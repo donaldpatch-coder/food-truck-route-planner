@@ -1056,11 +1056,29 @@ textarea {
   grid-column: span 2;
 }
 
+.marketing-summary-panel {
+  margin-bottom: 18px;
+}
+
 .panel-title-row {
   display: flex;
   justify-content: space-between;
   gap: 16px;
   align-items: start;
+}
+
+.selected-pipeline-summary {
+  display: grid;
+  gap: 4px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #f8fafc;
+  padding: 12px;
+}
+
+.selected-pipeline-summary span {
+  color: var(--muted);
+  font-size: 13px;
 }
 
 .ops-pipeline-list {

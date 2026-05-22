@@ -100,6 +100,7 @@ const opsDocumentUpload = document.querySelector("#ops-document-upload");
 const opsPhotoUpload = document.querySelector("#ops-photo-upload");
 const opsNotes = document.querySelector("#ops-notes");
 const opsDetailTitle = document.querySelector("#ops-detail-title");
+const opsSelectedLocationSummary = document.querySelector("#ops-selected-location-summary");
 const opsAiSummary = document.querySelector("#ops-ai-summary");
 const opsAiSummaryOutput = document.querySelector("#ops-ai-summary-output");
 const opsReminderTitle = document.querySelector("#ops-reminder-title");
@@ -4265,7 +4266,6 @@ function renderOpsLocationOptions() {
     .map((location) => `<option value="${location.id}">${location.name}</option>`)
     .join("");
 
-  opsLocation.innerHTML = options;
   reminderLocation.innerHTML = `<option value="">General reminder</option>${options}`;
 }
 
@@ -4317,6 +4317,11 @@ function loadPipelineRecordIntoForm(locationId) {
   selectedPipelineLocationId = location.id;
   opsLocation.value = location.id;
   opsDetailTitle.textContent = record ? `${location.name} reservation details` : `${location.name} new reservation`;
+  opsSelectedLocationSummary.innerHTML = `
+    <strong>${location.name}</strong>
+    <span>${location.city || "Location"}${location.type ? ` - ${location.type}` : ""}</span>
+    ${record?.status ? `<span>Status: ${record.status}</span>` : `<span>Added from Search Locations</span>`}
+  `;
   opsStatus.value = record?.status || "Interested";
   opsDeadline.value = record?.deadline || "";
   opsFee.value = record?.fee || "";
@@ -4414,7 +4419,16 @@ function removePipelineRecord(locationId) {
   savePipelineRecords(records);
   if (selectedPipelineLocationId === locationId) {
     selectedPipelineLocationId = "";
+    opsLocation.value = "";
     opsDetailTitle.textContent = "Select a pipeline item";
+    opsSelectedLocationSummary.textContent = "Select an item from the Pipeline List above to edit its details.";
+    opsDeadline.value = "";
+    opsFee.value = "";
+    opsWebpage.value = "";
+    opsDocuments.value = "";
+    opsNotes.value = "";
+    opsAiSummaryOutput.value = "";
+    applyPipelineStepsToForm(getDefaultPipelineSteps());
     opsStatusMessage.textContent = `${location?.name || "Pipeline item"} removed.`;
   }
   renderPipelineList();
@@ -5328,7 +5342,6 @@ document.querySelector("#jump-list-space").addEventListener("click", () => {
   document.querySelector("#list-space-panel").scrollIntoView({ behavior: "smooth", block: "start" });
 });
 document.querySelector("#save-ops-location").addEventListener("click", savePipelineRecord);
-opsLocation.addEventListener("change", () => loadPipelineRecordIntoForm(opsLocation.value));
 showHiddenPipeline.addEventListener("change", renderPipelineList);
 opsAiSummary.addEventListener("click", generatePipelineSummary);
 hideOpsLocation.addEventListener("click", () => {
@@ -5340,10 +5353,6 @@ removeOpsLocation.addEventListener("click", () => {
   if (opsLocation.value) {
     removePipelineRecord(opsLocation.value);
   }
-});
-document.querySelector("#open-truck-marketing").addEventListener("click", () => {
-  showScreen("public-site");
-  document.querySelector(".marketing-layout").scrollIntoView({ behavior: "smooth", block: "start" });
 });
 document.querySelector("#save-reminder").addEventListener("click", saveReminderRecord);
 document.querySelector("#generate-ai-week").addEventListener("click", generateAiWeek);

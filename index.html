@@ -26,6 +26,7 @@
           <button class="nav-item" data-screen="checkins">Sales Log</button>
           <button class="nav-item" data-screen="suppliers">Suppliers</button>
           <button class="nav-item" data-screen="operations">Operations</button>
+          <button class="nav-item" data-screen="marketing">Marketing</button>
           <button class="nav-item" data-screen="public-site">Public Site</button>
           <button class="nav-item" data-screen="pos">POS</button>
           <button class="nav-item" data-screen="reports">Reports</button>
@@ -592,6 +593,26 @@
             </aside>
           </div>
 
+        </section>
+
+        <section id="marketing" class="screen" aria-labelledby="marketing-title">
+          <div class="screen-header">
+            <p class="eyebrow">Truck Finder Marketing</p>
+            <h2 id="marketing-title">Public Truck Profile</h2>
+            <p>Manage what customers and event organizers see on the Truck Finder site.</p>
+          </div>
+
+          <article class="feature-panel marketing-summary-panel">
+            <p class="eyebrow">Profile Readiness</p>
+            <h3>One account, one public profile</h3>
+            <p class="helper-text">Keep services, photos, calendar, menu, daily special, AI menu draft, and Toast sandbox details ready for the public Truck Finder.</p>
+            <div class="mini-list" id="ops-marketing-checklist"></div>
+            <div class="button-row">
+              <a class="secondary button-link" href="public-trucks.html" target="_blank">View Truck Finder</a>
+            </div>
+            <p class="status-message" id="ops-marketing-status"></p>
+          </article>
+
           <div class="marketing-layout">
             <article class="feature-panel">
               <p class="eyebrow">For Food Truck Owners</p>
@@ -739,10 +760,10 @@
             <article class="feature-panel ops-detail-panel">
               <p class="eyebrow">Pipeline Details</p>
               <h3 id="ops-detail-title">Select a pipeline item</h3>
-              <label>
-                Location
-                <select id="ops-location"></select>
-              </label>
+              <input id="ops-location" type="hidden">
+              <div class="selected-pipeline-summary" id="ops-selected-location-summary">
+                Select an item from the Pipeline List above to edit its details.
+              </div>
               <label>
                 Status
                 <select id="ops-status">
@@ -827,18 +848,6 @@
                 <button type="button" class="secondary danger-button" id="remove-ops-location">Remove</button>
               </div>
               <p class="status-message" id="ops-status-message"></p>
-            </article>
-
-            <article class="feature-panel" id="ops-marketing-panel">
-              <p class="eyebrow">Truck Finder Marketing</p>
-              <h3>One account, one public profile</h3>
-              <p class="helper-text">Keep the public Truck Finder listing updated from this app: services, photos, calendar, menu, daily special, AI menu draft, and Toast sandbox.</p>
-              <div class="mini-list" id="ops-marketing-checklist"></div>
-              <div class="button-row">
-                <button type="button" class="primary" id="open-truck-marketing">Edit Marketing Profile</button>
-                <a class="secondary button-link" href="public-trucks.html" target="_blank">View Truck Finder</a>
-              </div>
-              <p class="status-message" id="ops-marketing-status"></p>
             </article>
 
             <article class="feature-panel">
