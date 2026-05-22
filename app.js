@@ -173,7 +173,7 @@ const detailHistoryList = document.querySelector("#detail-history-list");
 
 const SUPABASE_URL = "https://vyjquxjxjywhrtihpzwk.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_dnU2ePpleMBcl5Qt3kJriw_AFTeDa1w";
-const AUTH_REDIRECT_URL = "http://localhost:3000/";
+const AUTH_REDIRECT_URL = `${window.location.origin}/`;
 
 function createSafeStorage() {
   const memoryStorage = new Map();
@@ -2926,7 +2926,7 @@ async function createAccount() {
   }
 
   if (!data.session) {
-    accountStatus.textContent = "Account created. Check your email to confirm it, then log in.";
+    accountStatus.textContent = "Account created. Check your inbox and spam folder for the Supabase verification email, then log in.";
     databaseStatus.textContent = "Profile details are saved in this browser until email confirmation is complete.";
     return;
   }
@@ -2937,6 +2937,36 @@ async function createAccount() {
   accountStatus.textContent = `${profile.businessName} is saved to Supabase.`;
   databaseStatus.textContent = "Connected to Supabase.";
   showScreen("dashboard");
+}
+
+async function resendVerificationEmail() {
+  if (!dbClient) {
+    accountStatus.textContent = "Verification email needs Supabase to be connected.";
+    return;
+  }
+
+  const profile = readProfileForm();
+
+  if (!profile.email) {
+    accountStatus.textContent = "Enter the email address first.";
+    return;
+  }
+
+  accountStatus.textContent = "Sending verification email...";
+  const { error } = await dbClient.auth.resend({
+    type: "signup",
+    email: profile.email,
+    options: {
+      emailRedirectTo: AUTH_REDIRECT_URL
+    }
+  });
+
+  if (error) {
+    accountStatus.textContent = error.message;
+    return;
+  }
+
+  accountStatus.textContent = "Verification email resent. Check inbox and spam.";
 }
 
 async function logIn() {
@@ -4725,6 +4755,11 @@ document.querySelector("#create-account").addEventListener("click", () => {
 
 document.querySelector("#log-in").addEventListener("click", () => {
   logIn().catch((error) => {
+    accountStatus.textContent = error.message;
+  });
+});
+document.querySelector("#resend-verification").addEventListener("click", () => {
+  resendVerificationEmail().catch((error) => {
     accountStatus.textContent = error.message;
   });
 });
