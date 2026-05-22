@@ -73,6 +73,7 @@ const reminderLocation = document.querySelector("#reminder-location");
 const reminderList = document.querySelector("#reminder-list");
 const squareStatusTitle = document.querySelector("#square-status-title");
 const squareStatusCopy = document.querySelector("#square-status-copy");
+const squareConnectionBadge = document.querySelector("#square-connection-badge");
 const squareImportLocation = document.querySelector("#square-import-location");
 const squareImportSales = document.querySelector("#square-import-sales");
 const squareImportCosts = document.querySelector("#square-import-costs");
@@ -3276,22 +3277,34 @@ function renderSquareStatus() {
   const status = appStorage.getItem(storageKeys.posConnection);
 
   if (status === "square-sandbox") {
+    const connectedAt = appStorage.getItem(`${storageKeys.posConnection}ConnectedAt`);
     squareStatusTitle.textContent = "Square sandbox connected";
-    squareStatusCopy.textContent = "Tester mode is active. Demo imports will create sales history as if Square synced them.";
+    squareStatusCopy.textContent = `Tester mode is active${connectedAt ? ` since ${connectedAt}` : ""}. Demo imports will create sales history as if Square synced them.`;
+    squareConnectionBadge.textContent = "Connected to Square Sandbox";
+    squareConnectionBadge.classList.add("connected");
   } else {
     squareStatusTitle.textContent = "Not connected";
     squareStatusCopy.textContent = "This tester build includes a Square connection placeholder. Real OAuth will be added before production.";
+    squareConnectionBadge.textContent = "Disconnected";
+    squareConnectionBadge.classList.remove("connected");
   }
 }
 
 function connectSquareSandbox() {
+  const connectedAt = new Date().toLocaleString();
+
   appStorage.setItem(storageKeys.posConnection, "square-sandbox");
+  appStorage.setItem(`${storageKeys.posConnection}ConnectedAt`, connectedAt);
   renderSquareStatus();
+  squareImportStatus.textContent = "Square sandbox connected. Import a demo sale to test the sync flow.";
+  document.querySelector("#square-import-panel").scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 function disconnectSquare() {
   appStorage.removeItem(storageKeys.posConnection);
+  appStorage.removeItem(`${storageKeys.posConnection}ConnectedAt`);
   renderSquareStatus();
+  squareImportStatus.textContent = "Square sandbox disconnected.";
 }
 
 function importSquareDemoSale() {

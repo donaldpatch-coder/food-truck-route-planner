@@ -640,6 +640,7 @@
               <p class="eyebrow">Square</p>
               <h3 id="square-status-title">Not connected</h3>
               <p id="square-status-copy">This tester build includes a Square connection placeholder. Real OAuth will be added before production.</p>
+              <div class="connection-badge" id="square-connection-badge">Disconnected</div>
               <div class="button-row">
                 <button type="button" class="primary" id="connect-square">Connect Square Sandbox</button>
                 <button type="button" class="secondary" id="disconnect-square">Disconnect</button>
@@ -647,7 +648,7 @@
               <p class="helper-text">Planned sync: payments, item sales, refunds, taxes, tips, timestamps, and location IDs.</p>
             </article>
 
-            <article class="feature-panel">
+            <article class="feature-panel" id="square-import-panel">
               <p class="eyebrow">Sample Import</p>
               <h3>Import Square demo sales</h3>
               <p>Use this during testing to simulate Square sending sales into the app.</p>
