@@ -3097,7 +3097,7 @@ async function loadCurrentSession() {
 
 async function loadLocationsFromDatabase() {
   if (!dbClient) {
-    return;
+    return false;
   }
 
   const city = document.querySelector("#city").value || "Lowell, MA";
@@ -3108,7 +3108,7 @@ async function loadLocationsFromDatabase() {
     .order("score", { ascending: false });
 
   if (error || !data || data.length === 0) {
-    return;
+    return false;
   }
 
   locations.splice(
@@ -3136,6 +3136,28 @@ async function loadLocationsFromDatabase() {
   renderDetail();
   renderCheckinLocationOptions();
   renderResults();
+  return true;
+}
+
+async function findBestSpots() {
+  const city = document.querySelector("#city").value.trim() || "your area";
+
+  resultsSummary.textContent = `Searching best spots near ${city}...`;
+  showSavedLocationsOnly = false;
+
+  try {
+    const loadedFromDatabase = await loadLocationsFromDatabase();
+
+    if (!loadedFromDatabase) {
+      renderResults();
+      resultsSummary.textContent = `Showing built-in and saved recommendations for ${city}. Database-specific results were not available.`;
+    } else {
+      resultsSummary.textContent = `Showing database recommendations for ${city}.`;
+    }
+  } catch (error) {
+    renderResults();
+    resultsSummary.textContent = `Showing built-in recommendations for ${city}. Database search is unavailable right now.`;
+  }
 }
 
 async function loadWeeklyPlanFromDatabase(userId) {
@@ -4870,7 +4892,7 @@ document.querySelector("#resend-verification").addEventListener("click", () => {
 });
 
 document.querySelector("#find-spots").addEventListener("click", () => {
-  loadLocationsFromDatabase().finally(renderResults);
+  findBestSpots();
 });
 zipCode.addEventListener("input", () => {
   const city = cityFromZip(zipCode.value);
