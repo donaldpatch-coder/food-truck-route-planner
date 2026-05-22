@@ -85,11 +85,8 @@ const opsFee = document.querySelector("#ops-fee");
 const opsDocuments = document.querySelector("#ops-documents");
 const opsNotes = document.querySelector("#ops-notes");
 const opsStatusMessage = document.querySelector("#ops-status-message");
-const priceItem = document.querySelector("#price-item");
-const priceSupplier = document.querySelector("#price-supplier");
-const priceValue = document.querySelector("#price-value");
-const priceUnit = document.querySelector("#price-unit");
-const priceList = document.querySelector("#price-list");
+const opsMarketingChecklist = document.querySelector("#ops-marketing-checklist");
+const opsMarketingStatus = document.querySelector("#ops-marketing-status");
 const reminderTitle = document.querySelector("#reminder-title");
 const reminderDate = document.querySelector("#reminder-date");
 const reminderLocation = document.querySelector("#reminder-location");
@@ -3551,7 +3548,7 @@ function renderAllDataViews() {
   renderMarketplace();
   renderPublicListings();
   loadTruckProfileForm();
-  renderPrices();
+  renderMarketingChecklist();
   renderReminders();
   renderCalendar();
   renderSquareTransactions();
@@ -3752,6 +3749,33 @@ function renderTruckProfilePreview() {
   `;
 }
 
+function renderMarketingChecklist() {
+  const profile = getActiveTruckProfile();
+  const checks = [
+    ["Truck name", Boolean(profile.truckName && profile.truckName !== "Your Food Truck")],
+    ["Services description", Boolean(profile.description && !profile.description.includes("Add your services"))],
+    ["Menu items", Boolean((profile.menuItems || []).length)],
+    ["Daily special", Boolean(profile.dailySpecial)],
+    ["Public calendar", Boolean((profile.calendarItems || []).length)],
+    ["Photos", Boolean((profile.imageUrls || []).length)],
+    ["Booking link", Boolean(profile.contactUrl)],
+    ["Toast sandbox", Boolean(profile.toastConnected)]
+  ];
+  const completeCount = checks.filter(([, complete]) => complete).length;
+
+  opsMarketingChecklist.innerHTML = checks
+    .map(
+      ([label, complete]) => `
+        <div class="mini-list-item marketing-check ${complete ? "complete" : ""}">
+          <strong>${complete ? "Done" : "Needed"}: ${label}</strong>
+          <span>${complete ? "Ready for the public Truck Finder." : "Add this to improve the public listing."}</span>
+        </div>
+      `
+    )
+    .join("");
+  opsMarketingStatus.textContent = `${completeCount} of ${checks.length} marketing items complete.`;
+}
+
 function loadTruckProfileForm() {
   const profile = getActiveTruckProfile();
 
@@ -3765,6 +3789,7 @@ function loadTruckProfileForm() {
   truckProfileCalendar.value = (profile.calendarItems || []).join("\n");
   truckProfileImages.value = (profile.imageUrls || []).join("\n");
   renderTruckProfilePreview();
+  renderMarketingChecklist();
 }
 
 function saveTruckProfile() {
@@ -3794,6 +3819,7 @@ function saveTruckProfile() {
   saveTruckProfiles([profile, ...profiles]);
   truckProfileStatus.textContent = `${profile.truckName} is published on the truck finder site.`;
   renderTruckProfilePreview();
+  renderMarketingChecklist();
 }
 
 function getDirectoryListings() {
@@ -3940,7 +3966,12 @@ function savePriceRecord() {
 }
 
 function renderPrices() {
+  const priceList = document.querySelector("#price-list");
   const prices = getPriceRecords();
+
+  if (!priceList) {
+    return;
+  }
 
   priceList.innerHTML = prices.length
     ? prices
@@ -4730,7 +4761,10 @@ document.querySelector("#jump-list-space").addEventListener("click", () => {
   document.querySelector("#list-space-panel").scrollIntoView({ behavior: "smooth", block: "start" });
 });
 document.querySelector("#save-ops-location").addEventListener("click", savePipelineRecord);
-document.querySelector("#save-price").addEventListener("click", savePriceRecord);
+document.querySelector("#open-truck-marketing").addEventListener("click", () => {
+  showScreen("public-site");
+  document.querySelector(".marketing-layout").scrollIntoView({ behavior: "smooth", block: "start" });
+});
 document.querySelector("#save-reminder").addEventListener("click", saveReminderRecord);
 document.querySelector("#generate-ai-week").addEventListener("click", generateAiWeek);
 document.querySelector("#connect-square").addEventListener("click", connectSquareSandbox);
@@ -4821,7 +4855,7 @@ renderSuppliers();
 renderMarketplace();
 renderPublicListings();
 loadTruckProfileForm();
-renderPrices();
+renderMarketingChecklist();
 renderReminders();
 renderCalendar();
 renderSquareStatus();

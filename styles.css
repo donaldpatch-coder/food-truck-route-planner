@@ -1009,6 +1009,15 @@ textarea {
   font-size: 13px;
 }
 
+.marketing-check {
+  border-left: 4px solid #c8d5dc;
+}
+
+.marketing-check.complete {
+  border-left-color: var(--green);
+  background: #f3fbf6;
+}
+
 .transaction-list {
   display: grid;
   gap: 8px;
