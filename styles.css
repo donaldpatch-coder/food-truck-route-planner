@@ -25,7 +25,8 @@ body {
 
 button,
 input,
-select {
+select,
+textarea {
   font: inherit;
 }
 
@@ -163,7 +164,8 @@ label {
 }
 
 input,
-select {
+select,
+textarea {
   width: 100%;
   min-height: 44px;
   border: 1px solid var(--line);
@@ -171,6 +173,10 @@ select {
   color: var(--ink);
   padding: 10px 12px;
   background: #fbfcfe;
+}
+
+textarea {
+  resize: vertical;
 }
 
 .button-row {
@@ -431,6 +437,20 @@ select {
   padding: 20px;
 }
 
+.marketplace-media {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.marketplace-media img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: 8px;
+  object-fit: cover;
+  background: #e6edf5;
+}
+
 .marketplace-card h3,
 .marketplace-card p {
   margin: 0;
@@ -439,6 +459,25 @@ select {
 .marketplace-price {
   color: var(--blue-dark);
   font-size: 30px;
+  font-weight: 900;
+}
+
+.mini-map {
+  display: grid;
+  gap: 6px;
+}
+
+.mini-map svg {
+  width: 100%;
+  min-height: 96px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #eef5f2;
+}
+
+.mini-map text {
+  fill: var(--ink);
+  font-size: 5px;
   font-weight: 900;
 }
 
@@ -604,6 +643,74 @@ select {
 .settings-grid .feature-panel {
   display: grid;
   gap: 14px;
+}
+
+.help-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: 18px;
+  align-items: start;
+}
+
+.help-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.help-card {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  gap: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.help-card img {
+  width: 100%;
+  height: 100%;
+  min-height: 150px;
+  object-fit: cover;
+  background: #e6edf5;
+}
+
+.help-card div {
+  display: grid;
+  align-content: center;
+  gap: 8px;
+  padding: 16px 16px 16px 0;
+}
+
+.help-card h3,
+.help-card p {
+  margin: 0;
+}
+
+.forum-list {
+  display: grid;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.forum-post {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: var(--shadow);
+  padding: 18px;
+}
+
+.forum-post h3,
+.forum-post p {
+  margin: 0 0 8px;
+}
+
+.forum-post span {
+  color: var(--muted);
+  font-size: 13px;
 }
 
 .ops-grid .feature-panel {
@@ -779,6 +886,40 @@ select {
   color: var(--muted);
 }
 
+.owner-roster {
+  display: grid;
+  gap: 10px;
+  border-top: 1px solid var(--line);
+  margin-top: 4px;
+  padding-top: 14px;
+}
+
+.owner-roster-item {
+  display: grid;
+  gap: 4px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #effaf4;
+  padding: 12px;
+}
+
+.owner-roster-item span,
+.owner-roster-item p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.inline-check {
+  grid-template-columns: auto 1fr;
+  align-items: center;
+}
+
+.inline-check input {
+  min-height: auto;
+  width: auto;
+}
+
 .result-actions {
   display: grid;
   gap: 8px;
@@ -915,6 +1056,8 @@ tr:last-child td {
   .route-map-layout,
   .ops-grid,
   .settings-grid,
+  .help-layout,
+  .help-grid,
   .planner-toolbar,
   .public-layout,
   .public-listing-grid,
@@ -945,6 +1088,14 @@ tr:last-child td {
   .tester-banner {
     align-items: stretch;
     flex-direction: column;
+  }
+
+  .help-card {
+    grid-template-columns: 1fr;
+  }
+
+  .help-card div {
+    padding: 16px;
   }
 }
 

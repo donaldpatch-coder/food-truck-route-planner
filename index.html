@@ -33,6 +33,7 @@
           <button class="nav-item" data-screen="reports">Reports</button>
           <button class="nav-item" data-screen="marketplace">Marketplace</button>
           <button class="nav-item" data-screen="settings">Settings</button>
+          <button class="nav-item help-nav" data-screen="help">Help</button>
         </nav>
       </aside>
 
@@ -134,6 +135,10 @@
             <label>
               City
               <input id="city" type="text" value="Lowell, MA">
+            </label>
+            <label>
+              ZIP code
+              <input id="zip-code" type="text" inputmode="numeric" placeholder="01852">
             </label>
             <label>
               Date
@@ -336,6 +341,14 @@
               <label>
                 Notes
                 <input id="checkin-notes" type="text" placeholder="Rain after 3 PM, lunch rush was strong">
+              </label>
+              <label class="inline-check">
+                <input id="checkin-visible" type="checkbox">
+                Show me to other checked-in owners at this location
+              </label>
+              <label>
+                Contact for other owners
+                <input id="checkin-contact" type="text" placeholder="Text number, email, radio channel, Instagram">
               </label>
               <button type="button" class="primary" id="save-checkin">Save Check-In</button>
               <button type="button" class="secondary" id="clear-checkins">Clear Sales Log</button>
@@ -772,6 +785,10 @@
               <input id="marketplace-query" type="search" placeholder="truck, trailer, generator, fryer...">
             </label>
             <label>
+              ZIP code
+              <input id="marketplace-zip" type="text" inputmode="numeric" placeholder="03101">
+            </label>
+            <label>
               Category
               <select id="marketplace-category">
                 <option value="all">All listings</option>
@@ -811,6 +828,10 @@
                 <input id="marketplace-city" type="text" placeholder="Nashua, NH">
               </label>
               <label>
+                ZIP code
+                <input id="marketplace-listing-zip" type="text" inputmode="numeric" placeholder="03060">
+              </label>
+              <label>
                 Price
                 <input id="marketplace-price" type="number" min="0" step="1" placeholder="45000">
               </label>
@@ -825,6 +846,14 @@
               <label class="wide-field">
                 Description
                 <input id="marketplace-description" type="text" placeholder="Condition, equipment included, mileage, power, inspection notes">
+              </label>
+              <label class="wide-field">
+                Photo URLs, up to 10
+                <textarea id="marketplace-images" rows="4" placeholder="One image URL per line"></textarea>
+              </label>
+              <label>
+                Video link
+                <input id="marketplace-video" type="url" placeholder="YouTube, Vimeo, walkthrough video">
               </label>
               <button type="button" class="primary" id="save-marketplace-listing">Publish Listing</button>
               <p class="status-message" id="marketplace-status" aria-live="polite"></p>
@@ -903,6 +932,114 @@
               <p class="status-message" id="data-tools-status"></p>
             </article>
           </div>
+        </section>
+
+        <section id="help" class="screen" aria-labelledby="help-title">
+          <div class="screen-header">
+            <p class="eyebrow">Help Center</p>
+            <h2 id="help-title">Help & Owner Forum</h2>
+            <p>Quick guides, screenshots, and a place for food truck owners to share questions and advice.</p>
+          </div>
+
+          <div class="help-layout">
+            <section>
+              <div class="help-grid">
+                <article class="help-card">
+                  <img src="assets/help/dashboard.png" alt="Dashboard screenshot">
+                  <div>
+                    <p class="eyebrow">Guide</p>
+                    <h3>Dashboard & Weather</h3>
+                    <p>Understand best spots, weather risk, and sales learning.</p>
+                    <a class="source-link supplier-source" href="docs/help/dashboard-weather.md" target="_blank">Open guide</a>
+                  </div>
+                </article>
+                <article class="help-card">
+                  <img src="assets/help/find-locations.png" alt="Find locations screenshot">
+                  <div>
+                    <p class="eyebrow">Guide</p>
+                    <h3>Find Locations</h3>
+                    <p>Search opportunities, review history, and add custom spaces.</p>
+                    <a class="source-link supplier-source" href="docs/help/find-locations.md" target="_blank">Open guide</a>
+                  </div>
+                </article>
+                <article class="help-card">
+                  <img src="assets/help/sales-log.png" alt="Sales log screenshot">
+                  <div>
+                    <p class="eyebrow">Guide</p>
+                    <h3>Sales Log</h3>
+                    <p>Use the timer, track sales, costs, competitors, and best sellers.</p>
+                    <a class="source-link supplier-source" href="docs/help/sales-log.md" target="_blank">Open guide</a>
+                  </div>
+                </article>
+                <article class="help-card">
+                  <img src="assets/help/pos-reports.png" alt="POS and reports screenshot">
+                  <div>
+                    <p class="eyebrow">Guide</p>
+                    <h3>POS & Reports</h3>
+                    <p>Import Square demo transactions and read business reports.</p>
+                    <a class="source-link supplier-source" href="docs/help/pos-reports.md" target="_blank">Open guide</a>
+                  </div>
+                </article>
+                <article class="help-card">
+                  <img src="assets/help/route-marketplace.png" alt="Route and marketplace screenshot">
+                  <div>
+                    <p class="eyebrow">Guide</p>
+                    <h3>Routes & Marketplace</h3>
+                    <p>Plan mileage, find route vendors, and browse trucks/equipment.</p>
+                    <a class="source-link supplier-source" href="docs/help/routes-marketplace.md" target="_blank">Open guide</a>
+                  </div>
+                </article>
+                <article class="help-card">
+                  <img src="assets/help/marketplace.png" alt="Marketplace screenshot">
+                  <div>
+                    <p class="eyebrow">Guide</p>
+                    <h3>Marketplace Listings</h3>
+                    <p>Add trucks or equipment with ZIP search, photos, video, and affiliate links.</p>
+                    <a class="source-link supplier-source" href="docs/help/marketplace.md" target="_blank">Open guide</a>
+                  </div>
+                </article>
+                <article class="help-card">
+                  <img src="assets/help/help-forum.png" alt="Owner forum screenshot">
+                  <div>
+                    <p class="eyebrow">Guide</p>
+                    <h3>Owner Forum</h3>
+                    <p>Post needs, ask questions, and use visible check-ins to reach nearby owners.</p>
+                    <a class="source-link supplier-source" href="docs/help/community-forum.md" target="_blank">Open guide</a>
+                  </div>
+                </article>
+              </div>
+            </section>
+
+            <aside class="feature-panel">
+              <p class="eyebrow">Owner Forum</p>
+              <h3>Ask other owners</h3>
+              <label>
+                Topic
+                <select id="forum-topic">
+                  <option>Need / Buy / Borrow</option>
+                  <option>Locations</option>
+                  <option>Permits</option>
+                  <option>POS</option>
+                  <option>Suppliers</option>
+                  <option>Equipment</option>
+                  <option>Routes</option>
+                  <option>General</option>
+                </select>
+              </label>
+              <label>
+                Title
+                <input id="forum-title" type="text" placeholder="Best events near Manchester?">
+              </label>
+              <label>
+                Message
+                <input id="forum-message" type="text" placeholder="Ask a question or share a tip">
+              </label>
+              <button type="button" class="primary" id="save-forum-post">Post to Forum</button>
+              <p class="helper-text">Tester forum posts are saved in this browser. Production forum posts will sync to the database.</p>
+            </aside>
+          </div>
+
+          <div class="forum-list" id="forum-list"></div>
         </section>
       </section>
     </main>

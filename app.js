@@ -2,6 +2,7 @@ const screens = document.querySelectorAll(".screen");
 const navItems = document.querySelectorAll(".nav-item");
 const navToggle = document.querySelector("#nav-toggle");
 const resultList = document.querySelector("#results-list");
+const zipCode = document.querySelector("#zip-code");
 const accountStatus = document.querySelector("#account-status");
 const planStatus = document.querySelector("#plan-status");
 const weeklyPlanBody = document.querySelector("#weekly-plan-body");
@@ -16,6 +17,8 @@ const checkinCosts = document.querySelector("#checkin-costs");
 const checkinBestSellers = document.querySelector("#checkin-best-sellers");
 const checkinCompetitors = document.querySelector("#checkin-competitors");
 const checkinNotes = document.querySelector("#checkin-notes");
+const checkinVisible = document.querySelector("#checkin-visible");
+const checkinContact = document.querySelector("#checkin-contact");
 const checkinStatus = document.querySelector("#checkin-status");
 const checkinHistoryBody = document.querySelector("#checkin-history-body");
 const timerElapsed = document.querySelector("#timer-elapsed");
@@ -96,14 +99,18 @@ const reportPipelineValue = document.querySelector("#report-pipeline-value");
 const reportSupplierCosts = document.querySelector("#report-supplier-costs");
 const reportPosSummary = document.querySelector("#report-pos-summary");
 const marketplaceQuery = document.querySelector("#marketplace-query");
+const marketplaceZip = document.querySelector("#marketplace-zip");
 const marketplaceCategory = document.querySelector("#marketplace-category");
 const marketplaceTitleInput = document.querySelector("#marketplace-title-input");
 const marketplaceListingCategory = document.querySelector("#marketplace-listing-category");
 const marketplaceCity = document.querySelector("#marketplace-city");
+const marketplaceListingZip = document.querySelector("#marketplace-listing-zip");
 const marketplacePrice = document.querySelector("#marketplace-price");
 const marketplaceContact = document.querySelector("#marketplace-contact");
 const marketplaceAffiliate = document.querySelector("#marketplace-affiliate");
 const marketplaceDescription = document.querySelector("#marketplace-description");
+const marketplaceImages = document.querySelector("#marketplace-images");
+const marketplaceVideo = document.querySelector("#marketplace-video");
 const marketplaceStatus = document.querySelector("#marketplace-status");
 const marketplaceSummary = document.querySelector("#marketplace-summary");
 const marketplaceGrid = document.querySelector("#marketplace-grid");
@@ -117,6 +124,10 @@ const feedbackMessage = document.querySelector("#feedback-message");
 const feedbackEmail = document.querySelector("#feedback-email");
 const feedbackList = document.querySelector("#feedback-list");
 const dataToolsStatus = document.querySelector("#data-tools-status");
+const forumTopic = document.querySelector("#forum-topic");
+const forumTitle = document.querySelector("#forum-title");
+const forumMessage = document.querySelector("#forum-message");
+const forumList = document.querySelector("#forum-list");
 const salesInsightTitle = document.querySelector("#sales-insight-title");
 const salesInsightCopy = document.querySelector("#sales-insight-copy");
 const bestSalesLocation = document.querySelector("#best-sales-location");
@@ -197,6 +208,7 @@ const storageKeys = {
   marketplaceListings: "foodTruckAiMarketplaceListings",
   settings: "foodTruckAiSettings",
   feedback: "foodTruckAiFeedback",
+  forumPosts: "foodTruckAiForumPosts",
   homeBase: "foodTruckAiHomeBase",
   activeBusinessProfileId: "foodTruckAiBusinessProfileId",
   activeUserId: "foodTruckAiUserId"
@@ -1665,9 +1677,12 @@ const starterMarketplaceListings = [
     category: "Food truck",
     city: "Manchester, NH",
     price: 52000,
+    zip: "03101",
     description: "Starter truck shell with serving window, generator compartment, and room for custom buildout.",
     contactUrl: "https://www.commercialtrucktrader.com/food-truck/trucks-for-sale",
     affiliateUrl: "",
+    imageUrls: ["https://images.unsplash.com/photo-1565123409695-7b5ef63a2efb?auto=format&fit=crop&w=900&q=80"],
+    videoUrl: "",
     sellerType: "Directory lead"
   },
   {
@@ -1676,9 +1691,12 @@ const starterMarketplaceListings = [
     category: "Trailer",
     city: "New England",
     price: 28500,
+    zip: "",
     description: "Concession trailer style listing for startup operators comparing truck versus trailer costs.",
     contactUrl: "https://www.usedvending.com/food-trailers/",
     affiliateUrl: "",
+    imageUrls: ["https://images.unsplash.com/photo-1559925393-8be0ec4767c8?auto=format&fit=crop&w=900&q=80"],
+    videoUrl: "",
     sellerType: "Directory lead"
   },
   {
@@ -1687,9 +1705,12 @@ const starterMarketplaceListings = [
     category: "Power",
     city: "Ships to NH",
     price: 4200,
+    zip: "",
     description: "Power listing example for trucks needing event-ready generator capacity.",
     contactUrl: "https://www.gofoodservice.com/",
     affiliateUrl: "",
+    imageUrls: [],
+    videoUrl: "",
     sellerType: "Supplier lead"
   },
   {
@@ -1698,9 +1719,12 @@ const starterMarketplaceListings = [
     category: "Cooking equipment",
     city: "New Hampshire",
     price: 1800,
+    zip: "",
     description: "Common food truck cooking equipment listing for burgers, tacos, breakfast, and festival menus.",
     contactUrl: "https://www.katom.com/",
     affiliateUrl: "",
+    imageUrls: [],
+    videoUrl: "",
     sellerType: "Supplier lead"
   },
   {
@@ -1709,9 +1733,12 @@ const starterMarketplaceListings = [
     category: "Refrigeration",
     city: "New England",
     price: 2300,
+    zip: "",
     description: "Cold storage equipment listing example for prep and service line upgrades.",
     contactUrl: "https://www.gofoodservice.com/",
     affiliateUrl: "",
+    imageUrls: [],
+    videoUrl: "",
     sellerType: "Supplier lead"
   }
 ];
@@ -1748,6 +1775,29 @@ const cityCoordinates = {
   "norwalk, ct": { x: 28, y: 98 },
   "unity, me": { x: 86, y: 20 },
   "new england": { x: 48, y: 50 }
+};
+
+const zipLookup = {
+  "01852": "Lowell, MA",
+  "03101": "Manchester, NH",
+  "03301": "Concord, NH",
+  "03060": "Nashua, NH",
+  "03055": "Milford, NH",
+  "03842": "Hampton, NH",
+  "03801": "Portsmouth, NH",
+  "03037": "Deerfield, NH",
+  "03229": "Contoocook, NH",
+  "03584": "Lancaster, NH",
+  "03431": "Keene, NH",
+  "03867": "Rochester, NH",
+  "03860": "North Conway, NH",
+  "03255": "Newbury, NH",
+  "03782": "Sunapee, NH",
+  "03894": "Wolfeboro, NH",
+  "03079": "Salem, NH",
+  "03038": "Derry, NH",
+  "03458": "Peterborough, NH",
+  "03833": "Exeter, NH"
 };
 
 const defaultWeeklyPlan = [
@@ -2120,7 +2170,13 @@ function renderDetail() {
   }
 
   detailHistoryTitle.textContent = `${history.count} visit${history.count === 1 ? "" : "s"} - $${history.averageSales.toLocaleString()} avg sales, $${history.averageProfit.toLocaleString()} avg profit`;
-  detailHistoryList.innerHTML = renderHistoryRows(history.checkins);
+  detailHistoryList.innerHTML = `
+    ${renderHistoryRows(history.checkins)}
+    <div class="owner-roster">
+      <p class="eyebrow">Owners Checked In Here</p>
+      ${renderOwnerRoster(selectedLocation.name)}
+    </div>
+  `;
 }
 
 function getSavedPlan() {
@@ -2221,6 +2277,14 @@ function saveFeedbackRecords(records) {
   saveCollection(storageKeys.feedback, records);
 }
 
+function getForumPosts() {
+  return getSavedCollection(storageKeys.forumPosts);
+}
+
+function saveForumPosts(posts) {
+  saveCollection(storageKeys.forumPosts, posts);
+}
+
 function getSupplierPartners() {
   return getSavedCollection(storageKeys.supplierPartners);
 }
@@ -2269,6 +2333,31 @@ function getLocationHistorySummary(locationName) {
     lastVisit,
     checkins
   };
+}
+
+function getVisibleOwnersAtLocation(locationName) {
+  return getSavedCheckins().filter((checkin) => checkin.location === locationName && checkin.visibleToOwners);
+}
+
+function renderOwnerRoster(locationName) {
+  const owners = getVisibleOwnersAtLocation(locationName);
+
+  if (owners.length === 0) {
+    return `<p class="helper-text">No owners are publicly visible at this location yet.</p>`;
+  }
+
+  return owners
+    .slice(0, 6)
+    .map(
+      (owner) => `
+        <div class="owner-roster-item">
+          <strong>${owner.businessName || "Food truck owner"}</strong>
+          <span>${owner.date}, ${owner.startTime}-${owner.endTime}</span>
+          <p>${owner.ownerContact ? `Contact: ${owner.ownerContact}` : "No contact shared."}</p>
+        </div>
+      `
+    )
+    .join("");
 }
 
 function renderHistoryRows(checkins) {
@@ -2552,7 +2641,10 @@ function saveCheckin() {
     costs: Number(checkinCosts.value) || 0,
     bestSellers: checkinBestSellers.value.trim(),
     competitors: checkinCompetitors.value,
-    notes: checkinNotes.value.trim()
+    notes: checkinNotes.value.trim(),
+    visibleToOwners: checkinVisible.checked,
+    ownerContact: checkinContact.value.trim(),
+    businessName: document.querySelector("#business-name").value.trim()
   };
   const checkins = [checkin, ...getSavedCheckins()];
 
@@ -2566,6 +2658,8 @@ function saveCheckin() {
   checkinBestSellers.value = "";
   checkinCompetitors.value = "";
   checkinNotes.value = "";
+  checkinVisible.checked = false;
+  checkinContact.value = "";
   updateTimerReadout();
   renderCheckinHistory();
   renderDashboard();
@@ -2989,12 +3083,15 @@ async function saveLocationToDatabase() {
 }
 
 function renderResults() {
-  resultsSummary.textContent = `${locations.length} recommended spots sorted by opportunity score.`;
-  resultList.innerHTML = locations
+  const visibleLocations = locations.filter((location) => locationMatchesZip(location, zipCode.value));
+
+  resultsSummary.textContent = `${visibleLocations.length} recommended spot${visibleLocations.length === 1 ? "" : "s"} sorted by opportunity score.`;
+  resultList.innerHTML = visibleLocations
     .sort((a, b) => getLocationScore(b) - getLocationScore(a))
     .map((location) => {
       const history = getLocationHistorySummary(location.name);
       const pipeline = getPipelineForLocation(location.name);
+      const visibleOwners = getVisibleOwnersAtLocation(location.name);
 
       return `
         <article class="result-card${selectedLocation && selectedLocation.id === location.id ? " selected" : ""}">
@@ -3022,9 +3119,14 @@ function renderResults() {
             <strong>${location.weather}</strong>
             <span>Weather risk</span>
           </div>
+          ${getStaticMapPreview(location.city, location.name)}
           <div>
             <strong>${pipeline ? pipeline.status : "Interested"}</strong>
             <span>${pipeline && pipeline.deadline ? `Deadline ${pipeline.deadline}` : "Pipeline"}</span>
+          </div>
+          <div>
+            <strong>${visibleOwners.length}</strong>
+            <span>Owners visible</span>
           </div>
           ${
             history
@@ -3164,15 +3266,39 @@ function getAllMarketplaceListings() {
 function getFilteredMarketplaceListings() {
   const query = marketplaceQuery.value.trim().toLowerCase();
   const category = marketplaceCategory.value;
+  const zip = marketplaceZip.value.trim();
+  const zipCity = cityFromZip(zip);
 
   return getAllMarketplaceListings().filter((listing) => {
     const matchesCategory = category === "all" || listing.category === category;
+    const matchesZip = !zip || (zipCity && normalizeCity(listing.city).includes(normalizeCity(zipCity).split(",")[0])) || listing.zip === zip;
     const searchText = [listing.title, listing.category, listing.city, listing.description, listing.sellerType]
       .join(" ")
       .toLowerCase();
 
-    return matchesCategory && (!query || searchText.includes(query));
+    return matchesCategory && matchesZip && (!query || searchText.includes(query));
   });
+}
+
+function renderMarketplaceMedia(listing) {
+  const images = (listing.imageUrls || []).slice(0, 10);
+
+  if (images.length === 0 && !listing.videoUrl) {
+    return getStaticMapPreview(listing.city, listing.title);
+  }
+
+  return `
+    <div class="marketplace-media">
+      ${
+        images.length
+          ? images
+              .map((url) => `<img src="${url}" alt="${listing.title} photo" loading="lazy">`)
+              .join("")
+          : ""
+      }
+      ${listing.videoUrl ? `<a class="source-link supplier-source" href="${listing.videoUrl}" target="_blank" rel="noreferrer">Watch video</a>` : ""}
+    </div>
+  `;
 }
 
 function renderMarketplace() {
@@ -3183,11 +3309,13 @@ function renderMarketplace() {
     .map(
       (listing) => `
         <article class="marketplace-card">
+          ${renderMarketplaceMedia(listing)}
           <p class="eyebrow">${listing.category}</p>
           <h3>${listing.title}</h3>
           <p class="helper-text">${listing.city}</p>
           <div class="marketplace-price">$${Number(listing.price || 0).toLocaleString()}</div>
           <p>${listing.description}</p>
+          ${getStaticMapPreview(listing.city, listing.title)}
           <p class="helper-text">${listing.sellerType || "Seller listing"}</p>
           <div class="button-row">
             ${
@@ -3332,7 +3460,8 @@ function resetDemoData() {
     storageKeys.squareImports,
     storageKeys.squareDemoTransactions,
     storageKeys.marketplaceListings,
-    storageKeys.feedback
+    storageKeys.feedback,
+    storageKeys.forumPosts
   ].forEach((key) => appStorage.removeItem(key));
 
   dataToolsStatus.textContent = "Demo data reset in this browser.";
@@ -3358,6 +3487,72 @@ function renderAllDataViews() {
   renderFeedback();
 }
 
+function saveForumPost() {
+  if (!forumTitle.value.trim() || !forumMessage.value.trim()) {
+    return;
+  }
+
+  const post = {
+    id: `${Date.now()}`,
+    topic: forumTopic.value,
+    title: forumTitle.value.trim(),
+    message: forumMessage.value.trim(),
+    author: settingsBusinessName.value || document.querySelector("#business-name").value || "Food truck owner",
+    createdAt: new Date().toLocaleString(),
+    replies: []
+  };
+
+  saveForumPosts([post, ...getForumPosts()]);
+  forumTitle.value = "";
+  forumMessage.value = "";
+  renderForum();
+}
+
+function renderForum() {
+  const starterPosts = [
+    {
+      id: "starter-need",
+      topic: "Need / Buy / Borrow",
+      title: "Example: Anyone have extra mustard I can buy?",
+      message: "Use this topic for quick needs during service: condiments, propane, cups, ice, generator help, staff, or spare ingredients.",
+      author: "Food Truck AI",
+      createdAt: "Starter tip"
+    },
+    {
+      id: "starter-permits",
+      topic: "Permits",
+      title: "What permits should I check before a fair?",
+      message: "Ask for health permit requirements, fire inspection rules, insurance certificate needs, booth fees, and setup hours.",
+      author: "Food Truck AI",
+      createdAt: "Starter tip"
+    },
+    {
+      id: "starter-routes",
+      topic: "Routes",
+      title: "How do I decide if an event is too far?",
+      message: "Compare expected profit per hour against fuel, labor, prep time, and the chance of repeat bookings.",
+      author: "Food Truck AI",
+      createdAt: "Starter tip"
+    }
+  ];
+  const posts = [...getForumPosts(), ...starterPosts];
+
+  forumList.innerHTML = posts
+    .map(
+      (post) => `
+        <article class="forum-post">
+          <div>
+            <p class="eyebrow">${post.topic}</p>
+            <h3>${post.title}</h3>
+            <p>${post.message}</p>
+            <span>${post.author} - ${post.createdAt}</span>
+          </div>
+        </article>
+      `
+    )
+    .join("");
+}
+
 function saveMarketplaceListing() {
   if (!marketplaceTitleInput.value.trim()) {
     marketplaceStatus.textContent = "Add a listing title first.";
@@ -3370,9 +3565,16 @@ function saveMarketplaceListing() {
     category: marketplaceListingCategory.value,
     city: marketplaceCity.value.trim() || "New England",
     price: Number(marketplacePrice.value) || 0,
+    zip: marketplaceListingZip.value.trim(),
     description: marketplaceDescription.value.trim() || "Seller did not add a description yet.",
     contactUrl: marketplaceContact.value.trim(),
     affiliateUrl: marketplaceAffiliate.value.trim(),
+    imageUrls: marketplaceImages.value
+      .split(/\r?\n/)
+      .map((url) => url.trim())
+      .filter(Boolean)
+      .slice(0, 10),
+    videoUrl: marketplaceVideo.value.trim(),
     sellerType: marketplaceAffiliate.value.trim() ? "Partner listing" : "Seller listing",
     createdAt: new Date().toISOString()
   };
@@ -3383,9 +3585,12 @@ function saveMarketplaceListing() {
   marketplaceTitleInput.value = "";
   marketplaceCity.value = "";
   marketplacePrice.value = "";
+  marketplaceListingZip.value = "";
   marketplaceContact.value = "";
   marketplaceAffiliate.value = "";
   marketplaceDescription.value = "";
+  marketplaceImages.value = "";
+  marketplaceVideo.value = "";
   renderMarketplace();
 }
 
@@ -3628,6 +3833,41 @@ function getCityCoordinates(city) {
   const normalized = normalizeCity(city);
 
   return cityCoordinates[normalized] || cityCoordinates[normalized.replace(/\s+/g, " ")] || cityCoordinates["new england"];
+}
+
+function cityFromZip(zip) {
+  return zipLookup[(zip || "").trim()] || "";
+}
+
+function locationMatchesZip(location, zip) {
+  const city = cityFromZip(zip);
+
+  if (!zip || !city) {
+    return true;
+  }
+
+  return normalizeCity(location.city).includes(normalizeCity(city).split(",")[0]);
+}
+
+function getMapEmbedUrl(city) {
+  return `https://www.openstreetmap.org/export/embed.html?bbox=${encodeURIComponent("-73,41,-69,45")}&layer=mapnik&marker=${encodeURIComponent(city || "New England")}`;
+}
+
+function getStaticMapPreview(city, label) {
+  const coords = getCityCoordinates(city);
+
+  return `
+    <div class="mini-map" aria-label="Map preview for ${label}">
+      <svg viewBox="0 0 100 70">
+        <rect x="0" y="0" width="100" height="70" rx="6" class="map-bg"></rect>
+        <path d="M 10 18 C 28 8, 45 18, 60 12 S 84 16, 92 8" class="map-road soft"></path>
+        <path d="M 8 50 C 25 44, 42 60, 55 48 S 79 44, 92 56" class="map-road soft"></path>
+        <circle cx="${coords.x}" cy="${Math.min(64, coords.y * 0.7)}" r="4" class="stop-dot"></circle>
+        <text x="${Math.min(82, coords.x + 5)}" y="${Math.max(8, coords.y * 0.7 - 5)}">${label.slice(0, 18)}</text>
+      </svg>
+      <a href="https://www.openstreetmap.org/search?query=${encodeURIComponent(city || label)}" target="_blank" rel="noreferrer">Open map</a>
+    </div>
+  `;
 }
 
 function getRouteStopCount() {
@@ -4103,6 +4343,15 @@ document.querySelector("#log-in").addEventListener("click", () => {
 document.querySelector("#find-spots").addEventListener("click", () => {
   loadLocationsFromDatabase().finally(renderResults);
 });
+zipCode.addEventListener("input", () => {
+  const city = cityFromZip(zipCode.value);
+
+  if (city) {
+    document.querySelector("#city").value = city;
+  }
+
+  renderResults();
+});
 
 document.querySelector("#save-custom-location").addEventListener("click", saveCustomLocation);
 document.querySelector("#search-suppliers").addEventListener("click", renderSuppliers);
@@ -4111,6 +4360,7 @@ supplierCategory.addEventListener("change", renderSuppliers);
 document.querySelector("#save-partner").addEventListener("click", saveSupplierPartner);
 document.querySelector("#search-marketplace").addEventListener("click", renderMarketplace);
 marketplaceQuery.addEventListener("input", renderMarketplace);
+marketplaceZip.addEventListener("input", renderMarketplace);
 marketplaceCategory.addEventListener("change", renderMarketplace);
 document.querySelector("#save-marketplace-listing").addEventListener("click", saveMarketplaceListing);
 document.querySelector("#save-public-listing").addEventListener("click", savePublicListing);
@@ -4132,6 +4382,7 @@ document.querySelector("#save-settings").addEventListener("click", saveSettings)
 document.querySelector("#save-feedback").addEventListener("click", saveFeedback);
 document.querySelector("#export-demo-data").addEventListener("click", exportDemoData);
 document.querySelector("#reset-demo-data").addEventListener("click", resetDemoData);
+document.querySelector("#save-forum-post").addEventListener("click", saveForumPost);
 navToggle.addEventListener("click", () => {
   document.querySelector(".sidebar").classList.toggle("nav-open");
 });
@@ -4217,4 +4468,5 @@ renderReports();
 renderWeeklyPlan();
 renderCheckinHistory();
 renderFeedback();
+renderForum();
 refreshWeather(selectedLocation);
