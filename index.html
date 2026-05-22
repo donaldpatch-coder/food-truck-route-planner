@@ -1,0 +1,635 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Food Truck AI SaaS MVP</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="app-shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-mark">FT</div>
+          <div>
+            <p class="eyebrow">Food Truck AI</p>
+            <h1>Route Planner</h1>
+          </div>
+        </div>
+
+        <nav class="nav" aria-label="App screens">
+          <button class="nav-item active" data-screen="login">Account</button>
+          <button class="nav-item" data-screen="dashboard">Dashboard</button>
+          <button class="nav-item" data-screen="find">Find Locations</button>
+          <button class="nav-item" data-screen="detail">Location Detail</button>
+          <button class="nav-item" data-screen="plan">Weekly Plan</button>
+          <button class="nav-item" data-screen="checkins">Sales Log</button>
+          <button class="nav-item" data-screen="suppliers">Suppliers</button>
+          <button class="nav-item" data-screen="calendar">Calendar</button>
+          <button class="nav-item" data-screen="operations">Operations</button>
+          <button class="nav-item" data-screen="public-site">Public Site</button>
+        </nav>
+      </aside>
+
+      <section class="content">
+        <section id="login" class="screen active" aria-labelledby="login-title">
+          <div class="screen-header">
+            <p class="eyebrow">Account</p>
+            <h2 id="login-title">Login / Sign Up</h2>
+            <p>Save your truck profile and start planning profitable stops.</p>
+          </div>
+
+          <form class="form-panel">
+            <label>
+              Email
+              <input id="email" type="email" value="owner@lowellbites.com">
+            </label>
+            <label>
+              Password
+              <input id="password" type="password" value="foodtruck">
+            </label>
+            <label>
+              Business name
+              <input id="business-name" type="text" value="Lowell Bites">
+            </label>
+            <label>
+              City
+              <input id="profile-city" type="text" value="Lowell, MA">
+            </label>
+            <div class="button-row">
+              <button type="button" class="primary" id="create-account">Create Account</button>
+              <button type="button" class="secondary" id="log-in">Log In</button>
+            </div>
+            <p class="status-message" id="account-status" aria-live="polite"></p>
+            <p class="helper-text" id="database-status"></p>
+          </form>
+        </section>
+
+        <section id="dashboard" class="screen" aria-labelledby="dashboard-title">
+          <div class="screen-header">
+            <p class="eyebrow">Dashboard</p>
+            <h2 id="dashboard-title">Dashboard</h2>
+            <p>Today's best opportunities at a glance.</p>
+          </div>
+
+          <div class="dashboard-grid">
+            <article class="feature-panel large">
+              <p class="eyebrow">Today's Best Spot</p>
+              <h3 id="dashboard-best-name">Downtown Lowell - Lunch Hours</h3>
+              <div class="score" id="dashboard-best-score">87/100</div>
+              <p><strong>Best Time:</strong> <span id="dashboard-best-time">11 AM - 2 PM</span></p>
+              <p><strong>Reason:</strong> <span id="dashboard-best-reason">High office traffic + low competition</span></p>
+              <button class="primary" id="dashboard-view-details" type="button">View Details</button>
+            </article>
+
+            <article class="feature-panel">
+              <p class="eyebrow">Top 3 Events Near You</p>
+              <ul class="tight-list">
+                <li>Canalway Lunch Market</li>
+                <li>University Night Game</li>
+                <li>Brewery Patio Series</li>
+              </ul>
+            </article>
+
+            <article class="feature-panel">
+              <p class="eyebrow">Live Weather</p>
+              <h3 id="weather-summary">Weather not loaded</h3>
+              <p id="weather-detail">Refresh weather to check service risk for the selected city.</p>
+              <button class="secondary" type="button" id="refresh-weather">Refresh Weather</button>
+            </article>
+
+            <article class="feature-panel">
+              <p class="eyebrow">Estimated Sales Opportunity</p>
+              <h3 id="dashboard-sales">$850 - $1,250</h3>
+              <p>Based on traffic, weather, nearby events, and competition.</p>
+            </article>
+
+            <article class="feature-panel">
+              <p class="eyebrow">Learning From Sales</p>
+              <h3 id="dashboard-learning-title">No sales logged yet</h3>
+              <p id="dashboard-learning-copy">Check in after a service to teach the planner which spots actually perform.</p>
+            </article>
+          </div>
+        </section>
+
+        <section id="find" class="screen" aria-labelledby="find-title">
+          <div class="screen-header">
+            <p class="eyebrow">Search</p>
+            <h2 id="find-title">Find Locations</h2>
+            <p>Search for profitable spots by city, time, and food type.</p>
+          </div>
+
+          <form class="search-panel">
+            <label>
+              City
+              <input id="city" type="text" value="Lowell, MA">
+            </label>
+            <label>
+              Date
+              <input type="date" value="2026-05-22">
+            </label>
+            <label>
+              Time
+              <input type="time" value="11:30">
+            </label>
+            <label>
+              Food type
+              <select id="food-type">
+                <option>Tacos</option>
+                <option>Burgers</option>
+                <option>Coffee</option>
+                <option>Dessert</option>
+              </select>
+            </label>
+            <label>
+              Distance range
+              <select>
+                <option>5 miles</option>
+                <option>10 miles</option>
+                <option>25 miles</option>
+              </select>
+            </label>
+            <button type="button" class="primary" id="find-spots">Find Best Spots</button>
+          </form>
+
+          <details class="add-location-panel">
+            <summary>Add your own location</summary>
+            <form class="custom-location-form">
+              <label>
+                Location name
+                <input id="custom-location-name" type="text" placeholder="Town common, office park, brewery...">
+              </label>
+              <label>
+                City
+                <input id="custom-location-city" type="text" placeholder="Lowell, MA">
+              </label>
+              <label>
+                Type
+                <select id="custom-location-type">
+                  <option>Custom spot</option>
+                  <option>County fair</option>
+                  <option>Festival</option>
+                  <option>Farmers market</option>
+                  <option>Brewery</option>
+                  <option>Private event</option>
+                  <option>Street service</option>
+                </select>
+              </label>
+              <label>
+                Best time
+                <input id="custom-location-time" type="text" placeholder="11 AM - 2 PM">
+              </label>
+              <label>
+                Score
+                <input id="custom-location-score" type="number" min="1" max="100" value="75">
+              </label>
+              <label>
+                Source or contact link
+                <input id="custom-location-source" type="url" placeholder="https://...">
+              </label>
+              <label class="wide-field">
+                Notes
+                <input id="custom-location-notes" type="text" placeholder="Permit contact, power, fee, past sales, parking notes">
+              </label>
+              <button type="button" class="primary" id="save-custom-location">Save Location</button>
+              <p class="status-message" id="custom-location-status" aria-live="polite"></p>
+            </form>
+          </details>
+
+          <div class="results-toolbar">
+            <p class="helper-text" id="results-summary"></p>
+            <button type="button" class="secondary" id="generate-plan">Build Weekly Plan</button>
+          </div>
+          <div class="results-list" id="results-list" aria-live="polite"></div>
+        </section>
+
+        <section id="detail" class="screen" aria-labelledby="detail-title">
+          <div class="screen-header">
+            <p class="eyebrow">Recommendation</p>
+            <h2 id="detail-title">Location Detail Page</h2>
+            <p>Explain why a spot is recommended.</p>
+          </div>
+
+          <div class="detail-layout">
+            <article class="feature-panel large">
+              <p class="eyebrow">AI Recommendation</p>
+              <h3 id="detail-name">Downtown Lowell</h3>
+              <p id="detail-reason">This location is strong for lunch because nearby offices create high foot traffic. Best operating time is 11:30 AM-2:00 PM.</p>
+              <div class="button-row">
+                <button class="primary" id="save-location">Save Location</button>
+                <button class="secondary" id="add-to-plan">Add to Weekly Plan</button>
+                <button class="secondary" id="check-in-location">Check In Here</button>
+              </div>
+            </article>
+
+            <div class="metric-grid">
+              <div class="metric"><span>Location Score</span><strong id="detail-score">87/100</strong></div>
+              <div class="metric"><span>Foot Traffic Estimate</span><strong id="detail-traffic">High</strong></div>
+              <div class="metric"><span>Nearby Events</span><strong id="detail-events">3</strong></div>
+              <div class="metric"><span>Competitors Nearby</span><strong id="detail-competition">2</strong></div>
+              <div class="metric"><span>Weather Impact</span><strong id="detail-weather">Low risk</strong></div>
+              <div class="metric"><span>Parking Notes</span><strong id="detail-parking">Metered curb spots</strong></div>
+            </div>
+          </div>
+
+          <article class="feature-panel location-history-panel">
+            <p class="eyebrow">Past Visits</p>
+            <h3 id="detail-history-title">No history yet</h3>
+            <div class="visit-history-list" id="detail-history-list"></div>
+          </article>
+        </section>
+
+        <section id="plan" class="screen" aria-labelledby="plan-title">
+          <div class="screen-header">
+            <p class="eyebrow">Planner</p>
+            <h2 id="plan-title">Weekly Plan</h2>
+            <p>Help the owner plan where to park each day.</p>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Day</th>
+                  <th>Best Location</th>
+                  <th>Best Time</th>
+                  <th>Score</th>
+                </tr>
+              </thead>
+              <tbody id="weekly-plan-body"></tbody>
+            </table>
+          </div>
+
+          <div class="button-row">
+            <button class="primary" id="export-plan">Export Plan</button>
+            <button class="secondary" id="send-calendar">Send to Calendar</button>
+          </div>
+          <p class="status-message" id="plan-status" aria-live="polite"></p>
+        </section>
+
+        <section id="checkins" class="screen" aria-labelledby="checkins-title">
+          <div class="screen-header">
+            <p class="eyebrow">Sales Log</p>
+            <h2 id="checkins-title">Check In & Record Sales</h2>
+            <p>Capture where the truck parked, when service happened, and how much it made.</p>
+          </div>
+
+          <div class="checkin-layout">
+            <form class="form-panel">
+              <label>
+                Location
+                <select id="checkin-location"></select>
+              </label>
+              <label>
+                Service date
+                <input id="checkin-date" type="date">
+              </label>
+              <label>
+                Start time
+                <input id="checkin-start" type="time">
+              </label>
+              <label>
+                End time
+                <input id="checkin-end" type="time">
+              </label>
+              <label>
+                Sales
+                <input id="checkin-sales" type="number" min="0" step="1" placeholder="950">
+              </label>
+              <label>
+                Costs
+                <input id="checkin-costs" type="number" min="0" step="1" placeholder="280">
+              </label>
+              <label>
+                Best sellers
+                <input id="checkin-best-sellers" type="text" placeholder="Tacos, lemonade, burgers">
+              </label>
+              <label>
+                Competitors
+                <input id="checkin-competitors" type="number" min="0" step="1" placeholder="3">
+              </label>
+              <div class="timer-panel">
+                <div class="timer-readout">
+                  <span>Elapsed Time</span>
+                  <strong id="timer-elapsed">00:00:00</strong>
+                </div>
+                <div class="timer-readout">
+                  <span>Gross Per Hour</span>
+                  <strong id="timer-rate">$0/hr</strong>
+                </div>
+              </div>
+              <div class="button-row">
+                <button type="button" class="primary" id="start-service">Start Service</button>
+                <button type="button" class="secondary" id="stop-service">Stop & Fill Time</button>
+              </div>
+              <label>
+                Notes
+                <input id="checkin-notes" type="text" placeholder="Rain after 3 PM, lunch rush was strong">
+              </label>
+              <button type="button" class="primary" id="save-checkin">Save Check-In</button>
+              <button type="button" class="secondary" id="clear-checkins">Clear Sales Log</button>
+              <p class="status-message" id="checkin-status" aria-live="polite"></p>
+            </form>
+
+            <div class="feature-panel">
+              <p class="eyebrow">AI Learning Snapshot</p>
+              <h3 id="sales-insight-title">Start logging sales</h3>
+              <p id="sales-insight-copy">After a few check-ins, the app can compare average sales by spot and adjust recommendations.</p>
+              <div class="metric-grid compact">
+                <div class="metric"><span>Best Avg Spot</span><strong id="best-sales-location">--</strong></div>
+                <div class="metric"><span>Lowest Avg Spot</span><strong id="lowest-sales-location">--</strong></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="table-wrap sales-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Time</th>
+                  <th>Location</th>
+                  <th>Sales</th>
+                  <th>Profit</th>
+                  <th>Notes</th>
+                </tr>
+              </thead>
+              <tbody id="checkin-history-body"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="suppliers" class="screen" aria-labelledby="suppliers-title">
+          <div class="screen-header">
+            <p class="eyebrow">Wholesale Search</p>
+            <h2 id="suppliers-title">New Hampshire Suppliers</h2>
+            <p>Find wholesale food, produce, seafood, equipment, paper goods, and service vendors.</p>
+          </div>
+
+          <form class="supplier-search-panel">
+            <label>
+              Search
+              <input id="supplier-query" type="search" placeholder="seafood, produce, paper, equipment...">
+            </label>
+            <label>
+              Category
+              <select id="supplier-category">
+                <option value="all">All suppliers</option>
+                <option value="Broadline">Broadline</option>
+                <option value="Local directory">Local directory</option>
+                <option value="Produce">Produce</option>
+                <option value="Seafood">Seafood</option>
+                <option value="Meat">Meat</option>
+                <option value="Equipment">Equipment</option>
+                <option value="Repair">Repair</option>
+                <option value="Paper and cleaning">Paper and cleaning</option>
+                <option value="Refrigeration">Refrigeration</option>
+              </select>
+            </label>
+            <button type="button" class="primary" id="search-suppliers">Search Suppliers</button>
+          </form>
+
+          <details class="add-location-panel">
+            <summary>Add supplier partner</summary>
+            <form class="custom-location-form">
+              <label>
+                Vendor name
+                <input id="partner-name" type="text" placeholder="Restaurant supply, local farm, distributor">
+              </label>
+              <label>
+                Category
+                <select id="partner-category">
+                  <option>Broadline</option>
+                  <option>Local directory</option>
+                  <option>Produce</option>
+                  <option>Seafood</option>
+                  <option>Meat</option>
+                  <option>Equipment</option>
+                  <option>Repair</option>
+                  <option>Paper and cleaning</option>
+                  <option>Refrigeration</option>
+                  <option>Other</option>
+                </select>
+              </label>
+              <label>
+                City / service area
+                <input id="partner-city" type="text" placeholder="Manchester, NH or statewide">
+              </label>
+              <label>
+                Products
+                <input id="partner-products" type="text" placeholder="Paper goods, beef, produce, propane">
+              </label>
+              <label>
+                Affiliate link
+                <input id="partner-link" type="url" placeholder="https://vendor.com/?ref=yourcode">
+              </label>
+              <label>
+                Commission notes
+                <input id="partner-commission" type="text" placeholder="10% referral, $50 signup bonus, pending approval">
+              </label>
+              <label class="wide-field">
+                Listing notes
+                <input id="partner-notes" type="text" placeholder="Best for new trucks, fast delivery, negotiated discount">
+              </label>
+              <button type="button" class="primary" id="save-partner">Save Supplier Partner</button>
+              <p class="status-message" id="partner-status" aria-live="polite"></p>
+            </form>
+          </details>
+
+          <div class="results-toolbar">
+            <p class="helper-text" id="supplier-summary"></p>
+          </div>
+          <div class="supplier-list" id="supplier-list" aria-live="polite"></div>
+        </section>
+
+        <section id="public-site" class="screen" aria-labelledby="public-title">
+          <div class="public-hero">
+            <div>
+              <p class="eyebrow">Public Directory</p>
+              <h2 id="public-title">Find Food Truck Spaces in New England</h2>
+              <p>Help event organizers, property owners, breweries, farms, and markets list truck-friendly spaces while sending qualified opportunities into the operator app.</p>
+              <div class="button-row">
+                <button type="button" class="primary" id="browse-public-listings">Browse Spaces</button>
+                <button type="button" class="secondary" id="jump-list-space">List a Space</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="public-layout">
+            <section>
+              <div class="results-toolbar">
+                <p class="helper-text" id="public-listing-summary"></p>
+              </div>
+              <div class="public-listing-grid" id="public-listing-grid"></div>
+            </section>
+
+            <aside class="feature-panel" id="list-space-panel">
+              <p class="eyebrow">For Hosts</p>
+              <h3>List your space or event</h3>
+              <label>
+                Space / event name
+                <input id="public-space-name" type="text" placeholder="Brewery patio, fairground, office park">
+              </label>
+              <label>
+                City
+                <input id="public-space-city" type="text" placeholder="Manchester, NH">
+              </label>
+              <label>
+                Space type
+                <select id="public-space-type">
+                  <option>Brewery</option>
+                  <option>Farmers market</option>
+                  <option>Festival</option>
+                  <option>County fair</option>
+                  <option>Office park</option>
+                  <option>Private lot</option>
+                  <option>Municipal event</option>
+                </select>
+              </label>
+              <label>
+                Best service window
+                <input id="public-space-time" type="text" placeholder="11 AM - 2 PM">
+              </label>
+              <label>
+                Fee / rent
+                <input id="public-space-fee" type="text" placeholder="$100 flat, 10%, free">
+              </label>
+              <label>
+                Contact / application link
+                <input id="public-space-link" type="url" placeholder="https://...">
+              </label>
+              <label>
+                Notes
+                <input id="public-space-notes" type="text" placeholder="Power, parking, permits, expected crowd">
+              </label>
+              <button type="button" class="primary" id="save-public-listing">Submit Listing</button>
+              <p class="status-message" id="public-listing-status" aria-live="polite"></p>
+            </aside>
+          </div>
+        </section>
+
+        <section id="calendar" class="screen" aria-labelledby="calendar-title">
+          <div class="screen-header">
+            <p class="eyebrow">Schedule</p>
+            <h2 id="calendar-title">Calendar & Route Planner</h2>
+            <p>Review upcoming opportunities, deadlines, route notes, and AI weekly suggestions.</p>
+          </div>
+
+          <div class="planner-toolbar">
+            <label>
+              Home base
+              <input id="home-base" type="text" value="Lowell, MA">
+            </label>
+            <button type="button" class="primary" id="generate-ai-week">Suggest My Week</button>
+          </div>
+
+          <div class="dashboard-grid">
+            <article class="feature-panel">
+              <p class="eyebrow">AI Weekly Recommendation</p>
+              <h3 id="ai-week-title">Ready to plan</h3>
+              <p id="ai-week-copy">Build a weekly recommendation using weather, history, deadlines, fees, and opportunity score.</p>
+            </article>
+            <article class="feature-panel">
+              <p class="eyebrow">Route Estimate</p>
+              <h3 id="route-estimate-title">Home base not calculated</h3>
+              <p id="route-estimate-copy">Route notes use city distance estimates for planning until map routing is connected.</p>
+            </article>
+          </div>
+
+          <div class="calendar-list" id="calendar-list"></div>
+        </section>
+
+        <section id="operations" class="screen" aria-labelledby="operations-title">
+          <div class="screen-header">
+            <p class="eyebrow">Back Office</p>
+            <h2 id="operations-title">Permits, Pipeline, Prices & Reminders</h2>
+            <p>Track applications, documents, fees, ingredient prices, and deadline reminders.</p>
+          </div>
+
+          <div class="ops-grid">
+            <article class="feature-panel">
+              <p class="eyebrow">Location Pipeline</p>
+              <label>
+                Location
+                <select id="ops-location"></select>
+              </label>
+              <label>
+                Status
+                <select id="ops-status">
+                  <option>Interested</option>
+                  <option>Applied</option>
+                  <option>Accepted</option>
+                  <option>Rejected</option>
+                  <option>Paid</option>
+                  <option>Confirmed</option>
+                  <option>Completed</option>
+                </select>
+              </label>
+              <label>
+                Application deadline
+                <input id="ops-deadline" type="date">
+              </label>
+              <label>
+                Permit / booth fee
+                <input id="ops-fee" type="number" min="0" step="1" placeholder="350">
+              </label>
+              <label>
+                Documents needed
+                <input id="ops-documents" type="text" placeholder="COI, health permit, fire inspection">
+              </label>
+              <label>
+                Contact notes
+                <input id="ops-notes" type="text" placeholder="Email, phone, application link, setup notes">
+              </label>
+              <button type="button" class="primary" id="save-ops-location">Save Pipeline</button>
+              <p class="status-message" id="ops-status-message"></p>
+            </article>
+
+            <article class="feature-panel">
+              <p class="eyebrow">Wholesale Price Tracker</p>
+              <label>
+                Item
+                <input id="price-item" type="text" placeholder="Ground beef, tortillas, propane">
+              </label>
+              <label>
+                Supplier
+                <input id="price-supplier" type="text" placeholder="Favorite Foods">
+              </label>
+              <label>
+                Unit price
+                <input id="price-value" type="number" min="0" step="0.01" placeholder="48.50">
+              </label>
+              <label>
+                Unit
+                <input id="price-unit" type="text" placeholder="case, lb, tank">
+              </label>
+              <button type="button" class="primary" id="save-price">Save Price</button>
+              <div class="mini-list" id="price-list"></div>
+            </article>
+
+            <article class="feature-panel">
+              <p class="eyebrow">Reminders</p>
+              <label>
+                Reminder
+                <input id="reminder-title" type="text" placeholder="Submit health permit">
+              </label>
+              <label>
+                Due date
+                <input id="reminder-date" type="date">
+              </label>
+              <label>
+                Related location
+                <select id="reminder-location"></select>
+              </label>
+              <button type="button" class="primary" id="save-reminder">Save Reminder</button>
+              <div class="mini-list" id="reminder-list"></div>
+            </article>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
