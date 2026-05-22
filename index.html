@@ -475,6 +475,7 @@
               <div class="button-row">
                 <button type="button" class="primary" id="browse-public-listings">Browse Spaces</button>
                 <button type="button" class="secondary" id="jump-list-space">List a Space</button>
+                <a class="secondary button-link" href="public-trucks.html" target="_blank">Open Truck Finder</a>
               </div>
             </div>
           </div>
@@ -529,6 +530,72 @@
               <button type="button" class="primary" id="save-public-listing">Submit Listing</button>
               <p class="status-message" id="public-listing-status" aria-live="polite"></p>
             </aside>
+          </div>
+
+          <div class="marketing-layout">
+            <article class="feature-panel">
+              <p class="eyebrow">For Food Truck Owners</p>
+              <h3>Publish your customer profile</h3>
+              <p class="helper-text">This connects your app account to the public truck finder site for testing.</p>
+              <label>
+                Truck name
+                <input id="truck-profile-name" type="text" placeholder="Lowell Bites">
+              </label>
+              <label>
+                Home city / service area
+                <input id="truck-profile-city" type="text" placeholder="Manchester, NH">
+              </label>
+              <label>
+                Food type
+                <input id="truck-profile-cuisine" type="text" placeholder="Tacos, BBQ, coffee, desserts">
+              </label>
+              <label>
+                Booking / website link
+                <input id="truck-profile-link" type="url" placeholder="https://...">
+              </label>
+              <label class="wide-field">
+                Services description
+                <textarea id="truck-profile-description" rows="3" placeholder="Catering, lunch stops, private events, breweries, weddings..."></textarea>
+              </label>
+              <label class="wide-field">
+                Daily special
+                <input id="truck-profile-special" type="text" placeholder="Friday: brisket tacos with street corn for $14">
+              </label>
+              <label class="wide-field">
+                Menu
+                <textarea id="truck-profile-menu" rows="4" placeholder="One menu item per line"></textarea>
+              </label>
+              <div class="wide-field menu-tools-panel">
+                <p class="eyebrow">Menu Tools</p>
+                <label>
+                  Upload or photograph menu
+                  <input id="truck-profile-menu-file" type="file" accept="image/*,.pdf" capture="environment">
+                </label>
+                <div class="button-row">
+                  <button type="button" class="secondary" id="convert-menu-ai">AI Draft Menu</button>
+                  <button type="button" class="secondary" id="connect-toast-menu">Connect Toast Sandbox</button>
+                </div>
+                <p class="helper-text" id="truck-menu-tools-status">Upload a picture or PDF, then use AI Draft Menu to test menu conversion.</p>
+              </div>
+              <label class="wide-field">
+                Public calendar
+                <textarea id="truck-profile-calendar" rows="4" placeholder="Fri 5-9 PM - Manchester Night Market"></textarea>
+              </label>
+              <label class="wide-field">
+                Picture URLs, up to 10
+                <textarea id="truck-profile-images" rows="4" placeholder="One image URL per line"></textarea>
+              </label>
+              <div class="button-row">
+                <button type="button" class="primary" id="save-truck-profile">Publish Truck Profile</button>
+                <a class="secondary button-link" href="public-trucks.html" target="_blank">View Public Site</a>
+              </div>
+              <p class="status-message" id="truck-profile-status" aria-live="polite"></p>
+            </article>
+
+            <article class="feature-panel">
+              <p class="eyebrow">Marketing Preview</p>
+              <div id="truck-profile-preview" class="truck-profile-preview"></div>
+            </article>
           </div>
         </section>
 
@@ -744,9 +811,20 @@
             <article class="metric"><span>Best Location</span><strong id="report-best-location">--</strong></article>
           </div>
 
+          <div class="report-controls">
+            <label>
+              Pull up venue report
+              <select id="report-location-filter"></select>
+            </label>
+          </div>
+
           <div class="reports-grid wide">
             <article class="feature-panel">
-              <p class="eyebrow">Location Performance</p>
+              <p class="eyebrow">Selected Venue</p>
+              <div class="report-list" id="report-selected-location"></div>
+            </article>
+            <article class="feature-panel">
+              <p class="eyebrow">All Venue Performance</p>
               <div class="report-list" id="report-location-performance"></div>
             </article>
             <article class="feature-panel">

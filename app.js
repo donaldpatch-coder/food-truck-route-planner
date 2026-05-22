@@ -53,6 +53,19 @@ const publicSpaceFee = document.querySelector("#public-space-fee");
 const publicSpaceLink = document.querySelector("#public-space-link");
 const publicSpaceNotes = document.querySelector("#public-space-notes");
 const publicListingStatus = document.querySelector("#public-listing-status");
+const truckProfileName = document.querySelector("#truck-profile-name");
+const truckProfileCity = document.querySelector("#truck-profile-city");
+const truckProfileCuisine = document.querySelector("#truck-profile-cuisine");
+const truckProfileLink = document.querySelector("#truck-profile-link");
+const truckProfileDescription = document.querySelector("#truck-profile-description");
+const truckProfileSpecial = document.querySelector("#truck-profile-special");
+const truckProfileMenu = document.querySelector("#truck-profile-menu");
+const truckProfileMenuFile = document.querySelector("#truck-profile-menu-file");
+const truckMenuToolsStatus = document.querySelector("#truck-menu-tools-status");
+const truckProfileCalendar = document.querySelector("#truck-profile-calendar");
+const truckProfileImages = document.querySelector("#truck-profile-images");
+const truckProfileStatus = document.querySelector("#truck-profile-status");
+const truckProfilePreview = document.querySelector("#truck-profile-preview");
 const homeBase = document.querySelector("#home-base");
 const routePeriod = document.querySelector("#route-period");
 const aiWeekTitle = document.querySelector("#ai-week-title");
@@ -92,6 +105,8 @@ const reportTotalSales = document.querySelector("#report-total-sales");
 const reportTotalProfit = document.querySelector("#report-total-profit");
 const reportAvgProfit = document.querySelector("#report-avg-profit");
 const reportBestLocation = document.querySelector("#report-best-location");
+const reportLocationFilter = document.querySelector("#report-location-filter");
+const reportSelectedLocation = document.querySelector("#report-selected-location");
 const reportLocationPerformance = document.querySelector("#report-location-performance");
 const reportMenuDemand = document.querySelector("#report-menu-demand");
 const reportWeatherImpact = document.querySelector("#report-weather-impact");
@@ -202,6 +217,7 @@ const storageKeys = {
   reminders: "foodTruckAiReminders",
   supplierPartners: "foodTruckAiSupplierPartners",
   publicListings: "foodTruckAiPublicListings",
+  truckProfiles: "foodTruckAiTruckProfiles",
   posConnection: "foodTruckAiPosConnection",
   squareImports: "foodTruckAiSquareImports",
   squareDemoTransactions: "foodTruckAiSquareDemoTransactions",
@@ -1539,6 +1555,36 @@ const suppliers = [
     notes: "Independent New England foodservice distributor based in New Hampshire."
   },
   {
+    name: "BJ's Wholesale Club - Manchester",
+    category: "Broadline",
+    city: "Manchester, NH",
+    products: "Bulk grocery, snacks, beverages, paper goods, cleaning supplies, propane exchange and club-size restocking",
+    ordering: "Membership warehouse pickup",
+    bestFor: "Fast route restock near Manchester events",
+    sourceUrl: "https://www.bjs.com/cl/manchester/0220",
+    notes: "Warehouse club option for emergency restocking and bulk packaged items."
+  },
+  {
+    name: "BJ's Wholesale Club - Nashua",
+    category: "Broadline",
+    city: "Nashua, NH",
+    products: "Bulk pantry, drinks, paper goods, cleaning supplies, snacks and event restock items",
+    ordering: "Membership warehouse pickup",
+    bestFor: "Southern NH route restock",
+    sourceUrl: "https://www.bjs.com/cl/nashua/0039",
+    notes: "Warehouse club option near Nashua and Massachusetts border routes."
+  },
+  {
+    name: "Costco Wholesale - Nashua",
+    category: "Broadline",
+    city: "Nashua, NH",
+    products: "Bulk grocery, beverages, disposable goods, business member supplies and route restock items",
+    ordering: "Membership warehouse pickup",
+    bestFor: "Bulk buying for high-volume service days",
+    sourceUrl: "https://www.costco.com/warehouse-locations/nashua-NH-307.html",
+    notes: "Costco lists a Nashua warehouse location with business member hours."
+  },
+  {
     name: "Colony Foods",
     category: "Broadline",
     city: "Serves NH",
@@ -1607,6 +1653,16 @@ const suppliers = [
     bestFor: "Equipment, disposables, and replacement supplies",
     sourceUrl: "https://www.gofoodservice.com/local/manchester-nh",
     notes: "Manchester page says 60,000+ products ship to New Hampshire operators."
+  },
+  {
+    name: "RestaurantSupply.com",
+    category: "Equipment",
+    city: "Ships to Manchester/NH",
+    products: "Commercial cooking equipment, refrigeration, smallwares, disposables, storage and prep supplies",
+    ordering: "Online restaurant supply",
+    bestFor: "Smallwares, replacement gear, and online equipment ordering",
+    sourceUrl: "https://www.restaurantsupply.com/pages/new-hampshire-manchester-restaurant-supply-store",
+    notes: "Manchester restaurant supply page targets New Hampshire foodservice operators."
   },
   {
     name: "KaTom Restaurant Supply",
@@ -2299,6 +2355,14 @@ function getPublicListings() {
 
 function savePublicListings(listings) {
   saveCollection(storageKeys.publicListings, listings);
+}
+
+function getTruckProfiles() {
+  return getSavedCollection(storageKeys.truckProfiles);
+}
+
+function saveTruckProfiles(profiles) {
+  saveCollection(storageKeys.truckProfiles, profiles);
 }
 
 function getPipelineForLocation(locationName) {
@@ -3376,6 +3440,9 @@ function saveSettings() {
   appStorage.setItem(storageKeys.homeBase, settings.homeBase);
   settingsStatus.textContent = "Settings saved for this browser.";
   renderCalendar();
+  if (getTruckProfiles().length === 0) {
+    loadTruckProfileForm();
+  }
 }
 
 function saveFeedback() {
@@ -3428,6 +3495,7 @@ function collectDemoData() {
     reminders: getReminderRecords(),
     supplierPartners: getSupplierPartners(),
     publicListings: getPublicListings(),
+    truckProfiles: getTruckProfiles(),
     marketplaceListings: getMarketplaceListings(),
     squareImports: getSquareImports(),
     feedback: getFeedbackRecords(),
@@ -3457,6 +3525,7 @@ function resetDemoData() {
     storageKeys.reminders,
     storageKeys.supplierPartners,
     storageKeys.publicListings,
+    storageKeys.truckProfiles,
     storageKeys.squareImports,
     storageKeys.squareDemoTransactions,
     storageKeys.marketplaceListings,
@@ -3476,6 +3545,7 @@ function renderAllDataViews() {
   renderSuppliers();
   renderMarketplace();
   renderPublicListings();
+  loadTruckProfileForm();
   renderPrices();
   renderReminders();
   renderCalendar();
@@ -3592,6 +3662,133 @@ function saveMarketplaceListing() {
   marketplaceImages.value = "";
   marketplaceVideo.value = "";
   renderMarketplace();
+}
+
+function splitProfileLines(value) {
+  return value
+    .split(/\r?\n/)
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function draftMenuFromUpload() {
+  const file = truckProfileMenuFile.files[0];
+  const cuisine = truckProfileCuisine.value.trim() || "food truck";
+  const fileHint = file ? file.name.replace(/\.[^.]+$/, "").replace(/[-_]+/g, " ") : cuisine;
+  const draftItems = [
+    `${fileHint} signature plate`,
+    `${cuisine} combo with side`,
+    "Chef daily special",
+    "Kids meal",
+    "House drink"
+  ];
+
+  truckProfileMenu.value = [...new Set([...splitProfileLines(truckProfileMenu.value), ...draftItems])].join("\n");
+  truckMenuToolsStatus.textContent = file
+    ? `AI drafted menu items from ${file.name}. Review before publishing.`
+    : "AI drafted sample menu items. Upload a menu picture or PDF for a better draft later.";
+}
+
+function connectToastMenuSandbox() {
+  appStorage.setItem("foodTruckAiToastMenuConnected", "true");
+  truckMenuToolsStatus.textContent = "Toast sandbox connected for testing. Real Toast menu sync will need Toast API approval.";
+}
+
+function getActiveTruckProfile() {
+  const profile = getTruckProfiles()[0];
+  let settings = {};
+
+  try {
+    settings = JSON.parse(appStorage.getItem(storageKeys.settings) || "{}");
+  } catch (error) {
+    settings = {};
+  }
+
+  return (
+    profile || {
+      truckName: settings.businessName || document.querySelector("#business-name").value || "Your Food Truck",
+      city: settings.homeBase || homeBase.value || "New England",
+      cuisine: settings.foodType || document.querySelector("#food-type").value || "Street food",
+      contactUrl: "",
+      description: "Add your services, catering details, and best public stops.",
+      dailySpecial: "",
+      menuItems: [],
+      menuSource: "Manual",
+      toastConnected: false,
+      calendarItems: [],
+      imageUrls: []
+    }
+  );
+}
+
+function renderTruckProfilePreview() {
+  const profile = getActiveTruckProfile();
+  const image = (profile.imageUrls || [])[0];
+  const menuItems = (profile.menuItems || []).slice(0, 5);
+  const calendarItems = (profile.calendarItems || []).slice(0, 5);
+
+  truckProfilePreview.innerHTML = `
+    ${image ? `<img src="${image}" alt="${profile.truckName} food truck preview">` : ""}
+    <p class="eyebrow">${profile.cuisine || "Food truck"}</p>
+    <h3>${profile.truckName}</h3>
+    <p><strong>${profile.city}</strong></p>
+    ${profile.dailySpecial ? `<p class="daily-special-preview"><strong>Daily special:</strong> ${profile.dailySpecial}</p>` : ""}
+    <p>${profile.description || "Add a description so customers know what you serve and where you go."}</p>
+    <p class="helper-text">Menu source: ${profile.menuSource || "Manual"}${profile.toastConnected ? " + Toast sandbox" : ""}</p>
+    <div class="profile-mini-list">
+      <span>Menu</span>
+      ${menuItems.length ? menuItems.map((item) => `<p>${item}</p>`).join("") : "<p>No menu added yet.</p>"}
+    </div>
+    <div class="profile-mini-list">
+      <span>Calendar</span>
+      ${calendarItems.length ? calendarItems.map((item) => `<p>${item}</p>`).join("") : "<p>No public schedule added yet.</p>"}
+    </div>
+    ${profile.contactUrl ? `<a class="source-link supplier-source" href="${profile.contactUrl}" target="_blank">Booking link</a>` : ""}
+  `;
+}
+
+function loadTruckProfileForm() {
+  const profile = getActiveTruckProfile();
+
+  truckProfileName.value = profile.truckName || "";
+  truckProfileCity.value = profile.city || "";
+  truckProfileCuisine.value = profile.cuisine || "";
+  truckProfileLink.value = profile.contactUrl || "";
+  truckProfileDescription.value = profile.description || "";
+  truckProfileSpecial.value = profile.dailySpecial || "";
+  truckProfileMenu.value = (profile.menuItems || []).join("\n");
+  truckProfileCalendar.value = (profile.calendarItems || []).join("\n");
+  truckProfileImages.value = (profile.imageUrls || []).join("\n");
+  renderTruckProfilePreview();
+}
+
+function saveTruckProfile() {
+  if (!truckProfileName.value.trim()) {
+    truckProfileStatus.textContent = "Add the truck name first.";
+    return;
+  }
+
+  const profile = {
+    id: makeLocationId(truckProfileName.value.trim(), truckProfileCity.value.trim() || "truck"),
+    truckName: truckProfileName.value.trim(),
+    city: truckProfileCity.value.trim() || "New England",
+    cuisine: truckProfileCuisine.value.trim() || "Food truck",
+    contactUrl: truckProfileLink.value.trim(),
+    description: truckProfileDescription.value.trim() || "Owner has not added a service description yet.",
+    dailySpecial: truckProfileSpecial.value.trim(),
+    menuItems: splitProfileLines(truckProfileMenu.value),
+    menuSource: truckProfileMenuFile.files[0] ? `AI draft from ${truckProfileMenuFile.files[0].name}` : "Manual",
+    toastConnected: appStorage.getItem("foodTruckAiToastMenuConnected") === "true",
+    calendarItems: splitProfileLines(truckProfileCalendar.value),
+    imageUrls: splitProfileLines(truckProfileImages.value).slice(0, 10),
+    publishedAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  };
+  const profiles = getTruckProfiles().filter((item) => item.id !== profile.id);
+
+  saveTruckProfiles([profile, ...profiles]);
+  truckProfileStatus.textContent = `${profile.truckName} is published on the truck finder site.`;
+  renderTruckProfilePreview();
 }
 
 function getDirectoryListings() {
@@ -3906,13 +4103,25 @@ function getRouteLegs(stops, baseCity) {
 
 function getSupplierRouteMatches(stops, baseCity) {
   const routeCities = new Set([baseCity, ...stops.map((stop) => stop.city || "")].map((city) => normalizeCity(city)));
+  const routePoints = [baseCity, ...stops.map((stop) => stop.city || "")];
 
   return suppliers
-    .filter((supplier) => {
+    .map((supplier) => {
+      const nearestMiles = Math.min(...routePoints.map((city) => estimateDistanceMiles(city, supplier.city)));
       const normalizedSupplierCity = normalizeCity(supplier.city);
-      return [...routeCities].some((city) => normalizedSupplierCity.includes(city.split(",")[0]) || supplier.city.includes("NH") || supplier.city.includes("Statewide"));
+      const cityMatch = [...routeCities].some(
+        (city) => normalizedSupplierCity.includes(city.split(",")[0]) || supplier.city.includes("NH") || supplier.city.includes("Statewide")
+      );
+
+      return {
+        ...supplier,
+        routeMiles: nearestMiles,
+        routeMatch: cityMatch || nearestMiles <= 65
+      };
     })
-    .slice(0, 5);
+    .filter((supplier) => supplier.routeMatch)
+    .sort((a, b) => a.routeMiles - b.routeMiles)
+    .slice(0, 8);
 }
 
 function renderRouteMap(stops, baseCity) {
@@ -3969,7 +4178,7 @@ function renderRoutePlanning() {
           (vendor) => `
             <div class="mini-list-item">
               <strong>${vendor.name}</strong>
-              <span>${vendor.category} - ${vendor.city}</span>
+              <span>${vendor.category} - ${vendor.city} - about ${vendor.routeMiles} miles from route</span>
             </div>
           `
         )
@@ -4237,6 +4446,50 @@ function renderReportList(element, rows, emptyText) {
     : `<p class="helper-text">${emptyText}</p>`;
 }
 
+function renderReportLocationOptions(byLocation) {
+  const currentValue = reportLocationFilter.value;
+  const options = byLocation.map((item) => `<option value="${item.location}">${item.location}</option>`).join("");
+
+  reportLocationFilter.innerHTML = `<option value="all">All venues</option>${options}`;
+  if ([...reportLocationFilter.options].some((option) => option.value === currentValue)) {
+    reportLocationFilter.value = currentValue;
+  } else if (byLocation[0]) {
+    reportLocationFilter.value = byLocation[0].location;
+  } else {
+    reportLocationFilter.value = "all";
+  }
+}
+
+function renderSelectedLocationReport(locationName, checkins, byLocation) {
+  const selectedName = locationName === "all" ? byLocation[0]?.location : locationName;
+
+  if (!selectedName) {
+    reportSelectedLocation.innerHTML = `<p class="helper-text">Save check-ins or import POS sales to unlock venue reports.</p>`;
+    return;
+  }
+
+  const visits = checkins.filter((checkin) => checkin.location === selectedName);
+  const summary = byLocation.find((item) => item.location === selectedName);
+  const recentNotes = visits
+    .slice(0, 4)
+    .map((visit) => ({
+      title: `${visit.date || "No date"} - $${Number(visit.sales || 0).toLocaleString()} sales`,
+      detail: `${visit.bestSellers ? `Best sellers: ${visit.bestSellers}. ` : ""}${visit.notes || "No notes saved."}`
+    }));
+
+  renderReportList(
+    reportSelectedLocation,
+    [
+      {
+        title: selectedName,
+        detail: `${summary.visits} visits, $${summary.sales.toLocaleString()} sales, $${summary.profit.toLocaleString()} profit, $${summary.avgProfit.toLocaleString()} avg profit`
+      },
+      ...recentNotes
+    ],
+    "No history for this venue yet."
+  );
+}
+
 function renderReports() {
   const checkins = getSavedCheckins();
   const totalSales = checkins.reduce((sum, checkin) => sum + Number(checkin.sales || 0), 0);
@@ -4266,6 +4519,8 @@ function renderReports() {
   reportTotalProfit.textContent = `$${totalProfit.toLocaleString()}`;
   reportAvgProfit.textContent = `$${avgProfit.toLocaleString()}`;
   reportBestLocation.textContent = best ? best.location : "--";
+  renderReportLocationOptions(byLocation);
+  renderSelectedLocationReport(reportLocationFilter.value, checkins, byLocation);
   renderReportList(
     reportLocationPerformance,
     byLocation.slice(0, 6).map((item) => ({
@@ -4365,6 +4620,9 @@ marketplaceCategory.addEventListener("change", renderMarketplace);
 document.querySelector("#save-marketplace-listing").addEventListener("click", saveMarketplaceListing);
 document.querySelector("#save-public-listing").addEventListener("click", savePublicListing);
 document.querySelector("#browse-public-listings").addEventListener("click", renderPublicListings);
+document.querySelector("#save-truck-profile").addEventListener("click", saveTruckProfile);
+document.querySelector("#convert-menu-ai").addEventListener("click", draftMenuFromUpload);
+document.querySelector("#connect-toast-menu").addEventListener("click", connectToastMenuSandbox);
 document.querySelector("#jump-list-space").addEventListener("click", () => {
   document.querySelector("#list-space-panel").scrollIntoView({ behavior: "smooth", block: "start" });
 });
@@ -4383,6 +4641,7 @@ document.querySelector("#save-feedback").addEventListener("click", saveFeedback)
 document.querySelector("#export-demo-data").addEventListener("click", exportDemoData);
 document.querySelector("#reset-demo-data").addEventListener("click", resetDemoData);
 document.querySelector("#save-forum-post").addEventListener("click", saveForumPost);
+reportLocationFilter.addEventListener("change", renderReports);
 navToggle.addEventListener("click", () => {
   document.querySelector(".sidebar").classList.toggle("nav-open");
 });
@@ -4458,6 +4717,7 @@ renderResults();
 renderSuppliers();
 renderMarketplace();
 renderPublicListings();
+loadTruckProfileForm();
 renderPrices();
 renderReminders();
 renderCalendar();

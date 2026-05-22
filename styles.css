@@ -264,6 +264,13 @@ textarea {
   color: var(--ink);
 }
 
+.button-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
 .danger-button {
   border-color: #b94545;
   color: #9d2e2e;
@@ -400,6 +407,14 @@ textarea {
   align-items: start;
 }
 
+.marketing-layout {
+  display: grid;
+  grid-template-columns: minmax(320px, 0.95fr) minmax(280px, 1fr);
+  gap: 18px;
+  align-items: start;
+  margin-top: 18px;
+}
+
 .public-listing-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -418,6 +433,264 @@ textarea {
 
 .public-listing-card h3,
 .public-listing-card p {
+  margin: 0;
+}
+
+.truck-profile-preview {
+  display: grid;
+  gap: 12px;
+}
+
+.truck-profile-preview img {
+  width: 100%;
+  max-height: 260px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.truck-profile-preview h3,
+.truck-profile-preview p {
+  margin: 0;
+}
+
+.menu-tools-panel {
+  display: grid;
+  gap: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #f8fbfa;
+  padding: 16px;
+}
+
+.daily-special-preview,
+.daily-special-card {
+  border-left: 4px solid var(--yellow);
+  background: #fff8e8;
+  padding: 12px;
+}
+
+.profile-mini-list {
+  display: grid;
+  gap: 6px;
+  border-top: 1px solid var(--line);
+  padding-top: 12px;
+}
+
+.profile-mini-list span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0;
+}
+
+.public-directory-body {
+  background: #eef3f0;
+}
+
+.public-directory-shell {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 28px;
+}
+
+.truck-finder-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 18px;
+  align-items: end;
+  min-height: 360px;
+  border-radius: 8px;
+  background:
+    linear-gradient(90deg, rgba(16, 31, 39, 0.88), rgba(16, 31, 39, 0.3)),
+    url("https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1600&q=80");
+  background-position: center;
+  background-size: cover;
+  color: #ffffff;
+  padding: 36px;
+}
+
+.truck-finder-hero h1 {
+  max-width: 780px;
+  margin: 0;
+  font-size: 46px;
+  line-height: 1.05;
+}
+
+.truck-finder-hero p:not(.eyebrow) {
+  max-width: 680px;
+  color: #edf5fb;
+  font-size: 18px;
+}
+
+.truck-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.public-feature-strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin: 18px 0;
+}
+
+.public-feature-strip article {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 12px;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: var(--shadow);
+  padding: 18px;
+}
+
+.public-feature-strip p {
+  grid-column: 2;
+  margin: 0;
+  color: var(--muted);
+}
+
+.directory-icon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+  background: #eff6f4;
+  color: var(--green);
+}
+
+.directory-icon svg {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
+}
+
+.truck-search-panel {
+  display: grid;
+  grid-template-columns: minmax(240px, 1fr) minmax(180px, 260px) minmax(180px, 240px);
+  gap: 16px;
+  align-items: end;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: var(--shadow);
+  margin: 18px 0;
+  padding: 18px;
+}
+
+.truck-directory-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.truck-directory-card {
+  display: grid;
+  grid-template-columns: minmax(180px, 0.85fr) minmax(0, 1.15fr);
+  gap: 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: var(--shadow);
+}
+
+.truck-card-body {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  padding: 20px;
+}
+
+.truck-card-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.truck-card-badges span {
+  border: 1px solid #c7ddd3;
+  border-radius: 999px;
+  background: #f2faf6;
+  color: var(--green);
+  font-size: 12px;
+  font-weight: 900;
+  padding: 6px 9px;
+}
+
+.truck-card-body h2,
+.truck-card-body p {
+  margin: 0;
+}
+
+.daily-special-card {
+  display: grid;
+  gap: 4px;
+  border-radius: 8px;
+}
+
+.daily-special-card span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0;
+}
+
+.daily-special-card strong {
+  line-height: 1.35;
+}
+
+.truck-photo-strip {
+  display: grid;
+  gap: 4px;
+  min-height: 100%;
+  background: #dfe8e6;
+}
+
+.truck-photo-strip img {
+  width: 100%;
+  height: 100%;
+  min-height: 130px;
+  object-fit: cover;
+}
+
+.truck-photo-placeholder {
+  display: grid;
+  place-items: center;
+  min-height: 100%;
+  background: #dfe8e6;
+  color: var(--muted);
+  font-weight: 900;
+  text-align: center;
+  padding: 20px;
+}
+
+.public-owner-cta {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: var(--shadow);
+  margin-top: 22px;
+  padding: 24px;
+}
+
+.public-owner-cta h2,
+.public-owner-cta p {
   margin: 0;
 }
 
@@ -770,6 +1043,12 @@ textarea {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.report-controls {
+  display: grid;
+  grid-template-columns: minmax(240px, 420px);
+  margin: 0 0 16px;
+}
+
 .report-list {
   display: grid;
   gap: 10px;
@@ -1058,6 +1337,7 @@ tr:last-child td {
   .settings-grid,
   .help-layout,
   .help-grid,
+  .marketing-layout,
   .planner-toolbar,
   .public-layout,
   .public-listing-grid,
@@ -1097,9 +1377,30 @@ tr:last-child td {
   .help-card div {
     padding: 16px;
   }
+
+  .truck-finder-hero,
+  .truck-search-panel,
+  .truck-directory-card,
+  .truck-directory-grid,
+  .public-feature-strip,
+  .public-owner-cta {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 520px) {
+  .public-directory-shell {
+    padding: 16px;
+  }
+
+  .truck-finder-hero {
+    padding: 24px;
+  }
+
+  .truck-finder-hero h1 {
+    font-size: 34px;
+  }
+
   .content {
     padding: 18px;
   }
