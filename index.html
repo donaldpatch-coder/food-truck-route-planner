@@ -599,51 +599,50 @@
           <div class="screen-header">
             <p class="eyebrow">Truck Finder Marketing</p>
             <h2 id="marketing-title">Public Truck Profile</h2>
-            <p>Manage what customers and event organizers see on the Truck Finder site.</p>
+            <p>Answer the profile questions, save a draft, then publish when it is ready for the Truck Finder site.</p>
           </div>
 
-          <article class="feature-panel marketing-summary-panel">
-            <p class="eyebrow">Profile Readiness</p>
-            <h3>One account, one public profile</h3>
-            <p class="helper-text">Keep services, photos, calendar, menu, daily special, AI menu draft, and Toast sandbox details ready for the public Truck Finder.</p>
-            <div class="mini-list" id="ops-marketing-checklist"></div>
-            <div class="button-row">
-              <a class="secondary button-link" href="public-trucks.html" target="_blank">View Truck Finder</a>
+          <article class="feature-panel marketing-editor-panel">
+            <div class="panel-title-row">
+              <div>
+                <p class="eyebrow">Profile Questions</p>
+                <h3>Truck Finder listing</h3>
+              </div>
+              <div class="button-row">
+                <button type="button" class="secondary" id="edit-truck-profile">Edit</button>
+                <button type="button" class="secondary" id="save-truck-draft">Save</button>
+                <button type="button" class="primary" id="save-truck-profile">Publish</button>
+                <a class="secondary button-link" href="public-trucks.html" target="_blank">View Public Site</a>
+              </div>
             </div>
-            <p class="status-message" id="ops-marketing-status"></p>
-          </article>
 
-          <div class="marketing-layout">
-            <article class="feature-panel">
-              <p class="eyebrow">For Food Truck Owners</p>
-              <h3>Publish your customer profile</h3>
-              <p class="helper-text">This connects your app account to the public truck finder site for testing.</p>
+            <div class="marketing-question-grid">
               <label>
-                Truck name
+                What is your truck name?
                 <input id="truck-profile-name" type="text" placeholder="Lowell Bites">
               </label>
               <label>
-                Home city / service area
+                What city or area do you serve?
                 <input id="truck-profile-city" type="text" placeholder="Manchester, NH">
               </label>
               <label>
-                Food type
+                What type of food do you sell?
                 <input id="truck-profile-cuisine" type="text" placeholder="Tacos, BBQ, coffee, desserts">
               </label>
               <label>
-                Booking / website link
+                Where should customers book or contact you?
                 <input id="truck-profile-link" type="url" placeholder="https://...">
               </label>
               <label class="wide-field">
-                Services description
+                How would you describe your services?
                 <textarea id="truck-profile-description" rows="3" placeholder="Catering, lunch stops, private events, breweries, weddings..."></textarea>
               </label>
               <label class="wide-field">
-                Daily special
+                What is today's special?
                 <input id="truck-profile-special" type="text" placeholder="Friday: brisket tacos with street corn for $14">
               </label>
               <label class="wide-field">
-                Menu
+                What is on your menu?
                 <textarea id="truck-profile-menu" rows="4" placeholder="One menu item per line"></textarea>
               </label>
               <div class="wide-field menu-tools-panel">
@@ -659,25 +658,22 @@
                 <p class="helper-text" id="truck-menu-tools-status">Upload a picture or PDF, then use AI Draft Menu to test menu conversion.</p>
               </div>
               <label class="wide-field">
-                Public calendar
+                Where will you be this week?
                 <textarea id="truck-profile-calendar" rows="4" placeholder="Fri 5-9 PM - Manchester Night Market"></textarea>
               </label>
               <label class="wide-field">
-                Picture URLs, up to 10
+                Add picture URLs, up to 10
                 <textarea id="truck-profile-images" rows="4" placeholder="One image URL per line"></textarea>
               </label>
-              <div class="button-row">
-                <button type="button" class="primary" id="save-truck-profile">Publish Truck Profile</button>
-                <a class="secondary button-link" href="public-trucks.html" target="_blank">View Public Site</a>
-              </div>
-              <p class="status-message" id="truck-profile-status" aria-live="polite"></p>
-            </article>
+            </div>
 
-            <article class="feature-panel">
-              <p class="eyebrow">Marketing Preview</p>
-              <div id="truck-profile-preview" class="truck-profile-preview"></div>
-            </article>
-          </div>
+            <div class="marketing-status-row">
+              <p class="status-message" id="truck-profile-status" aria-live="polite"></p>
+              <p class="status-message" id="ops-marketing-status"></p>
+              <div class="truck-profile-preview hidden-preview" id="truck-profile-preview" aria-hidden="true"></div>
+              <div class="mini-list compact-readiness hidden-preview" id="ops-marketing-checklist" aria-hidden="true"></div>
+            </div>
+          </article>
         </section>
 
         <section id="calendar" class="screen legacy-screen" aria-labelledby="calendar-title">

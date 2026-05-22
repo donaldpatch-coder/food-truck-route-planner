@@ -78,6 +78,8 @@ const truckProfileCalendar = document.querySelector("#truck-profile-calendar");
 const truckProfileImages = document.querySelector("#truck-profile-images");
 const truckProfileStatus = document.querySelector("#truck-profile-status");
 const truckProfilePreview = document.querySelector("#truck-profile-preview");
+const editTruckProfile = document.querySelector("#edit-truck-profile");
+const saveTruckDraft = document.querySelector("#save-truck-draft");
 const homeBase = document.querySelector("#home-base");
 const routePeriod = document.querySelector("#route-period");
 const aiWeekTitle = document.querySelector("#ai-week-title");
@@ -1917,6 +1919,8 @@ const defaultWeeklyPlan = [
 
 let selectedLocation = locations[0];
 let selectedPipelineLocationId = "";
+let editingTruckProfileId = "";
+let truckProfileEditing = true;
 let serviceTimerId = null;
 let serviceStartTime = null;
 let serviceElapsedMilliseconds = 0;
@@ -4045,11 +4049,13 @@ function draftMenuFromUpload() {
   truckMenuToolsStatus.textContent = file
     ? `AI drafted menu items from ${file.name}. Review before publishing.`
     : "AI drafted sample menu items. Upload a menu picture or PDF for a better draft later.";
+  renderTruckProfilePreview(getTruckProfileDraftFromForm());
 }
 
 function connectToastMenuSandbox() {
   appStorage.setItem("foodTruckAiToastMenuConnected", "true");
   truckMenuToolsStatus.textContent = "Toast sandbox connected for testing. Real Toast menu sync will need Toast API approval.";
+  renderTruckProfilePreview(getTruckProfileDraftFromForm());
 }
 
 function getActiveTruckProfile() {
@@ -4080,7 +4086,7 @@ function getActiveTruckProfile() {
 }
 
 function renderTruckProfilePreview() {
-  const profile = getActiveTruckProfile();
+  const profile = arguments.length ? arguments[0] : getActiveTruckProfile();
   const image = (profile.imageUrls || [])[0];
   const menuItems = (profile.menuItems || []).slice(0, 5);
   const calendarItems = (profile.calendarItems || []).slice(0, 5);
@@ -4123,8 +4129,8 @@ function renderMarketingChecklist() {
     .map(
       ([label, complete]) => `
         <div class="mini-list-item marketing-check ${complete ? "complete" : ""}">
-          <strong>${complete ? "Done" : "Needed"}: ${label}</strong>
-          <span>${complete ? "Ready for the public Truck Finder." : "Add this to improve the public listing."}</span>
+          <strong>${label}</strong>
+          <span>${complete ? "Ready" : "Needed"}</span>
         </div>
       `
     )
@@ -4132,9 +4138,37 @@ function renderMarketingChecklist() {
   opsMarketingStatus.textContent = `${completeCount} of ${checks.length} marketing items complete.`;
 }
 
+function getTruckProfileFields() {
+  return [
+    truckProfileName,
+    truckProfileCity,
+    truckProfileCuisine,
+    truckProfileLink,
+    truckProfileDescription,
+    truckProfileSpecial,
+    truckProfileMenu,
+    truckProfileMenuFile,
+    truckProfileCalendar,
+    truckProfileImages
+  ];
+}
+
+function setTruckProfileEditing(isEditing) {
+  truckProfileEditing = isEditing;
+  getTruckProfileFields().forEach((field) => {
+    field.disabled = !isEditing;
+  });
+  document.querySelector("#convert-menu-ai").disabled = !isEditing;
+  document.querySelector("#connect-toast-menu").disabled = !isEditing;
+  saveTruckDraft.disabled = !isEditing;
+  document.querySelector("#save-truck-profile").disabled = !isEditing;
+  editTruckProfile.textContent = isEditing ? "Editing" : "Edit";
+}
+
 function loadTruckProfileForm() {
   const profile = getActiveTruckProfile();
 
+  editingTruckProfileId = profile.id || "";
   truckProfileName.value = profile.truckName || "";
   truckProfileCity.value = profile.city || "";
   truckProfileCuisine.value = profile.cuisine || "";
@@ -4144,20 +4178,19 @@ function loadTruckProfileForm() {
   truckProfileMenu.value = (profile.menuItems || []).join("\n");
   truckProfileCalendar.value = (profile.calendarItems || []).join("\n");
   truckProfileImages.value = (profile.imageUrls || []).join("\n");
-  renderTruckProfilePreview();
+  renderTruckProfilePreview(getTruckProfileDraftFromForm());
   renderMarketingChecklist();
+  setTruckProfileEditing(true);
 }
 
-function saveTruckProfile() {
-  if (!truckProfileName.value.trim()) {
-    truckProfileStatus.textContent = "Add the truck name first.";
-    return;
-  }
+function getTruckProfileDraftFromForm() {
+  const truckName = truckProfileName.value.trim();
+  const city = truckProfileCity.value.trim();
 
-  const profile = {
-    id: makeLocationId(truckProfileName.value.trim(), truckProfileCity.value.trim() || "truck"),
-    truckName: truckProfileName.value.trim(),
-    city: truckProfileCity.value.trim() || "New England",
+  return {
+    id: editingTruckProfileId || makeLocationId(truckName || "truck-profile", city || "truck"),
+    truckName: truckName || "Your Food Truck",
+    city: city || "New England",
     cuisine: truckProfileCuisine.value.trim() || "Food truck",
     contactUrl: truckProfileLink.value.trim(),
     description: truckProfileDescription.value.trim() || "Owner has not added a service description yet.",
@@ -4167,15 +4200,48 @@ function saveTruckProfile() {
     toastConnected: appStorage.getItem("foodTruckAiToastMenuConnected") === "true",
     calendarItems: splitProfileLines(truckProfileCalendar.value),
     imageUrls: splitProfileLines(truckProfileImages.value).slice(0, 10),
+    published: false,
     publishedAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   };
-  const profiles = getTruckProfiles().filter((item) => item.id !== profile.id);
+}
+
+function saveTruckProfileRecord({ publish = false } = {}) {
+  if (!truckProfileName.value.trim()) {
+    truckProfileStatus.textContent = "Add the truck name first.";
+    return null;
+  }
+
+  const existingProfile = getTruckProfiles().find((item) => item.id === editingTruckProfileId);
+  const profile = {
+    ...getTruckProfileDraftFromForm(),
+    published: publish,
+    publishedAt: existingProfile?.publishedAt || new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  };
+  const profiles = getTruckProfiles().filter((item) => item.id !== editingTruckProfileId && item.id !== profile.id);
 
   saveTruckProfiles([profile, ...profiles]);
-  truckProfileStatus.textContent = `${profile.truckName} is published on the truck finder site.`;
-  renderTruckProfilePreview();
+  editingTruckProfileId = profile.id;
+  renderTruckProfilePreview(profile);
   renderMarketingChecklist();
+  return profile;
+}
+
+function saveTruckProfileDraft() {
+  const profile = saveTruckProfileRecord({ publish: false });
+
+  if (profile) {
+    truckProfileStatus.textContent = `${profile.truckName} draft saved.`;
+  }
+}
+
+function saveTruckProfile() {
+  const profile = saveTruckProfileRecord({ publish: true });
+
+  if (profile) {
+    truckProfileStatus.textContent = `${profile.truckName} is published on the truck finder site.`;
+  }
 }
 
 function getDirectoryListings() {
@@ -5336,8 +5402,18 @@ document.querySelector("#save-marketplace-listing").addEventListener("click", sa
 document.querySelector("#save-public-listing").addEventListener("click", savePublicListing);
 document.querySelector("#browse-public-listings").addEventListener("click", renderPublicListings);
 document.querySelector("#save-truck-profile").addEventListener("click", saveTruckProfile);
+saveTruckDraft.addEventListener("click", saveTruckProfileDraft);
+editTruckProfile.addEventListener("click", () => {
+  setTruckProfileEditing(true);
+  truckProfileName.focus();
+  truckProfileStatus.textContent = "Editing profile.";
+});
 document.querySelector("#convert-menu-ai").addEventListener("click", draftMenuFromUpload);
 document.querySelector("#connect-toast-menu").addEventListener("click", connectToastMenuSandbox);
+getTruckProfileFields().filter((input) => input !== truckProfileMenuFile).forEach((input) => {
+  input.addEventListener("input", () => renderTruckProfilePreview(getTruckProfileDraftFromForm()));
+});
+truckProfileMenuFile.addEventListener("change", () => renderTruckProfilePreview(getTruckProfileDraftFromForm()));
 document.querySelector("#jump-list-space").addEventListener("click", () => {
   document.querySelector("#list-space-panel").scrollIntoView({ behavior: "smooth", block: "start" });
 });
