@@ -128,6 +128,13 @@ textarea {
   max-width: 760px;
 }
 
+.title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
 .screen-header h2 {
   font-size: 34px;
   line-height: 1.15;
@@ -264,11 +271,38 @@ textarea {
   color: var(--ink);
 }
 
+.secondary.active {
+  border-color: var(--blue);
+  background: #eef7ff;
+  color: var(--blue-dark);
+}
+
 .button-link {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   text-decoration: none;
+}
+
+.link-button {
+  border: 0;
+  background: transparent;
+  color: var(--blue-dark);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 900;
+  padding: 0;
+  text-align: left;
+}
+
+.link-button:hover {
+  text-decoration: underline;
+}
+
+.segmented-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .danger-button {
@@ -1367,6 +1401,11 @@ tr:last-child td {
 
   .results-toolbar {
     align-items: stretch;
+    flex-direction: column;
+  }
+
+  .title-row {
+    align-items: flex-start;
     flex-direction: column;
   }
 

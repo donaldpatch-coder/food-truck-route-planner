@@ -3,6 +3,8 @@ const navItems = document.querySelectorAll(".nav-item");
 const navToggle = document.querySelector("#nav-toggle");
 const resultList = document.querySelector("#results-list");
 const zipCode = document.querySelector("#zip-code");
+const showAllLocations = document.querySelector("#show-all-locations");
+const showSavedLocations = document.querySelector("#show-saved-locations");
 const accountStatus = document.querySelector("#account-status");
 const planStatus = document.querySelector("#plan-status");
 const weeklyPlanBody = document.querySelector("#weekly-plan-body");
@@ -217,6 +219,7 @@ const storageKeys = {
   pipeline: "foodTruckAiPipeline",
   prices: "foodTruckAiPrices",
   reminders: "foodTruckAiReminders",
+  savedLocations: "foodTruckAiSavedLocations",
   supplierPartners: "foodTruckAiSupplierPartners",
   publicListings: "foodTruckAiPublicListings",
   truckProfiles: "foodTruckAiTruckProfiles",
@@ -1883,6 +1886,7 @@ let selectedLocation = locations[0];
 let serviceTimerId = null;
 let serviceStartTime = null;
 let serviceElapsedMilliseconds = 0;
+let showSavedLocationsOnly = false;
 const weatherCache = new Map();
 
 const weatherCodeLabels = {
@@ -2251,6 +2255,39 @@ function savePlan(plan) {
   appStorage.setItem(storageKeys.weeklyPlan, JSON.stringify(plan));
 }
 
+function getSavedLocationIds() {
+  return getSavedCollection(storageKeys.savedLocations);
+}
+
+function saveLocationIds(locationIds) {
+  saveCollection(storageKeys.savedLocations, locationIds);
+}
+
+function isLocationTracked(locationId) {
+  return getSavedLocationIds().includes(locationId);
+}
+
+function toggleTrackedLocation(locationId) {
+  const savedIds = getSavedLocationIds();
+  const isTracked = savedIds.includes(locationId);
+  const nextIds = isTracked ? savedIds.filter((id) => id !== locationId) : [locationId, ...savedIds];
+
+  saveLocationIds(nextIds);
+  renderResults();
+}
+
+function trackLocation(locationId) {
+  const savedIds = getSavedLocationIds();
+
+  if (!savedIds.includes(locationId)) {
+    saveLocationIds([locationId, ...savedIds]);
+  }
+}
+
+function isLocationOnRoute(locationName) {
+  return getSavedPlan().some((item) => item.location === locationName);
+}
+
 function getSavedCheckins() {
   const savedCheckins = appStorage.getItem(storageKeys.checkins);
 
@@ -2559,7 +2596,10 @@ function saveCustomLocation() {
   customLocationTime.value = "";
   customLocationSource.value = "";
   customLocationNotes.value = "";
-  showScreen("detail");
+  showSavedLocationsOnly = true;
+  trackLocation(customLocation.id);
+  renderResults();
+  showScreen("find");
 }
 
 function makePlanItem(location, day) {
@@ -2579,6 +2619,7 @@ function addLocationToPlan(location, day = "Monday") {
     plan.unshift(makePlanItem(location, day));
     savePlan(plan);
     renderWeeklyPlan();
+    renderCalendar();
   }
 
   return !alreadySaved;
@@ -3179,20 +3220,29 @@ async function saveLocationToDatabase() {
 }
 
 function renderResults() {
-  const visibleLocations = locations.filter((location) => locationMatchesZip(location, zipCode.value));
+  const savedLocationIds = getSavedLocationIds();
+  const visibleLocations = locations.filter(
+    (location) => locationMatchesZip(location, zipCode.value) && (!showSavedLocationsOnly || savedLocationIds.includes(location.id))
+  );
 
-  resultsSummary.textContent = `${visibleLocations.length} recommended spot${visibleLocations.length === 1 ? "" : "s"} sorted by opportunity score.`;
+  showAllLocations.classList.toggle("active", !showSavedLocationsOnly);
+  showSavedLocations.classList.toggle("active", showSavedLocationsOnly);
+  resultsSummary.textContent = showSavedLocationsOnly
+    ? `${visibleLocations.length} saved spot${visibleLocations.length === 1 ? "" : "s"} you are tracking.`
+    : `${visibleLocations.length} recommended spot${visibleLocations.length === 1 ? "" : "s"} sorted by opportunity score.`;
   resultList.innerHTML = visibleLocations
     .sort((a, b) => getLocationScore(b) - getLocationScore(a))
     .map((location) => {
       const history = getLocationHistorySummary(location.name);
       const pipeline = getPipelineForLocation(location.name);
       const visibleOwners = getVisibleOwnersAtLocation(location.name);
+      const tracked = savedLocationIds.includes(location.id);
+      const onRoute = isLocationOnRoute(location.name);
 
       return `
         <article class="result-card${selectedLocation && selectedLocation.id === location.id ? " selected" : ""}">
           <div>
-            <strong>${location.name}</strong>
+            <button class="link-button result-detail-action" type="button" data-location-id="${location.id}">${location.name}</button>
             <span>${location.opportunityType || "Location"} - ${location.city || "Massachusetts"}</span>
           </div>
           <div>
@@ -3245,7 +3295,15 @@ function renderResults() {
               `
           }
           <div class="result-actions">
-            <button class="secondary result-action" type="button" data-location-id="${location.id}">Review</button>
+            <button class="secondary result-detail-action" type="button" data-location-id="${location.id}">Details</button>
+            <button class="secondary result-track-action${tracked ? " active" : ""}" type="button" data-location-id="${location.id}">
+              ${tracked ? "Saved" : "Track"}
+            </button>
+            ${
+              onRoute
+                ? `<button class="secondary result-calendar-action" type="button" data-location-id="${location.id}">On Route: Calendar</button>`
+                : `<button class="secondary result-add-route-action" type="button" data-location-id="${location.id}">Add to Route</button>`
+            }
             ${
               location.sourceUrl
                 ? `<a class="source-link" href="${location.sourceUrl}" target="_blank" rel="noreferrer">Source</a>`
@@ -3257,11 +3315,46 @@ function renderResults() {
     })
     .join("");
 
-  document.querySelectorAll(".result-action").forEach((button) => {
+  if (visibleLocations.length === 0) {
+    resultList.innerHTML = `
+      <article class="feature-panel">
+        <h3>No saved locations yet</h3>
+        <p class="helper-text">Use Track on a search result to save locations you want to watch.</p>
+      </article>
+    `;
+  }
+
+  document.querySelectorAll(".result-detail-action").forEach((button) => {
     button.addEventListener("click", () => {
       setSelectedLocation(button.dataset.locationId);
       showScreen("detail");
       renderResults();
+    });
+  });
+  document.querySelectorAll(".result-track-action").forEach((button) => {
+    button.addEventListener("click", () => {
+      toggleTrackedLocation(button.dataset.locationId);
+    });
+  });
+  document.querySelectorAll(".result-add-route-action").forEach((button) => {
+    button.addEventListener("click", () => {
+      const location = locations.find((item) => item.id === button.dataset.locationId);
+
+      if (location) {
+        addLocationToPlan(location);
+        renderResults();
+      }
+    });
+  });
+  document.querySelectorAll(".result-calendar-action").forEach((button) => {
+    button.addEventListener("click", () => {
+      const location = locations.find((item) => item.id === button.dataset.locationId);
+
+      if (location) {
+        setSelectedLocation(location.id);
+      }
+
+      showScreen("calendar");
     });
   });
 }
@@ -3521,6 +3614,7 @@ function collectDemoData() {
     settings: appStorage.getItem(storageKeys.settings),
     checkins: getSavedCheckins(),
     weeklyPlan: getSavedPlan(),
+    savedLocations: getSavedLocationIds(),
     customLocations: getSavedCustomLocations(),
     pipeline: getPipelineRecords(),
     prices: getPriceRecords(),
@@ -3550,6 +3644,7 @@ function exportDemoData() {
 function resetDemoData() {
   [
     storageKeys.weeklyPlan,
+    storageKeys.savedLocations,
     storageKeys.checkins,
     storageKeys.customLocations,
     storageKeys.pipeline,
@@ -4278,7 +4373,7 @@ function renderCalendar() {
         <article class="calendar-card">
           <div>
             <p class="eyebrow">${pipeline ? pipeline.status : "Interested"}</p>
-            <h3>${location.name}</h3>
+            <h3><button class="link-button calendar-detail-action" type="button" data-location-id="${location.id}">${location.name}</button></h3>
             <p>${location.city || "New England"} - ${getOpportunityDate(location)}</p>
           </div>
           <div class="metric"><span>Distance</span><strong>${distance} mi</strong></div>
@@ -4288,6 +4383,12 @@ function renderCalendar() {
       `;
     })
     .join("");
+  document.querySelectorAll(".calendar-detail-action").forEach((button) => {
+    button.addEventListener("click", () => {
+      setSelectedLocation(button.dataset.locationId);
+      showScreen("detail");
+    });
+  });
 }
 
 function generateAiWeek() {
@@ -4774,6 +4875,14 @@ zipCode.addEventListener("input", () => {
     document.querySelector("#city").value = city;
   }
 
+  renderResults();
+});
+showAllLocations.addEventListener("click", () => {
+  showSavedLocationsOnly = false;
+  renderResults();
+});
+showSavedLocations.addEventListener("click", () => {
+  showSavedLocationsOnly = true;
   renderResults();
 });
 

@@ -22,7 +22,6 @@
           <button class="nav-item active" data-screen="login">Account</button>
           <button class="nav-item" data-screen="dashboard">Dashboard</button>
           <button class="nav-item" data-screen="find">Find Locations</button>
-          <button class="nav-item" data-screen="detail">Location Detail</button>
           <button class="nav-item" data-screen="plan">Weekly Plan</button>
           <button class="nav-item" data-screen="checkins">Sales Log</button>
           <button class="nav-item" data-screen="suppliers">Suppliers</button>
@@ -65,6 +64,7 @@
             <div class="button-row">
               <button type="button" class="primary" id="create-account">Create Account</button>
               <button type="button" class="secondary" id="log-in">Log In</button>
+              <button type="button" class="secondary" id="resend-verification">Resend Verification Email</button>
             </div>
             <p class="status-message" id="account-status" aria-live="polite"></p>
             <p class="helper-text" id="database-status"></p>
@@ -127,7 +127,13 @@
         <section id="find" class="screen" aria-labelledby="find-title">
           <div class="screen-header">
             <p class="eyebrow">Search</p>
-            <h2 id="find-title">Find Locations</h2>
+            <div class="title-row">
+              <h2 id="find-title">Find Locations</h2>
+              <div class="segmented-actions" aria-label="Location result view">
+                <button type="button" class="secondary active" id="show-all-locations">All Locations</button>
+                <button type="button" class="secondary" id="show-saved-locations">Saved Locations</button>
+              </div>
+            </div>
             <p>Search for profitable spots by city, time, and food type.</p>
           </div>
 
@@ -222,7 +228,7 @@
         <section id="detail" class="screen" aria-labelledby="detail-title">
           <div class="screen-header">
             <p class="eyebrow">Recommendation</p>
-            <h2 id="detail-title">Location Detail Page</h2>
+            <h2 id="detail-title">Location Details</h2>
             <p>Explain why a spot is recommended.</p>
           </div>
 
