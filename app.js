@@ -3,11 +3,21 @@ const navItems = document.querySelectorAll(".nav-item");
 const navToggle = document.querySelector("#nav-toggle");
 const resultList = document.querySelector("#results-list");
 const zipCode = document.querySelector("#zip-code");
+const findStartDate = document.querySelector("#find-start-date");
+const findEndDate = document.querySelector("#find-end-date");
 const showAllLocations = document.querySelector("#show-all-locations");
 const showSavedLocations = document.querySelector("#show-saved-locations");
 const accountStatus = document.querySelector("#account-status");
 const planStatus = document.querySelector("#plan-status");
 const weeklyPlanBody = document.querySelector("#weekly-plan-body");
+const routePlanPeriod = document.querySelector("#route-plan-period");
+const routePlanStart = document.querySelector("#route-plan-start");
+const routePlanEnd = document.querySelector("#route-plan-end");
+const planRouteMapTitle = document.querySelector("#plan-route-map-title");
+const planRouteMap = document.querySelector("#plan-route-map");
+const planRouteMileageTotal = document.querySelector("#plan-route-mileage-total");
+const planRouteLegList = document.querySelector("#plan-route-leg-list");
+const planRouteVendorList = document.querySelector("#plan-route-vendor-list");
 const databaseStatus = document.querySelector("#database-status");
 const resultsSummary = document.querySelector("#results-summary");
 const checkinLocation = document.querySelector("#checkin-location");
@@ -2614,6 +2624,34 @@ function makePlanItem(location, day) {
   };
 }
 
+function getRoutePlanLabels() {
+  const start = routePlanStart.value ? new Date(`${routePlanStart.value}T12:00:00`) : new Date();
+  const end = routePlanEnd.value ? new Date(`${routePlanEnd.value}T12:00:00`) : null;
+  const weekdayLabels = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+
+  if (routePlanPeriod.value === "month") {
+    return Array.from({ length: 12 }, (_, index) => {
+      const date = new Date(start);
+      date.setDate(start.getDate() + index * 2);
+      return date.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+    });
+  }
+
+  if (routePlanPeriod.value === "range" && end && end >= start) {
+    const labels = [];
+    const current = new Date(start);
+
+    while (current <= end && labels.length < 21) {
+      labels.push(current.toLocaleDateString(undefined, { month: "short", day: "numeric" }));
+      current.setDate(current.getDate() + 1);
+    }
+
+    return labels.length ? labels : weekdayLabels;
+  }
+
+  return weekdayLabels;
+}
+
 function addLocationToPlan(location, day = "Monday") {
   const plan = getSavedPlan();
   const alreadySaved = plan.some((item) => item.location === location.name);
@@ -2636,6 +2674,17 @@ function setDefaultCheckinFields() {
   checkinStart.value = "11:00";
   checkinEnd.value = "14:00";
   updateTimerReadout();
+}
+
+function setDefaultRoutePlanDates() {
+  const start = new Date();
+  const end = new Date();
+
+  end.setDate(start.getDate() + 6);
+  routePlanStart.value = start.toISOString().slice(0, 10);
+  routePlanEnd.value = end.toISOString().slice(0, 10);
+  findStartDate.value = routePlanStart.value;
+  findEndDate.value = routePlanEnd.value;
 }
 
 function renderCheckinLocationOptions() {
@@ -2795,18 +2844,18 @@ function clearCheckins() {
 }
 
 function generateWeeklyPlan() {
-  const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+  const days = getRoutePlanLabels();
   const rankedLocations = [...locations].sort((a, b) => getLocationScore(b) - getLocationScore(a));
   const plan = days.map((day, index) => makePlanItem(rankedLocations[index % rankedLocations.length], day));
 
   savePlan(plan);
   renderWeeklyPlan();
-  planStatus.textContent = "Weekly plan built from your highest-scoring locations.";
+  planStatus.textContent = "Route plan built from your highest-scoring locations.";
   showScreen("plan");
 }
 
 function downloadWeeklyPlanCsv() {
-  const headers = ["Day", "Best Location", "Best Time", "Score"];
+  const headers = ["Date / Day", "Best Location", "Best Time", "Score"];
   const rows = getSavedPlan().map((item) => [item.day, item.location, item.bestTime, item.score]);
   const csv = [headers, ...rows]
     .map((row) => row.map((value) => `"${String(value).replaceAll('"', '""')}"`).join(","))
@@ -2816,10 +2865,86 @@ function downloadWeeklyPlanCsv() {
   const link = document.createElement("a");
 
   link.href = url;
-  link.download = "food-truck-weekly-plan.csv";
+  link.download = "food-truck-route-plan.csv";
   link.click();
   URL.revokeObjectURL(url);
-  planStatus.textContent = "Weekly plan exported as a CSV file.";
+  planStatus.textContent = "Route plan exported as a CSV file.";
+}
+
+function getPlanStops() {
+  return getSavedPlan()
+    .map((item) => {
+      const location = locations.find((spot) => spot.name === item.location);
+      return location || { name: item.location, city: homeBase.value || "New England", score: item.score, bestTime: item.bestTime };
+    })
+    .slice(0, 24);
+}
+
+function getRouteMapSvg(stops, baseCity) {
+  const mapStops = [{ name: "Home", city: baseCity, isHome: true }, ...stops];
+  const points = mapStops.map((stop) => ({
+    ...stop,
+    coords: getCityCoordinates(stop.city)
+  }));
+  const polyline = points.map((point) => `${point.coords.x},${point.coords.y}`).join(" ");
+
+  return `
+    <svg viewBox="0 0 100 100" role="img" aria-label="Route map">
+      <rect x="0" y="0" width="100" height="100" rx="4" class="map-bg"></rect>
+      <path d="M 12 18 C 28 22, 34 18, 46 28 S 75 34, 84 20" class="map-road soft"></path>
+      <path d="M 15 80 C 30 70, 42 82, 55 70 S 78 65, 86 78" class="map-road soft"></path>
+      <polyline points="${polyline}" class="route-line"></polyline>
+      ${points
+        .map(
+          (point, index) => `
+            <g>
+              <circle cx="${point.coords.x}" cy="${point.coords.y}" r="${point.isHome ? 3.5 : 2.8}" class="${point.isHome ? "home-dot" : "stop-dot"}"></circle>
+              <text x="${Math.min(92, point.coords.x + 3)}" y="${Math.max(8, point.coords.y - 3)}">${index === 0 ? "Home" : index}</text>
+            </g>
+          `
+        )
+        .join("")}
+    </svg>
+  `;
+}
+
+function renderRoutePlanMap() {
+  const baseCity = homeBase.value.trim() || "Lowell, MA";
+  const stops = getPlanStops();
+  const legs = getRouteLegs(stops, baseCity);
+  const vendors = getSupplierRouteMatches(stops, baseCity);
+  const totalMiles = legs.reduce((sum, leg) => sum + leg.miles, 0);
+
+  planRouteMapTitle.textContent = `${routePlanPeriod.options[routePlanPeriod.selectedIndex].text} route plan`;
+  planRouteMap.innerHTML = getRouteMapSvg(stops, baseCity);
+  planRouteMileageTotal.textContent = `${totalMiles.toLocaleString()} miles`;
+  planRouteLegList.innerHTML = legs.length
+    ? legs
+        .map(
+          (leg) => `
+            <div class="mini-list-item">
+              <strong>${leg.from} to ${leg.to}</strong>
+              <span>${leg.fromCity || "Unknown"} to ${leg.toCity || "Unknown"} - ${leg.miles} miles</span>
+            </div>
+          `
+        )
+        .join("")
+    : `<p class="helper-text">Build a route plan to see mileage.</p>`;
+  planRouteVendorList.innerHTML = vendors.length
+    ? vendors
+        .slice(0, 6)
+        .map(
+          (vendor) => `
+            <div class="mini-list-item">
+              <strong>${vendor.name}</strong>
+              <span>${vendor.category} - ${vendor.city} - about ${vendor.routeMiles} miles from route</span>
+            </div>
+          `
+        )
+        .join("")
+    : `<p class="helper-text">No suppliers matched this route yet.</p>`;
+  routeEstimateTitle.textContent = `${baseCity} route estimates`;
+  routeEstimateCopy.textContent = `${routePlanPeriod.options[routePlanPeriod.selectedIndex].text} route plan covering ${stops.length} stop${stops.length === 1 ? "" : "s"} and ${totalMiles.toLocaleString()} estimated miles.`;
 }
 
 function renderWeeklyPlan() {
@@ -2835,6 +2960,7 @@ function renderWeeklyPlan() {
       `
     )
     .join("");
+  renderRoutePlanMap();
 }
 
 function saveProfile() {
@@ -3250,12 +3376,15 @@ function renderResults() {
   const visibleLocations = locations.filter(
     (location) => locationMatchesZip(location, zipCode.value) && (!showSavedLocationsOnly || savedLocationIds.includes(location.id))
   );
+  const dateLabel = findStartDate.value && findEndDate.value
+    ? ` for ${findStartDate.value} to ${findEndDate.value}`
+    : "";
 
   showAllLocations.classList.toggle("active", !showSavedLocationsOnly);
   showSavedLocations.classList.toggle("active", showSavedLocationsOnly);
   resultsSummary.textContent = showSavedLocationsOnly
-    ? `${visibleLocations.length} saved spot${visibleLocations.length === 1 ? "" : "s"} you are tracking.`
-    : `${visibleLocations.length} recommended spot${visibleLocations.length === 1 ? "" : "s"} sorted by opportunity score.`;
+    ? `${visibleLocations.length} saved spot${visibleLocations.length === 1 ? "" : "s"} you are tracking${dateLabel}.`
+    : `${visibleLocations.length} recommended spot${visibleLocations.length === 1 ? "" : "s"} sorted by opportunity score${dateLabel}.`;
   resultList.innerHTML = visibleLocations
     .sort((a, b) => getLocationScore(b) - getLocationScore(a))
     .map((location) => {
@@ -3327,7 +3456,7 @@ function renderResults() {
             </button>
             ${
               onRoute
-                ? `<button class="secondary result-calendar-action" type="button" data-location-id="${location.id}">On Route: Calendar</button>`
+                ? `<button class="secondary result-calendar-action" type="button" data-location-id="${location.id}">On Route: Plan</button>`
                 : `<button class="secondary result-add-route-action" type="button" data-location-id="${location.id}">Add to Route</button>`
             }
             ${
@@ -3380,7 +3509,7 @@ function renderResults() {
         setSelectedLocation(location.id);
       }
 
-      showScreen("calendar");
+      showScreen("plan");
     });
   });
 }
@@ -4312,32 +4441,8 @@ function getSupplierRouteMatches(stops, baseCity) {
 }
 
 function renderRouteMap(stops, baseCity) {
-  const mapStops = [{ name: "Home", city: baseCity, isHome: true }, ...stops];
-  const points = mapStops.map((stop) => ({
-    ...stop,
-    coords: getCityCoordinates(stop.city)
-  }));
-  const polyline = points.map((point) => `${point.coords.x},${point.coords.y}`).join(" ");
-
   routeMapTitle.textContent = `${routePeriod.value[0].toUpperCase()}${routePeriod.value.slice(1)} route`;
-  routeMap.innerHTML = `
-    <svg viewBox="0 0 100 100" role="img" aria-label="Route map">
-      <rect x="0" y="0" width="100" height="100" rx="4" class="map-bg"></rect>
-      <path d="M 12 18 C 28 22, 34 18, 46 28 S 75 34, 84 20" class="map-road soft"></path>
-      <path d="M 15 80 C 30 70, 42 82, 55 70 S 78 65, 86 78" class="map-road soft"></path>
-      <polyline points="${polyline}" class="route-line"></polyline>
-      ${points
-        .map(
-          (point, index) => `
-            <g>
-              <circle cx="${point.coords.x}" cy="${point.coords.y}" r="${point.isHome ? 3.5 : 2.8}" class="${point.isHome ? "home-dot" : "stop-dot"}"></circle>
-              <text x="${Math.min(92, point.coords.x + 3)}" y="${Math.max(8, point.coords.y - 3)}">${index === 0 ? "Home" : index}</text>
-            </g>
-          `
-        )
-        .join("")}
-    </svg>
-  `;
+  routeMap.innerHTML = getRouteMapSvg(stops, baseCity);
 }
 
 function renderRoutePlanning() {
@@ -4383,12 +4488,13 @@ function renderCalendar() {
   const records = getPipelineRecords();
   const reminders = getReminderRecords();
   const base = homeBase.value.trim() || "Lowell, MA";
-  const topLocations = [...locations].sort((a, b) => getLocationScore(b) - getLocationScore(a)).slice(0, 10);
+  const planNames = new Set(getSavedPlan().map((item) => item.location));
+  const topLocations = [...locations]
+    .filter((location) => planNames.has(location.name) || getLocationScore(location) >= 85)
+    .sort((a, b) => getLocationScore(b) - getLocationScore(a))
+    .slice(0, 10);
 
   appStorage.setItem(storageKeys.homeBase, base);
-  routeEstimateTitle.textContent = `${base} route estimates`;
-  routeEstimateCopy.textContent = "Distances are planning estimates until live map routing is connected.";
-  renderRoutePlanning();
   calendarList.innerHTML = topLocations
     .map((location) => {
       const pipeline = records.find((item) => item.locationId === location.id);
@@ -4432,7 +4538,8 @@ function generateAiWeek() {
   savePlan(plan);
   renderWeeklyPlan();
   renderCalendar();
-  aiWeekTitle.textContent = `${ranked[0].name} anchors the week`;
+  showScreen("plan");
+  aiWeekTitle.textContent = `${ranked[0].name} anchors the route`;
   aiWeekCopy.textContent = `Suggested ${ranked.length} stops using score, weather risk, sales history, and pipeline status.`;
 }
 
@@ -4961,14 +5068,31 @@ document.querySelector("#dashboard-view-details").addEventListener("click", () =
 });
 
 document.querySelector("#generate-plan").addEventListener("click", generateWeeklyPlan);
+document.querySelector("#refresh-route-plan").addEventListener("click", () => {
+  generateWeeklyPlan();
+  planStatus.textContent = "Route plan refreshed.";
+});
+routePlanPeriod.addEventListener("change", () => {
+  generateWeeklyPlan();
+});
+routePlanStart.addEventListener("change", renderWeeklyPlan);
+routePlanEnd.addEventListener("change", renderWeeklyPlan);
+findStartDate.addEventListener("change", () => {
+  routePlanStart.value = findStartDate.value;
+  renderResults();
+});
+findEndDate.addEventListener("change", () => {
+  routePlanEnd.value = findEndDate.value;
+  renderResults();
+});
 document.querySelector("#refresh-weather").addEventListener("click", () => refreshWeather(selectedLocation));
 
 document.querySelector("#add-to-plan").addEventListener("click", () => {
   const added = addLocationToPlan(selectedLocation);
 
   planStatus.textContent = added
-    ? `${selectedLocation.name} was added to your weekly plan.`
-    : `${selectedLocation.name} is already in your weekly plan.`;
+    ? `${selectedLocation.name} was added to your route plan.`
+    : `${selectedLocation.name} is already in your route plan.`;
   showScreen("plan");
 });
 
@@ -4982,8 +5106,8 @@ document.querySelector("#save-location").addEventListener("click", () => {
   addLocationToPlan(selectedLocation);
   saveLocationToDatabase().then((savedToDatabase) => {
     planStatus.textContent = savedToDatabase
-      ? `${selectedLocation.name} was saved to your Supabase weekly plan.`
-      : `${selectedLocation.name} was saved in this browser. Log in to save it to Supabase.`;
+      ? `${selectedLocation.name} was saved to your Supabase route plan.`
+      : `${selectedLocation.name} was saved in this browser route plan. Log in to save it to Supabase.`;
   });
 
   showScreen("plan");
@@ -4992,7 +5116,7 @@ document.querySelector("#save-location").addEventListener("click", () => {
 document.querySelector("#export-plan").addEventListener("click", downloadWeeklyPlanCsv);
 
 document.querySelector("#send-calendar").addEventListener("click", () => {
-  planStatus.textContent = "Calendar sending will connect after accounts are added.";
+  planStatus.textContent = "Calendar export is coming soon. For now, use Export Plan or view this map in Route Plan.";
 });
 
 document.querySelector("#save-checkin").addEventListener("click", saveCheckin);
@@ -5019,6 +5143,7 @@ loadSettings();
 renderDashboard();
 renderDetail();
 setDefaultCheckinFields();
+setDefaultRoutePlanDates();
 renderCheckinLocationOptions();
 renderResults();
 renderSuppliers();

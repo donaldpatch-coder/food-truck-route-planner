@@ -22,10 +22,9 @@
           <button class="nav-item active" data-screen="login">Account</button>
           <button class="nav-item" data-screen="dashboard">Dashboard</button>
           <button class="nav-item" data-screen="find">Find Locations</button>
-          <button class="nav-item" data-screen="plan">Weekly Plan</button>
+          <button class="nav-item" data-screen="plan">Route Plan</button>
           <button class="nav-item" data-screen="checkins">Sales Log</button>
           <button class="nav-item" data-screen="suppliers">Suppliers</button>
-          <button class="nav-item" data-screen="calendar">Calendar</button>
           <button class="nav-item" data-screen="operations">Operations</button>
           <button class="nav-item" data-screen="public-site">Public Site</button>
           <button class="nav-item" data-screen="pos">POS</button>
@@ -147,8 +146,12 @@
               <input id="zip-code" type="text" inputmode="numeric" placeholder="01852">
             </label>
             <label>
-              Date
-              <input type="date" value="2026-05-22">
+              Start date
+              <input id="find-start-date" type="date" value="2026-05-22">
+            </label>
+            <label>
+              End date
+              <input id="find-end-date" type="date" value="2026-05-28">
             </label>
             <label>
               Time
@@ -220,7 +223,7 @@
 
           <div class="results-toolbar">
             <p class="helper-text" id="results-summary"></p>
-            <button type="button" class="secondary" id="generate-plan">Build Weekly Plan</button>
+            <button type="button" class="secondary" id="generate-plan">Build Route Plan</button>
           </div>
           <div class="results-list" id="results-list" aria-live="polite"></div>
         </section>
@@ -239,7 +242,7 @@
               <p id="detail-reason">This location is strong for lunch because nearby offices create high foot traffic. Best operating time is 11:30 AM-2:00 PM.</p>
               <div class="button-row">
                 <button class="primary" id="save-location">Save Location</button>
-                <button class="secondary" id="add-to-plan">Add to Weekly Plan</button>
+                <button class="secondary" id="add-to-plan">Add to Route Plan</button>
                 <button class="secondary" id="check-in-location">Check In Here</button>
               </div>
             </article>
@@ -264,15 +267,51 @@
         <section id="plan" class="screen" aria-labelledby="plan-title">
           <div class="screen-header">
             <p class="eyebrow">Planner</p>
-            <h2 id="plan-title">Weekly Plan</h2>
-            <p>Help the owner plan where to park each day.</p>
+            <h2 id="plan-title">Route Plan</h2>
+            <p>Plan where to park, how far to travel, and which vendors are close to the route.</p>
+          </div>
+
+          <div class="planner-toolbar">
+            <label>
+              Route view
+              <select id="route-plan-period">
+                <option value="week">Weekly</option>
+                <option value="month">Monthly</option>
+                <option value="range">Date range</option>
+              </select>
+            </label>
+            <label>
+              Start date
+              <input id="route-plan-start" type="date">
+            </label>
+            <label>
+              End date
+              <input id="route-plan-end" type="date">
+            </label>
+            <button type="button" class="primary" id="refresh-route-plan">Refresh Route Plan</button>
+          </div>
+
+          <div class="route-map-layout">
+            <article class="feature-panel route-map-panel">
+              <p class="eyebrow">Route Map</p>
+              <h3 id="plan-route-map-title">Route plan map</h3>
+              <div class="route-map" id="plan-route-map"></div>
+            </article>
+
+            <article class="feature-panel">
+              <p class="eyebrow">Mileage & Vendors</p>
+              <h3 id="plan-route-mileage-total">0 miles</h3>
+              <div class="route-leg-list" id="plan-route-leg-list"></div>
+              <p class="eyebrow route-vendor-heading">Vendors near route</p>
+              <div class="route-vendor-list" id="plan-route-vendor-list"></div>
+            </article>
           </div>
 
           <div class="table-wrap">
             <table>
               <thead>
                 <tr>
-                  <th>Day</th>
+                  <th>Date / Day</th>
                   <th>Best Location</th>
                   <th>Best Time</th>
                   <th>Score</th>
@@ -287,6 +326,21 @@
             <button class="secondary" id="send-calendar">Send to Calendar</button>
           </div>
           <p class="status-message" id="plan-status" aria-live="polite"></p>
+
+          <div class="dashboard-grid route-planner-insights">
+            <article class="feature-panel">
+              <p class="eyebrow">AI Route Recommendation</p>
+              <h3 id="ai-week-title">Ready to plan</h3>
+              <p id="ai-week-copy">Build a route recommendation using weather, history, deadlines, fees, and opportunity score.</p>
+            </article>
+            <article class="feature-panel">
+              <p class="eyebrow">Route Estimate</p>
+              <h3 id="route-estimate-title">Home base not calculated</h3>
+              <p id="route-estimate-copy">Route notes use city distance estimates for planning until map routing is connected.</p>
+            </article>
+          </div>
+
+          <div class="calendar-list" id="calendar-list"></div>
         </section>
 
         <section id="checkins" class="screen" aria-labelledby="checkins-title">
@@ -605,7 +659,7 @@
           </div>
         </section>
 
-        <section id="calendar" class="screen" aria-labelledby="calendar-title">
+        <section id="calendar" class="screen legacy-screen" aria-labelledby="calendar-title">
           <div class="screen-header">
             <p class="eyebrow">Schedule</p>
             <h2 id="calendar-title">Calendar & Route Planner</h2>
