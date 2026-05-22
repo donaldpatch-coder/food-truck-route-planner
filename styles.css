@@ -1048,6 +1048,36 @@ textarea {
   font-size: 13px;
 }
 
+.ops-list-panel {
+  grid-column: span 2;
+}
+
+.ops-pipeline-list {
+  display: grid;
+  gap: 12px;
+}
+
+.pipeline-list-card {
+  display: grid;
+  gap: 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #ffffff;
+  padding: 14px;
+}
+
+.pipeline-list-card h4,
+.pipeline-list-card p {
+  margin: 0;
+}
+
+.pipeline-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
 .marketing-check {
   border-left: 4px solid #c8d5dc;
 }

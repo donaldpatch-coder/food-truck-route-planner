@@ -94,9 +94,14 @@ const opsLocation = document.querySelector("#ops-location");
 const opsStatus = document.querySelector("#ops-status");
 const opsDeadline = document.querySelector("#ops-deadline");
 const opsFee = document.querySelector("#ops-fee");
+const opsWebpage = document.querySelector("#ops-webpage");
 const opsDocuments = document.querySelector("#ops-documents");
+const opsDocumentUpload = document.querySelector("#ops-document-upload");
 const opsNotes = document.querySelector("#ops-notes");
+const opsReminderTitle = document.querySelector("#ops-reminder-title");
+const opsReminderDate = document.querySelector("#ops-reminder-date");
 const opsStatusMessage = document.querySelector("#ops-status-message");
+const opsPipelineList = document.querySelector("#ops-pipeline-list");
 const opsMarketingChecklist = document.querySelector("#ops-marketing-checklist");
 const opsMarketingStatus = document.querySelector("#ops-marketing-status");
 const reminderTitle = document.querySelector("#reminder-title");
@@ -2421,6 +2426,42 @@ function getPipelineForLocation(locationName) {
   return getPipelineRecords().find((record) => record.location === locationName);
 }
 
+function getPipelineForLocationId(locationId) {
+  return getPipelineRecords().find((record) => record.locationId === locationId);
+}
+
+function addLocationToPipeline(locationId, status = "Interested") {
+  const location = locations.find((item) => item.id === locationId);
+
+  if (!location) {
+    return null;
+  }
+
+  const existing = getPipelineForLocationId(location.id);
+  const record = {
+    location: location.name,
+    locationId: location.id,
+    status: existing?.status || status,
+    deadline: existing?.deadline || "",
+    fee: existing?.fee || 0,
+    webpage: existing?.webpage || location.sourceUrl || "",
+    documents: existing?.documents || "",
+    documentFiles: existing?.documentFiles || [],
+    notes: existing?.notes || location.ownerNotes || "",
+    updatedAt: new Date().toISOString()
+  };
+  const records = getPipelineRecords().filter((item) => item.locationId !== location.id);
+
+  savePipelineRecords([record, ...records]);
+  trackLocation(location.id);
+  renderOpsLocationOptions();
+  renderPipelineList();
+  renderResults();
+  renderCalendar();
+  renderReports();
+  return record;
+}
+
 function getLocationCheckins(locationName) {
   return getSavedCheckins().filter((checkin) => checkin.location === locationName);
 }
@@ -3459,6 +3500,9 @@ function renderResults() {
                 ? `<button class="secondary result-calendar-action" type="button" data-location-id="${location.id}">On Route: Plan</button>`
                 : `<button class="secondary result-add-route-action" type="button" data-location-id="${location.id}">Add to Route</button>`
             }
+            <button class="secondary result-pipeline-action" type="button" data-location-id="${location.id}">
+              ${pipeline ? `Pipeline: ${pipeline.status}` : "Add to Pipeline"}
+            </button>
             ${
               location.sourceUrl
                 ? `<a class="source-link" href="${location.sourceUrl}" target="_blank" rel="noreferrer">Source</a>`
@@ -3510,6 +3554,17 @@ function renderResults() {
       }
 
       showScreen("plan");
+    });
+  });
+  document.querySelectorAll(".result-pipeline-action").forEach((button) => {
+    button.addEventListener("click", () => {
+      const record = addLocationToPipeline(button.dataset.locationId);
+
+      if (record) {
+        opsLocation.value = record.locationId;
+        loadPipelineRecordIntoForm(record.locationId);
+        showScreen("operations");
+      }
     });
   });
 }
@@ -3829,6 +3884,7 @@ function renderAllDataViews() {
   renderPublicListings();
   loadTruckProfileForm();
   renderMarketingChecklist();
+  renderPipelineList();
   renderReminders();
   renderCalendar();
   renderSquareTransactions();
@@ -4194,6 +4250,67 @@ function renderOpsLocationOptions() {
   reminderLocation.innerHTML = `<option value="">General reminder</option>${options}`;
 }
 
+function loadPipelineRecordIntoForm(locationId) {
+  const location = locations.find((item) => item.id === locationId);
+  const record = getPipelineForLocationId(locationId);
+
+  if (!location) {
+    return;
+  }
+
+  opsLocation.value = location.id;
+  opsStatus.value = record?.status || "Interested";
+  opsDeadline.value = record?.deadline || "";
+  opsFee.value = record?.fee || "";
+  opsWebpage.value = record?.webpage || location.sourceUrl || "";
+  opsDocuments.value = record?.documents || "";
+  opsNotes.value = record?.notes || location.ownerNotes || "";
+  opsReminderTitle.value = "";
+  opsReminderDate.value = "";
+}
+
+function renderPipelineList() {
+  const records = getPipelineRecords();
+
+  opsPipelineList.innerHTML = records.length
+    ? records
+        .map((record) => {
+          const location = locations.find((item) => item.id === record.locationId);
+          const reminders = getReminderRecords().filter((item) => item.locationId === record.locationId);
+          const webpage = record.webpage || location?.sourceUrl || "";
+          const files = record.documentFiles || [];
+
+          return `
+            <article class="pipeline-list-card">
+              <div>
+                <p class="eyebrow">${record.status}</p>
+                <h4>${record.location}</h4>
+                <p>${location?.city || "Location"} ${record.deadline ? `- deadline ${record.deadline}` : ""}</p>
+              </div>
+              <div class="pipeline-card-actions">
+                <button type="button" class="secondary pipeline-edit-action" data-location-id="${record.locationId}">Edit</button>
+                ${
+                  webpage
+                    ? `<a class="source-link" href="${webpage}" target="_blank" rel="noreferrer">Webpage</a>`
+                    : `<span class="helper-text">No webpage added</span>`
+                }
+              </div>
+              <p><strong>Documents:</strong> ${record.documents || "None listed"}${files.length ? ` - uploaded: ${files.join(", ")}` : ""}</p>
+              <p><strong>Notes:</strong> ${record.notes || "No notes yet."}</p>
+              <p><strong>Reminders:</strong> ${reminders.length ? reminders.map((item) => `${item.dueDate}: ${item.title}`).join("; ") : "None yet."}</p>
+            </article>
+          `;
+        })
+        .join("")
+    : `<p class="helper-text">No pipeline locations yet. Add one from Search Locations.</p>`;
+
+  document.querySelectorAll(".pipeline-edit-action").forEach((button) => {
+    button.addEventListener("click", () => {
+      loadPipelineRecordIntoForm(button.dataset.locationId);
+    });
+  });
+}
+
 function savePipelineRecord() {
   const location = locations.find((item) => item.id === opsLocation.value);
 
@@ -4208,14 +4325,33 @@ function savePipelineRecord() {
     status: opsStatus.value,
     deadline: opsDeadline.value,
     fee: Number(opsFee.value) || 0,
+    webpage: opsWebpage.value.trim() || location.sourceUrl || "",
     documents: opsDocuments.value.trim(),
+    documentFiles: Array.from(opsDocumentUpload.files || []).map((file) => file.name),
     notes: opsNotes.value.trim(),
     updatedAt: new Date().toISOString()
   };
   const records = getPipelineRecords().filter((item) => item.locationId !== location.id);
 
   savePipelineRecords([record, ...records]);
+  if (opsReminderTitle.value.trim() && opsReminderDate.value) {
+    saveReminderRecords([
+      {
+        id: `${Date.now()}`,
+        title: opsReminderTitle.value.trim(),
+        dueDate: opsReminderDate.value,
+        location: location.name,
+        locationId: location.id,
+        completed: false
+      },
+      ...getReminderRecords()
+    ]);
+    opsReminderTitle.value = "";
+    opsReminderDate.value = "";
+  }
   opsStatusMessage.textContent = `${location.name} pipeline saved.`;
+  renderPipelineList();
+  renderReminders();
   renderCalendar();
   renderDashboard();
   renderResults();
@@ -5038,6 +5174,7 @@ document.querySelector("#jump-list-space").addEventListener("click", () => {
   document.querySelector("#list-space-panel").scrollIntoView({ behavior: "smooth", block: "start" });
 });
 document.querySelector("#save-ops-location").addEventListener("click", savePipelineRecord);
+opsLocation.addEventListener("change", () => loadPipelineRecordIntoForm(opsLocation.value));
 document.querySelector("#open-truck-marketing").addEventListener("click", () => {
   showScreen("public-site");
   document.querySelector(".marketing-layout").scrollIntoView({ behavior: "smooth", block: "start" });
@@ -5151,6 +5288,7 @@ renderMarketplace();
 renderPublicListings();
 loadTruckProfileForm();
 renderMarketingChecklist();
+renderPipelineList();
 renderReminders();
 renderCalendar();
 renderSquareStatus();

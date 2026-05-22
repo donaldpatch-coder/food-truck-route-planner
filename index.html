@@ -748,15 +748,38 @@
                 <input id="ops-fee" type="number" min="0" step="1" placeholder="350">
               </label>
               <label>
-                Documents needed
+                Webpage / application link
+                <input id="ops-webpage" type="url" placeholder="https://event.com/vendors">
+              </label>
+              <label>
+                Documents needed / uploaded
                 <input id="ops-documents" type="text" placeholder="COI, health permit, fire inspection">
+              </label>
+              <label>
+                Upload related documents
+                <input id="ops-document-upload" type="file" multiple>
               </label>
               <label>
                 Contact notes
                 <input id="ops-notes" type="text" placeholder="Email, phone, application link, setup notes">
               </label>
+              <label>
+                Reminder for this location
+                <input id="ops-reminder-title" type="text" placeholder="Call event organizer, submit permit">
+              </label>
+              <label>
+                Reminder date
+                <input id="ops-reminder-date" type="date">
+              </label>
               <button type="button" class="primary" id="save-ops-location">Save Pipeline</button>
               <p class="status-message" id="ops-status-message"></p>
+            </article>
+
+            <article class="feature-panel ops-list-panel">
+              <p class="eyebrow">Pipeline List</p>
+              <h3>Tracked locations</h3>
+              <p class="helper-text">Locations added from Search appear here with status, webpage, notes, documents, and reminders.</p>
+              <div class="ops-pipeline-list" id="ops-pipeline-list"></div>
             </article>
 
             <article class="feature-panel" id="ops-marketing-panel">
