@@ -175,7 +175,10 @@ const detailHistoryList = document.querySelector("#detail-history-list");
 
 const SUPABASE_URL = "https://vyjquxjxjywhrtihpzwk.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_dnU2ePpleMBcl5Qt3kJriw_AFTeDa1w";
-const AUTH_REDIRECT_URL = `${window.location.origin}/`;
+const LIVE_SITE_URL = "https://myfoodtruck.netlify.app/";
+const AUTH_REDIRECT_URL = window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost"
+  ? LIVE_SITE_URL
+  : `${window.location.origin}/`;
 
 function createSafeStorage() {
   const memoryStorage = new Map();
@@ -2968,7 +2971,7 @@ async function createAccount() {
 
   if (!data.session) {
     accountStatus.textContent = "Account created. Check your inbox and spam folder for the Supabase verification email, then log in.";
-    databaseStatus.textContent = "Profile details are saved in this browser until email confirmation is complete.";
+    databaseStatus.textContent = `Confirmation links should open ${AUTH_REDIRECT_URL}. If they still open localhost, update Supabase Auth URL settings.`;
     return;
   }
 
@@ -3008,6 +3011,7 @@ async function resendVerificationEmail() {
   }
 
   accountStatus.textContent = "Verification email resent. Check inbox and spam.";
+  databaseStatus.textContent = `Confirmation links should open ${AUTH_REDIRECT_URL}.`;
 }
 
 async function logIn() {
