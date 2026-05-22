@@ -1049,12 +1049,24 @@ textarea {
 }
 
 .ops-list-panel {
+  grid-column: 1 / -1;
+}
+
+.ops-detail-panel {
   grid-column: span 2;
+}
+
+.panel-title-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: start;
 }
 
 .ops-pipeline-list {
   display: grid;
   gap: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .pipeline-list-card {
@@ -1064,6 +1076,16 @@ textarea {
   border-radius: 8px;
   background: #ffffff;
   padding: 14px;
+}
+
+.pipeline-list-card.selected {
+  border-color: var(--green);
+  box-shadow: 0 0 0 2px rgba(60, 128, 90, 0.12);
+}
+
+.pipeline-list-card.hidden {
+  background: #f3f5f6;
+  opacity: 0.78;
 }
 
 .pipeline-list-card h4,
@@ -1076,6 +1098,33 @@ textarea {
   flex-wrap: wrap;
   gap: 10px;
   align-items: center;
+}
+
+.reservation-steps {
+  display: grid;
+  gap: 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #f8fafc;
+  padding: 14px;
+}
+
+.reservation-steps h4 {
+  margin: 0;
+}
+
+.step-check {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 10px;
+  align-items: center;
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.step-check input {
+  min-height: auto;
+  width: auto;
 }
 
 .marketing-check {
@@ -1423,6 +1472,7 @@ tr:last-child td {
   .reports-grid,
   .reports-grid.wide,
   .metric-grid,
+  .ops-pipeline-list,
   .custom-location-form,
   .supplier-list,
   .supplier-search-panel,

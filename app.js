@@ -97,11 +97,25 @@ const opsFee = document.querySelector("#ops-fee");
 const opsWebpage = document.querySelector("#ops-webpage");
 const opsDocuments = document.querySelector("#ops-documents");
 const opsDocumentUpload = document.querySelector("#ops-document-upload");
+const opsPhotoUpload = document.querySelector("#ops-photo-upload");
 const opsNotes = document.querySelector("#ops-notes");
+const opsDetailTitle = document.querySelector("#ops-detail-title");
+const opsAiSummary = document.querySelector("#ops-ai-summary");
+const opsAiSummaryOutput = document.querySelector("#ops-ai-summary-output");
 const opsReminderTitle = document.querySelector("#ops-reminder-title");
 const opsReminderDate = document.querySelector("#ops-reminder-date");
 const opsStatusMessage = document.querySelector("#ops-status-message");
 const opsPipelineList = document.querySelector("#ops-pipeline-list");
+const showHiddenPipeline = document.querySelector("#show-hidden-pipeline");
+const hideOpsLocation = document.querySelector("#hide-ops-location");
+const removeOpsLocation = document.querySelector("#remove-ops-location");
+const pipelineStepInputs = {
+  form: document.querySelector("#ops-step-form"),
+  insurance: document.querySelector("#ops-step-insurance"),
+  documents: document.querySelector("#ops-step-documents"),
+  fee: document.querySelector("#ops-step-fee"),
+  confirmation: document.querySelector("#ops-step-confirmation")
+};
 const opsMarketingChecklist = document.querySelector("#ops-marketing-checklist");
 const opsMarketingStatus = document.querySelector("#ops-marketing-status");
 const reminderTitle = document.querySelector("#reminder-title");
@@ -1901,6 +1915,7 @@ const defaultWeeklyPlan = [
 ];
 
 let selectedLocation = locations[0];
+let selectedPipelineLocationId = "";
 let serviceTimerId = null;
 let serviceStartTime = null;
 let serviceElapsedMilliseconds = 0;
@@ -2447,7 +2462,11 @@ function addLocationToPipeline(locationId, status = "Interested") {
     webpage: existing?.webpage || location.sourceUrl || "",
     documents: existing?.documents || "",
     documentFiles: existing?.documentFiles || [],
+    photoFiles: existing?.photoFiles || [],
+    steps: existing?.steps || getDefaultPipelineSteps(),
     notes: existing?.notes || location.ownerNotes || "",
+    aiSummary: existing?.aiSummary || "",
+    hidden: false,
     updatedAt: new Date().toISOString()
   };
   const records = getPipelineRecords().filter((item) => item.locationId !== location.id);
@@ -4250,6 +4269,43 @@ function renderOpsLocationOptions() {
   reminderLocation.innerHTML = `<option value="">General reminder</option>${options}`;
 }
 
+function getDefaultPipelineSteps() {
+  return {
+    form: false,
+    insurance: false,
+    documents: false,
+    fee: false,
+    confirmation: false
+  };
+}
+
+function getPipelineStepsFromForm() {
+  return Object.fromEntries(
+    Object.entries(pipelineStepInputs).map(([key, input]) => [key, Boolean(input?.checked)])
+  );
+}
+
+function applyPipelineStepsToForm(steps = {}) {
+  Object.entries(pipelineStepInputs).forEach(([key, input]) => {
+    if (input) {
+      input.checked = Boolean(steps[key]);
+    }
+  });
+}
+
+function getPipelineStepProgress(steps = {}) {
+  const total = Object.keys(getDefaultPipelineSteps()).length;
+  const complete = Object.values({ ...getDefaultPipelineSteps(), ...steps }).filter(Boolean).length;
+
+  return { complete, total };
+}
+
+function getPipelineFileNames(input, existingFiles = []) {
+  const selectedFiles = Array.from(input?.files || []).map((file) => file.name);
+
+  return selectedFiles.length ? selectedFiles : existingFiles;
+}
+
 function loadPipelineRecordIntoForm(locationId) {
   const location = locations.find((item) => item.id === locationId);
   const record = getPipelineForLocationId(locationId);
@@ -4258,57 +4314,149 @@ function loadPipelineRecordIntoForm(locationId) {
     return;
   }
 
+  selectedPipelineLocationId = location.id;
   opsLocation.value = location.id;
+  opsDetailTitle.textContent = record ? `${location.name} reservation details` : `${location.name} new reservation`;
   opsStatus.value = record?.status || "Interested";
   opsDeadline.value = record?.deadline || "";
   opsFee.value = record?.fee || "";
   opsWebpage.value = record?.webpage || location.sourceUrl || "";
   opsDocuments.value = record?.documents || "";
   opsNotes.value = record?.notes || location.ownerNotes || "";
+  opsAiSummaryOutput.value = record?.aiSummary || "";
+  applyPipelineStepsToForm(record?.steps || getDefaultPipelineSteps());
+  hideOpsLocation.textContent = record?.hidden ? "Show In List" : "Hide From List";
   opsReminderTitle.value = "";
   opsReminderDate.value = "";
+  opsStatusMessage.textContent = record ? `${location.name} loaded.` : `${location.name} ready to add.`;
 }
 
 function renderPipelineList() {
   const records = getPipelineRecords();
+  const visibleRecords = showHiddenPipeline?.checked ? records : records.filter((record) => !record.hidden);
 
-  opsPipelineList.innerHTML = records.length
-    ? records
+  opsPipelineList.innerHTML = visibleRecords.length
+    ? visibleRecords
         .map((record) => {
           const location = locations.find((item) => item.id === record.locationId);
           const reminders = getReminderRecords().filter((item) => item.locationId === record.locationId);
           const webpage = record.webpage || location?.sourceUrl || "";
           const files = record.documentFiles || [];
+          const photos = record.photoFiles || [];
+          const progress = getPipelineStepProgress(record.steps);
+          const selectedClass = record.locationId === selectedPipelineLocationId ? " selected" : "";
+          const hiddenClass = record.hidden ? " hidden" : "";
 
           return `
-            <article class="pipeline-list-card">
+            <article class="pipeline-list-card${selectedClass}${hiddenClass}">
               <div>
                 <p class="eyebrow">${record.status}</p>
                 <h4>${record.location}</h4>
                 <p>${location?.city || "Location"} ${record.deadline ? `- deadline ${record.deadline}` : ""}</p>
+                <p><strong>Reservation steps:</strong> ${progress.complete} of ${progress.total} complete</p>
               </div>
               <div class="pipeline-card-actions">
-                <button type="button" class="secondary pipeline-edit-action" data-location-id="${record.locationId}">Edit</button>
+                <button type="button" class="secondary pipeline-edit-action" data-location-id="${record.locationId}">Details</button>
                 ${
                   webpage
                     ? `<a class="source-link" href="${webpage}" target="_blank" rel="noreferrer">Webpage</a>`
                     : `<span class="helper-text">No webpage added</span>`
                 }
+                <button type="button" class="secondary pipeline-hide-action" data-location-id="${record.locationId}">${record.hidden ? "Show" : "Hide"}</button>
+                <button type="button" class="secondary danger-button pipeline-remove-action" data-location-id="${record.locationId}">Remove</button>
               </div>
               <p><strong>Documents:</strong> ${record.documents || "None listed"}${files.length ? ` - uploaded: ${files.join(", ")}` : ""}</p>
+              <p><strong>Photos:</strong> ${photos.length ? photos.join(", ") : "None yet."}</p>
               <p><strong>Notes:</strong> ${record.notes || "No notes yet."}</p>
               <p><strong>Reminders:</strong> ${reminders.length ? reminders.map((item) => `${item.dueDate}: ${item.title}`).join("; ") : "None yet."}</p>
             </article>
           `;
         })
         .join("")
-    : `<p class="helper-text">No pipeline locations yet. Add one from Search Locations.</p>`;
+    : `<p class="helper-text">${records.length ? "Hidden pipeline items are filtered out. Turn on Show hidden to view them." : "No pipeline locations yet. Add one from Search Locations."}</p>`;
 
   document.querySelectorAll(".pipeline-edit-action").forEach((button) => {
     button.addEventListener("click", () => {
       loadPipelineRecordIntoForm(button.dataset.locationId);
+      renderPipelineList();
     });
   });
+  document.querySelectorAll(".pipeline-hide-action").forEach((button) => {
+    button.addEventListener("click", () => {
+      togglePipelineHidden(button.dataset.locationId);
+    });
+  });
+  document.querySelectorAll(".pipeline-remove-action").forEach((button) => {
+    button.addEventListener("click", () => {
+      removePipelineRecord(button.dataset.locationId);
+    });
+  });
+}
+
+function togglePipelineHidden(locationId) {
+  const activeRecord = getPipelineForLocationId(locationId);
+  const records = getPipelineRecords().map((record) =>
+    record.locationId === locationId ? { ...record, hidden: !record.hidden, updatedAt: new Date().toISOString() } : record
+  );
+
+  savePipelineRecords(records);
+  if (opsLocation.value === locationId) {
+    hideOpsLocation.textContent = activeRecord?.hidden ? "Hide From List" : "Show In List";
+  }
+  renderPipelineList();
+  renderResults();
+}
+
+function removePipelineRecord(locationId) {
+  const location = locations.find((item) => item.id === locationId);
+  const records = getPipelineRecords().filter((record) => record.locationId !== locationId);
+
+  savePipelineRecords(records);
+  if (selectedPipelineLocationId === locationId) {
+    selectedPipelineLocationId = "";
+    opsDetailTitle.textContent = "Select a pipeline item";
+    opsStatusMessage.textContent = `${location?.name || "Pipeline item"} removed.`;
+  }
+  renderPipelineList();
+  renderResults();
+  renderCalendar();
+  renderReports();
+}
+
+function generatePipelineSummary() {
+  const location = locations.find((item) => item.id === opsLocation.value);
+
+  if (!location) {
+    opsStatusMessage.textContent = "Choose a pipeline location before summarizing.";
+    return;
+  }
+
+  const steps = getPipelineStepsFromForm();
+  const progress = getPipelineStepProgress(steps);
+  const files = [
+    ...getPipelineFileNames(opsDocumentUpload, getPipelineForLocationId(location.id)?.documentFiles || []),
+    ...getPipelineFileNames(opsPhotoUpload, getPipelineForLocationId(location.id)?.photoFiles || [])
+  ];
+  const needs = Object.entries({
+    form: "vendor request form",
+    insurance: "insurance / permit review",
+    documents: "supporting documents",
+    fee: "fee payment",
+    confirmation: "venue confirmation"
+  })
+    .filter(([key]) => !steps[key])
+    .map(([, label]) => label);
+
+  opsAiSummaryOutput.value = [
+    `${location.name} is currently marked ${opsStatus.value}.`,
+    `Reservation progress is ${progress.complete} of ${progress.total} steps complete.`,
+    needs.length ? `Next focus: ${needs.join(", ")}.` : "All reservation steps are marked complete.",
+    opsDeadline.value ? `Application deadline: ${opsDeadline.value}.` : "No deadline has been entered yet.",
+    opsFee.value ? `Estimated fee: $${Number(opsFee.value).toLocaleString()}.` : "No fee has been entered yet.",
+    files.length ? `Attached files/photos listed: ${files.join(", ")}.` : "No files or photos are listed yet.",
+    opsNotes.value.trim() ? `Notes: ${opsNotes.value.trim()}` : "Add notes from the application, venue page, or phone call for a stronger summary."
+  ].join("\n");
+  opsStatusMessage.textContent = "Summary drafted. Save details to keep it with this pipeline item.";
 }
 
 function savePipelineRecord() {
@@ -4319,6 +4467,7 @@ function savePipelineRecord() {
     return;
   }
 
+  const existing = getPipelineForLocationId(location.id);
   const record = {
     location: location.name,
     locationId: location.id,
@@ -4327,13 +4476,18 @@ function savePipelineRecord() {
     fee: Number(opsFee.value) || 0,
     webpage: opsWebpage.value.trim() || location.sourceUrl || "",
     documents: opsDocuments.value.trim(),
-    documentFiles: Array.from(opsDocumentUpload.files || []).map((file) => file.name),
+    documentFiles: getPipelineFileNames(opsDocumentUpload, existing?.documentFiles || []),
+    photoFiles: getPipelineFileNames(opsPhotoUpload, existing?.photoFiles || []),
+    steps: getPipelineStepsFromForm(),
     notes: opsNotes.value.trim(),
+    aiSummary: opsAiSummaryOutput.value.trim(),
+    hidden: existing?.hidden || false,
     updatedAt: new Date().toISOString()
   };
   const records = getPipelineRecords().filter((item) => item.locationId !== location.id);
 
   savePipelineRecords([record, ...records]);
+  selectedPipelineLocationId = location.id;
   if (opsReminderTitle.value.trim() && opsReminderDate.value) {
     saveReminderRecords([
       {
@@ -5175,6 +5329,18 @@ document.querySelector("#jump-list-space").addEventListener("click", () => {
 });
 document.querySelector("#save-ops-location").addEventListener("click", savePipelineRecord);
 opsLocation.addEventListener("change", () => loadPipelineRecordIntoForm(opsLocation.value));
+showHiddenPipeline.addEventListener("change", renderPipelineList);
+opsAiSummary.addEventListener("click", generatePipelineSummary);
+hideOpsLocation.addEventListener("click", () => {
+  if (opsLocation.value) {
+    togglePipelineHidden(opsLocation.value);
+  }
+});
+removeOpsLocation.addEventListener("click", () => {
+  if (opsLocation.value) {
+    removePipelineRecord(opsLocation.value);
+  }
+});
 document.querySelector("#open-truck-marketing").addEventListener("click", () => {
   showScreen("public-site");
   document.querySelector(".marketing-layout").scrollIntoView({ behavior: "smooth", block: "start" });

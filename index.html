@@ -721,8 +721,24 @@
           </div>
 
           <div class="ops-grid">
-            <article class="feature-panel">
-              <p class="eyebrow">Location Pipeline</p>
+            <article class="feature-panel ops-list-panel">
+              <div class="panel-title-row">
+                <div>
+                  <p class="eyebrow">Pipeline List</p>
+                  <h3>Events you are trying to book</h3>
+                  <p class="helper-text">Locations added from Search appear here first. Open details to work the reservation steps, notes, files, and reminders.</p>
+                </div>
+                <label class="inline-check">
+                  <input id="show-hidden-pipeline" type="checkbox">
+                  Show hidden
+                </label>
+              </div>
+              <div class="ops-pipeline-list" id="ops-pipeline-list"></div>
+            </article>
+
+            <article class="feature-panel ops-detail-panel">
+              <p class="eyebrow">Pipeline Details</p>
+              <h3 id="ops-detail-title">Select a pipeline item</h3>
               <label>
                 Location
                 <select id="ops-location"></select>
@@ -760,9 +776,43 @@
                 <input id="ops-document-upload" type="file" multiple>
               </label>
               <label>
+                Take or upload photos
+                <input id="ops-photo-upload" type="file" accept="image/*" capture="environment" multiple>
+              </label>
+
+              <div class="reservation-steps" aria-labelledby="reservation-steps-title">
+                <h4 id="reservation-steps-title">Reservation steps</h4>
+                <label class="step-check">
+                  <input id="ops-step-form" type="checkbox">
+                  Fill out vendor request form from venue
+                </label>
+                <label class="step-check">
+                  <input id="ops-step-insurance" type="checkbox">
+                  Check insurance, permits, COI, and venue requirements
+                </label>
+                <label class="step-check">
+                  <input id="ops-step-documents" type="checkbox">
+                  Attach application, menu, photos, and required documents
+                </label>
+                <label class="step-check">
+                  <input id="ops-step-fee" type="checkbox">
+                  Pay booth, vendor, or reservation fee
+                </label>
+                <label class="step-check">
+                  <input id="ops-step-confirmation" type="checkbox">
+                  Receive confirmation from venue
+                </label>
+              </div>
+
+              <label>
                 Contact notes
                 <input id="ops-notes" type="text" placeholder="Email, phone, application link, setup notes">
               </label>
+              <label>
+                AI event/application summary
+                <textarea id="ops-ai-summary-output" rows="5" placeholder="Use AI Summary after adding notes, links, photos, or documents."></textarea>
+              </label>
+              <button type="button" class="secondary" id="ops-ai-summary">Summarize Application</button>
               <label>
                 Reminder for this location
                 <input id="ops-reminder-title" type="text" placeholder="Call event organizer, submit permit">
@@ -771,15 +821,12 @@
                 Reminder date
                 <input id="ops-reminder-date" type="date">
               </label>
-              <button type="button" class="primary" id="save-ops-location">Save Pipeline</button>
+              <div class="button-row">
+                <button type="button" class="primary" id="save-ops-location">Save Details</button>
+                <button type="button" class="secondary" id="hide-ops-location">Hide From List</button>
+                <button type="button" class="secondary danger-button" id="remove-ops-location">Remove</button>
+              </div>
               <p class="status-message" id="ops-status-message"></p>
-            </article>
-
-            <article class="feature-panel ops-list-panel">
-              <p class="eyebrow">Pipeline List</p>
-              <h3>Tracked locations</h3>
-              <p class="helper-text">Locations added from Search appear here with status, webpage, notes, documents, and reminders.</p>
-              <div class="ops-pipeline-list" id="ops-pipeline-list"></div>
             </article>
 
             <article class="feature-panel" id="ops-marketing-panel">
