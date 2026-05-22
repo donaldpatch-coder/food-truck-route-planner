@@ -113,6 +113,11 @@ const reportWeatherImpact = document.querySelector("#report-weather-impact");
 const reportPipelineValue = document.querySelector("#report-pipeline-value");
 const reportSupplierCosts = document.querySelector("#report-supplier-costs");
 const reportPosSummary = document.querySelector("#report-pos-summary");
+const reportGrossHour = document.querySelector("#report-gross-hour");
+const reportLowPerformers = document.querySelector("#report-low-performers");
+const reportUntestedOpportunities = document.querySelector("#report-untested-opportunities");
+const reportRouteMileage = document.querySelector("#report-route-mileage");
+const reportRouteVendors = document.querySelector("#report-route-vendors");
 const marketplaceQuery = document.querySelector("#marketplace-query");
 const marketplaceZip = document.querySelector("#marketplace-zip");
 const marketplaceCategory = document.querySelector("#marketplace-category");
@@ -4490,6 +4495,103 @@ function renderSelectedLocationReport(locationName, checkins, byLocation) {
   );
 }
 
+function getCheckinHours(checkin) {
+  if (!checkin.startTime || !checkin.endTime) {
+    return 0;
+  }
+
+  const [startHour, startMinute] = checkin.startTime.split(":").map(Number);
+  const [endHour, endMinute] = checkin.endTime.split(":").map(Number);
+  const start = new Date();
+  const end = new Date();
+
+  start.setHours(startHour || 0, startMinute || 0, 0, 0);
+  end.setHours(endHour || 0, endMinute || 0, 0, 0);
+
+  if (end < start) {
+    end.setDate(end.getDate() + 1);
+  }
+
+  return Math.max(0, (end - start) / 3600000);
+}
+
+function renderExpandedDecisionReports(checkins, byLocation) {
+  const routeBase = homeBase.value.trim() || "Lowell, MA";
+  const routeStops = getRouteStops();
+  const routeLegs = getRouteLegs(routeStops, routeBase);
+  const routeVendors = getSupplierRouteMatches(routeStops, routeBase);
+  const testedLocations = new Set(checkins.map((checkin) => checkin.location));
+  const averageProfit = byLocation.length
+    ? byLocation.reduce((sum, item) => sum + item.avgProfit, 0) / byLocation.length
+    : 0;
+
+  renderReportList(
+    reportGrossHour,
+    checkins
+      .map((checkin) => {
+        const hours = getCheckinHours(checkin);
+        const rate = hours > 0 ? Math.round(Number(checkin.sales || 0) / hours) : 0;
+
+        return { ...checkin, hours, rate };
+      })
+      .filter((checkin) => checkin.rate > 0)
+      .sort((a, b) => b.rate - a.rate)
+      .slice(0, 6)
+      .map((checkin) => ({
+        title: checkin.location,
+        detail: `$${checkin.rate.toLocaleString()}/hr on ${checkin.date || "unknown date"} over ${checkin.hours.toFixed(1)} hours`
+      })),
+    "No timed check-ins yet. Use Sales Log start/stop times to unlock this report."
+  );
+
+  renderReportList(
+    reportLowPerformers,
+    byLocation
+      .filter((item) => item.avgProfit < averageProfit || item.profit < 0)
+      .sort((a, b) => a.avgProfit - b.avgProfit)
+      .slice(0, 6)
+      .map((item) => ({
+        title: item.location,
+        detail: `$${item.avgProfit.toLocaleString()} avg profit over ${item.visits} visits. Review notes, weather, competition, or rent.`
+      })),
+    "No weak spots yet. More check-ins will reveal locations to improve or avoid."
+  );
+
+  renderReportList(
+    reportUntestedOpportunities,
+    locations
+      .filter((location) => !testedLocations.has(location.name))
+      .sort((a, b) => getLocationScore(b) - getLocationScore(a))
+      .slice(0, 6)
+      .map((location) => ({
+        title: `${location.name} - ${getLocationScore(location)}/100`,
+        detail: `${location.city} - ${location.bestTime || "Time TBD"} - ${location.opportunityType || "Opportunity"}`
+      })),
+    "Every current opportunity has at least one check-in."
+  );
+
+  renderReportList(
+    reportRouteMileage,
+    routeLegs
+      .sort((a, b) => b.miles - a.miles)
+      .slice(0, 6)
+      .map((leg) => ({
+        title: `${leg.from} to ${leg.to}`,
+        detail: `${leg.miles} estimated miles from ${leg.fromCity || "unknown"} to ${leg.toCity || "unknown"}`
+      })),
+    "No route mileage available yet."
+  );
+
+  renderReportList(
+    reportRouteVendors,
+    routeVendors.slice(0, 6).map((vendor) => ({
+      title: vendor.name,
+      detail: `${vendor.category} in ${vendor.city}. About ${vendor.routeMiles} miles from route. Best for ${vendor.bestFor}.`
+    })),
+    "No route vendor matches yet."
+  );
+}
+
 function renderReports() {
   const checkins = getSavedCheckins();
   const totalSales = checkins.reduce((sum, checkin) => sum + Number(checkin.sales || 0), 0);
@@ -4573,6 +4675,7 @@ function renderReports() {
     })),
     "No POS imports yet."
   );
+  renderExpandedDecisionReports(checkins, byLocation);
 }
 
 navItems.forEach((item) => {
