@@ -16,6 +16,7 @@
             <h1>Route Planner</h1>
           </div>
         </div>
+        <button type="button" class="secondary nav-toggle" id="nav-toggle">Menu</button>
 
         <nav class="nav" aria-label="App screens">
           <button class="nav-item active" data-screen="login">Account</button>
@@ -29,6 +30,9 @@
           <button class="nav-item" data-screen="operations">Operations</button>
           <button class="nav-item" data-screen="public-site">Public Site</button>
           <button class="nav-item" data-screen="pos">POS</button>
+          <button class="nav-item" data-screen="reports">Reports</button>
+          <button class="nav-item" data-screen="marketplace">Marketplace</button>
+          <button class="nav-item" data-screen="settings">Settings</button>
         </nav>
       </aside>
 
@@ -71,6 +75,12 @@
             <p class="eyebrow">Dashboard</p>
             <h2 id="dashboard-title">Dashboard</h2>
             <p>Today's best opportunities at a glance.</p>
+          </div>
+
+          <div class="tester-banner">
+            <strong>Tester build</strong>
+            <span>Use Settings to send feedback, export demo data, or reset your local test data.</span>
+            <button type="button" class="secondary" data-next="settings">Open Settings</button>
           </div>
 
           <div class="dashboard-grid">
@@ -521,6 +531,14 @@
               Home base
               <input id="home-base" type="text" value="Lowell, MA">
             </label>
+            <label>
+              Route view
+              <select id="route-period">
+                <option value="week">Week</option>
+                <option value="month">Month</option>
+                <option value="year">Year</option>
+              </select>
+            </label>
             <button type="button" class="primary" id="generate-ai-week">Suggest My Week</button>
           </div>
 
@@ -534,6 +552,21 @@
               <p class="eyebrow">Route Estimate</p>
               <h3 id="route-estimate-title">Home base not calculated</h3>
               <p id="route-estimate-copy">Route notes use city distance estimates for planning until map routing is connected.</p>
+            </article>
+          </div>
+
+          <div class="route-map-layout">
+            <article class="feature-panel route-map-panel">
+              <p class="eyebrow">Route Map</p>
+              <h3 id="route-map-title">Weekly route</h3>
+              <div class="route-map" id="route-map"></div>
+            </article>
+            <article class="feature-panel">
+              <p class="eyebrow">Mileage Plan</p>
+              <h3 id="route-mileage-total">0 miles</h3>
+              <div class="route-leg-list" id="route-leg-list"></div>
+              <p class="eyebrow route-vendor-heading">Vendors Along Route</p>
+              <div class="route-vendor-list" id="route-vendor-list"></div>
             </article>
           </div>
 
@@ -640,6 +673,7 @@
               <p class="eyebrow">Square</p>
               <h3 id="square-status-title">Not connected</h3>
               <p id="square-status-copy">This tester build includes a Square connection placeholder. Real OAuth will be added before production.</p>
+              <p class="sandbox-warning">Sandbox simulation only. This does not connect to a real Square account yet.</p>
               <div class="connection-badge" id="square-connection-badge">Disconnected</div>
               <div class="button-row">
                 <button type="button" class="primary" id="connect-square">Connect Square Sandbox</button>
@@ -650,25 +684,19 @@
 
             <article class="feature-panel" id="square-import-panel">
               <p class="eyebrow">Sample Import</p>
-              <h3>Import Square demo sales</h3>
-              <p>Use this during testing to simulate Square sending sales into the app.</p>
+              <h3>Select Square transactions</h3>
+              <p>Use this during testing to simulate Square sending a batch of transactions into the app.</p>
               <label>
                 Match to location
                 <select id="square-import-location"></select>
               </label>
-              <label>
-                Demo sales total
-                <input id="square-import-sales" type="number" min="0" step="1" value="925">
-              </label>
-              <label>
-                Demo costs
-                <input id="square-import-costs" type="number" min="0" step="1" value="310">
-              </label>
-              <label>
-                Top items
-                <input id="square-import-items" type="text" value="Tacos, lemonade, loaded fries">
-              </label>
-              <button type="button" class="primary" id="import-square-demo">Import Demo Sale</button>
+              <div class="button-row">
+                <button type="button" class="secondary" id="select-all-square">Select All</button>
+                <button type="button" class="secondary" id="clear-square-selection">Clear</button>
+                <button type="button" class="secondary" id="refresh-square-demo">Refresh Demo Batch</button>
+              </div>
+              <div class="transaction-list" id="square-transaction-list"></div>
+              <button type="button" class="primary" id="import-square-demo">Import Selected Transactions</button>
               <p class="status-message" id="square-import-status" aria-live="polite"></p>
             </article>
           </div>
@@ -686,6 +714,194 @@
               </thead>
               <tbody id="square-sync-history"></tbody>
             </table>
+          </div>
+        </section>
+
+        <section id="reports" class="screen" aria-labelledby="reports-title">
+          <div class="screen-header">
+            <p class="eyebrow">Analytics</p>
+            <h2 id="reports-title">Business Reports</h2>
+            <p>Turn check-ins, POS imports, supplier prices, weather, and pipeline data into decisions.</p>
+          </div>
+
+          <div class="reports-grid">
+            <article class="metric"><span>Total Sales</span><strong id="report-total-sales">$0</strong></article>
+            <article class="metric"><span>Total Profit</span><strong id="report-total-profit">$0</strong></article>
+            <article class="metric"><span>Avg Profit / Visit</span><strong id="report-avg-profit">$0</strong></article>
+            <article class="metric"><span>Best Location</span><strong id="report-best-location">--</strong></article>
+          </div>
+
+          <div class="reports-grid wide">
+            <article class="feature-panel">
+              <p class="eyebrow">Location Performance</p>
+              <div class="report-list" id="report-location-performance"></div>
+            </article>
+            <article class="feature-panel">
+              <p class="eyebrow">Menu Demand</p>
+              <div class="report-list" id="report-menu-demand"></div>
+            </article>
+            <article class="feature-panel">
+              <p class="eyebrow">Weather Impact</p>
+              <div class="report-list" id="report-weather-impact"></div>
+            </article>
+            <article class="feature-panel">
+              <p class="eyebrow">Pipeline Value</p>
+              <div class="report-list" id="report-pipeline-value"></div>
+            </article>
+            <article class="feature-panel">
+              <p class="eyebrow">Supplier Cost Watch</p>
+              <div class="report-list" id="report-supplier-costs"></div>
+            </article>
+            <article class="feature-panel">
+              <p class="eyebrow">POS Sync Summary</p>
+              <div class="report-list" id="report-pos-summary"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="marketplace" class="screen" aria-labelledby="marketplace-title">
+          <div class="screen-header">
+            <p class="eyebrow">Buy & Sell</p>
+            <h2 id="marketplace-title">Truck & Equipment Marketplace</h2>
+            <p>Help operators find used trucks, trailers, generators, refrigeration, cooking equipment, and startup bundles.</p>
+          </div>
+
+          <div class="supplier-search-panel">
+            <label>
+              Search
+              <input id="marketplace-query" type="search" placeholder="truck, trailer, generator, fryer...">
+            </label>
+            <label>
+              Category
+              <select id="marketplace-category">
+                <option value="all">All listings</option>
+                <option>Food truck</option>
+                <option>Trailer</option>
+                <option>Cooking equipment</option>
+                <option>Refrigeration</option>
+                <option>Power</option>
+                <option>POS</option>
+                <option>Smallwares</option>
+              </select>
+            </label>
+            <button type="button" class="primary" id="search-marketplace">Search Marketplace</button>
+          </div>
+
+          <details class="add-location-panel">
+            <summary>Sell a truck or equipment</summary>
+            <form class="custom-location-form">
+              <label>
+                Listing title
+                <input id="marketplace-title-input" type="text" placeholder="2018 food truck, 24 inch griddle...">
+              </label>
+              <label>
+                Category
+                <select id="marketplace-listing-category">
+                  <option>Food truck</option>
+                  <option>Trailer</option>
+                  <option>Cooking equipment</option>
+                  <option>Refrigeration</option>
+                  <option>Power</option>
+                  <option>POS</option>
+                  <option>Smallwares</option>
+                </select>
+              </label>
+              <label>
+                City / state
+                <input id="marketplace-city" type="text" placeholder="Nashua, NH">
+              </label>
+              <label>
+                Price
+                <input id="marketplace-price" type="number" min="0" step="1" placeholder="45000">
+              </label>
+              <label>
+                Contact link
+                <input id="marketplace-contact" type="url" placeholder="https://...">
+              </label>
+              <label>
+                Affiliate / referral link
+                <input id="marketplace-affiliate" type="url" placeholder="Optional monetized link">
+              </label>
+              <label class="wide-field">
+                Description
+                <input id="marketplace-description" type="text" placeholder="Condition, equipment included, mileage, power, inspection notes">
+              </label>
+              <button type="button" class="primary" id="save-marketplace-listing">Publish Listing</button>
+              <p class="status-message" id="marketplace-status" aria-live="polite"></p>
+            </form>
+          </details>
+
+          <div class="results-toolbar">
+            <p class="helper-text" id="marketplace-summary"></p>
+          </div>
+          <div class="marketplace-grid" id="marketplace-grid"></div>
+        </section>
+
+        <section id="settings" class="screen" aria-labelledby="settings-title">
+          <div class="screen-header">
+            <p class="eyebrow">Tester Tools</p>
+            <h2 id="settings-title">Settings & Feedback</h2>
+            <p>Manage basic business defaults, send tester feedback, export demo data, or reset this browser.</p>
+          </div>
+
+          <div class="settings-grid">
+            <article class="feature-panel">
+              <p class="eyebrow">Business Defaults</p>
+              <label>
+                Business name
+                <input id="settings-business-name" type="text" placeholder="Lowell Bites">
+              </label>
+              <label>
+                Home base
+                <input id="settings-home-base" type="text" placeholder="Lowell, MA">
+              </label>
+              <label>
+                Default food type
+                <select id="settings-food-type">
+                  <option>Tacos</option>
+                  <option>Burgers</option>
+                  <option>Coffee</option>
+                  <option>Dessert</option>
+                  <option>BBQ</option>
+                  <option>Seafood</option>
+                  <option>Other</option>
+                </select>
+              </label>
+              <label>
+                Service radius
+                <input id="settings-radius" type="number" min="5" step="5" value="50">
+              </label>
+              <button type="button" class="primary" id="save-settings">Save Settings</button>
+              <p class="status-message" id="settings-status"></p>
+            </article>
+
+            <article class="feature-panel">
+              <p class="eyebrow">Tester Feedback</p>
+              <label>
+                What did you try?
+                <input id="feedback-area" type="text" placeholder="Square import, route map, check-in timer...">
+              </label>
+              <label>
+                Feedback
+                <input id="feedback-message" type="text" placeholder="What was confusing, useful, missing, or broken?">
+              </label>
+              <label>
+                Contact email
+                <input id="feedback-email" type="email" placeholder="Optional">
+              </label>
+              <button type="button" class="primary" id="save-feedback">Save Feedback</button>
+              <div class="mini-list" id="feedback-list"></div>
+            </article>
+
+            <article class="feature-panel">
+              <p class="eyebrow">Demo Data</p>
+              <p>Export this browser's tester data or reset local demo records before another test run.</p>
+              <div class="button-row">
+                <button type="button" class="primary" id="export-demo-data">Export Data</button>
+                <button type="button" class="secondary danger-button" id="reset-demo-data">Reset Demo Data</button>
+              </div>
+              <p class="status-message" id="data-tools-status"></p>
+            </article>
           </div>
         </section>
       </section>

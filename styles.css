@@ -87,6 +87,12 @@ select {
   gap: 8px;
 }
 
+.nav-toggle {
+  display: none;
+  width: 100%;
+  margin: 0 0 12px;
+}
+
 .nav-item {
   width: 100%;
   min-height: 44px;
@@ -214,6 +220,23 @@ select {
   font-size: 14px;
 }
 
+.tester-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border: 1px solid #f0d28a;
+  border-radius: 8px;
+  background: #fff8e8;
+  margin-bottom: 18px;
+  padding: 14px 16px;
+}
+
+.tester-banner span,
+.sandbox-warning {
+  color: var(--muted);
+}
+
 .primary,
 .secondary {
   min-height: 44px;
@@ -233,6 +256,11 @@ select {
   border: 1px solid var(--line);
   background: #ffffff;
   color: var(--ink);
+}
+
+.danger-button {
+  border-color: #b94545;
+  color: #9d2e2e;
 }
 
 .dashboard-grid {
@@ -387,6 +415,33 @@ select {
   margin: 0;
 }
 
+.marketplace-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.marketplace-card {
+  display: grid;
+  gap: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: var(--shadow);
+  padding: 20px;
+}
+
+.marketplace-card h3,
+.marketplace-card p {
+  margin: 0;
+}
+
+.marketplace-price {
+  color: var(--blue-dark);
+  font-size: 30px;
+  font-weight: 900;
+}
+
 .affiliate-note {
   border-left: 3px solid var(--yellow);
   color: var(--muted);
@@ -446,6 +501,77 @@ select {
   margin-top: 18px;
 }
 
+.route-map-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.75fr);
+  gap: 16px;
+  margin: 18px 0;
+}
+
+.route-map-panel {
+  min-height: 420px;
+}
+
+.route-map {
+  min-height: 330px;
+  margin-top: 14px;
+}
+
+.route-map svg {
+  width: 100%;
+  min-height: 330px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #eef5f2;
+}
+
+.map-bg {
+  fill: #eef5f2;
+}
+
+.map-road {
+  fill: none;
+  stroke: #c9d7cf;
+  stroke-width: 2;
+}
+
+.route-line {
+  fill: none;
+  stroke: var(--blue);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.4;
+}
+
+.home-dot {
+  fill: var(--yellow);
+  stroke: #17202c;
+  stroke-width: 0.7;
+}
+
+.stop-dot {
+  fill: var(--blue);
+  stroke: #ffffff;
+  stroke-width: 0.7;
+}
+
+.route-map text {
+  fill: var(--ink);
+  font-size: 3px;
+  font-weight: 900;
+}
+
+.route-leg-list,
+.route-vendor-list {
+  display: grid;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.route-vendor-heading {
+  margin-top: 18px;
+}
+
 .calendar-card {
   display: grid;
   grid-template-columns: minmax(260px, 1fr) repeat(3, minmax(120px, 0.4fr));
@@ -466,6 +592,18 @@ select {
 .ops-grid {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   align-items: start;
+}
+
+.settings-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  align-items: start;
+}
+
+.settings-grid .feature-panel {
+  display: grid;
+  gap: 14px;
 }
 
 .ops-grid .feature-panel {
@@ -489,6 +627,46 @@ select {
 .mini-list-item span {
   color: var(--muted);
   font-size: 13px;
+}
+
+.transaction-list {
+  display: grid;
+  gap: 8px;
+  max-height: 320px;
+  overflow: auto;
+}
+
+.transaction-row {
+  display: grid;
+  grid-template-columns: auto 54px 1fr auto auto;
+  gap: 10px;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #f8fafc;
+  padding: 10px;
+}
+
+.transaction-row input {
+  min-height: auto;
+  width: auto;
+}
+
+.reports-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.reports-grid.wide {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.report-list {
+  display: grid;
+  gap: 10px;
+  margin-top: 12px;
 }
 
 .add-location-panel {
@@ -713,6 +891,18 @@ tr:last-child td {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .nav-toggle {
+    display: block;
+  }
+
+  .sidebar .nav {
+    display: none;
+  }
+
+  .sidebar.nav-open .nav {
+    display: grid;
+  }
+
   .content {
     padding: 24px;
   }
@@ -722,10 +912,15 @@ tr:last-child td {
   .checkin-layout,
   .pos-layout,
   .calendar-card,
+  .route-map-layout,
   .ops-grid,
+  .settings-grid,
   .planner-toolbar,
   .public-layout,
   .public-listing-grid,
+  .marketplace-grid,
+  .reports-grid,
+  .reports-grid.wide,
   .metric-grid,
   .custom-location-form,
   .supplier-list,
@@ -745,6 +940,11 @@ tr:last-child td {
 
   .timer-panel {
     grid-template-columns: 1fr;
+  }
+
+  .tester-banner {
+    align-items: stretch;
+    flex-direction: column;
   }
 }
 

@@ -1,5 +1,6 @@
 const screens = document.querySelectorAll(".screen");
 const navItems = document.querySelectorAll(".nav-item");
+const navToggle = document.querySelector("#nav-toggle");
 const resultList = document.querySelector("#results-list");
 const accountStatus = document.querySelector("#account-status");
 const planStatus = document.querySelector("#plan-status");
@@ -50,11 +51,17 @@ const publicSpaceLink = document.querySelector("#public-space-link");
 const publicSpaceNotes = document.querySelector("#public-space-notes");
 const publicListingStatus = document.querySelector("#public-listing-status");
 const homeBase = document.querySelector("#home-base");
+const routePeriod = document.querySelector("#route-period");
 const aiWeekTitle = document.querySelector("#ai-week-title");
 const aiWeekCopy = document.querySelector("#ai-week-copy");
 const routeEstimateTitle = document.querySelector("#route-estimate-title");
 const routeEstimateCopy = document.querySelector("#route-estimate-copy");
 const calendarList = document.querySelector("#calendar-list");
+const routeMapTitle = document.querySelector("#route-map-title");
+const routeMap = document.querySelector("#route-map");
+const routeMileageTotal = document.querySelector("#route-mileage-total");
+const routeLegList = document.querySelector("#route-leg-list");
+const routeVendorList = document.querySelector("#route-vendor-list");
 const opsLocation = document.querySelector("#ops-location");
 const opsStatus = document.querySelector("#ops-status");
 const opsDeadline = document.querySelector("#ops-deadline");
@@ -75,11 +82,41 @@ const squareStatusTitle = document.querySelector("#square-status-title");
 const squareStatusCopy = document.querySelector("#square-status-copy");
 const squareConnectionBadge = document.querySelector("#square-connection-badge");
 const squareImportLocation = document.querySelector("#square-import-location");
-const squareImportSales = document.querySelector("#square-import-sales");
-const squareImportCosts = document.querySelector("#square-import-costs");
-const squareImportItems = document.querySelector("#square-import-items");
+const squareTransactionList = document.querySelector("#square-transaction-list");
 const squareImportStatus = document.querySelector("#square-import-status");
 const squareSyncHistory = document.querySelector("#square-sync-history");
+const reportTotalSales = document.querySelector("#report-total-sales");
+const reportTotalProfit = document.querySelector("#report-total-profit");
+const reportAvgProfit = document.querySelector("#report-avg-profit");
+const reportBestLocation = document.querySelector("#report-best-location");
+const reportLocationPerformance = document.querySelector("#report-location-performance");
+const reportMenuDemand = document.querySelector("#report-menu-demand");
+const reportWeatherImpact = document.querySelector("#report-weather-impact");
+const reportPipelineValue = document.querySelector("#report-pipeline-value");
+const reportSupplierCosts = document.querySelector("#report-supplier-costs");
+const reportPosSummary = document.querySelector("#report-pos-summary");
+const marketplaceQuery = document.querySelector("#marketplace-query");
+const marketplaceCategory = document.querySelector("#marketplace-category");
+const marketplaceTitleInput = document.querySelector("#marketplace-title-input");
+const marketplaceListingCategory = document.querySelector("#marketplace-listing-category");
+const marketplaceCity = document.querySelector("#marketplace-city");
+const marketplacePrice = document.querySelector("#marketplace-price");
+const marketplaceContact = document.querySelector("#marketplace-contact");
+const marketplaceAffiliate = document.querySelector("#marketplace-affiliate");
+const marketplaceDescription = document.querySelector("#marketplace-description");
+const marketplaceStatus = document.querySelector("#marketplace-status");
+const marketplaceSummary = document.querySelector("#marketplace-summary");
+const marketplaceGrid = document.querySelector("#marketplace-grid");
+const settingsBusinessName = document.querySelector("#settings-business-name");
+const settingsHomeBase = document.querySelector("#settings-home-base");
+const settingsFoodType = document.querySelector("#settings-food-type");
+const settingsRadius = document.querySelector("#settings-radius");
+const settingsStatus = document.querySelector("#settings-status");
+const feedbackArea = document.querySelector("#feedback-area");
+const feedbackMessage = document.querySelector("#feedback-message");
+const feedbackEmail = document.querySelector("#feedback-email");
+const feedbackList = document.querySelector("#feedback-list");
+const dataToolsStatus = document.querySelector("#data-tools-status");
 const salesInsightTitle = document.querySelector("#sales-insight-title");
 const salesInsightCopy = document.querySelector("#sales-insight-copy");
 const bestSalesLocation = document.querySelector("#best-sales-location");
@@ -156,6 +193,10 @@ const storageKeys = {
   publicListings: "foodTruckAiPublicListings",
   posConnection: "foodTruckAiPosConnection",
   squareImports: "foodTruckAiSquareImports",
+  squareDemoTransactions: "foodTruckAiSquareDemoTransactions",
+  marketplaceListings: "foodTruckAiMarketplaceListings",
+  settings: "foodTruckAiSettings",
+  feedback: "foodTruckAiFeedback",
   homeBase: "foodTruckAiHomeBase",
   activeBusinessProfileId: "foodTruckAiBusinessProfileId",
   activeUserId: "foodTruckAiUserId"
@@ -1617,6 +1658,98 @@ const suppliers = [
   }
 ];
 
+const starterMarketplaceListings = [
+  {
+    id: "starter-step-van",
+    title: "2017 step van food truck shell",
+    category: "Food truck",
+    city: "Manchester, NH",
+    price: 52000,
+    description: "Starter truck shell with serving window, generator compartment, and room for custom buildout.",
+    contactUrl: "https://www.commercialtrucktrader.com/food-truck/trucks-for-sale",
+    affiliateUrl: "",
+    sellerType: "Directory lead"
+  },
+  {
+    id: "starter-trailer",
+    title: "16 foot concession trailer",
+    category: "Trailer",
+    city: "New England",
+    price: 28500,
+    description: "Concession trailer style listing for startup operators comparing truck versus trailer costs.",
+    contactUrl: "https://www.usedvending.com/food-trailers/",
+    affiliateUrl: "",
+    sellerType: "Directory lead"
+  },
+  {
+    id: "starter-generator",
+    title: "Quiet commercial generator",
+    category: "Power",
+    city: "Ships to NH",
+    price: 4200,
+    description: "Power listing example for trucks needing event-ready generator capacity.",
+    contactUrl: "https://www.gofoodservice.com/",
+    affiliateUrl: "",
+    sellerType: "Supplier lead"
+  },
+  {
+    id: "starter-griddle",
+    title: "36 inch flat top griddle",
+    category: "Cooking equipment",
+    city: "New Hampshire",
+    price: 1800,
+    description: "Common food truck cooking equipment listing for burgers, tacos, breakfast, and festival menus.",
+    contactUrl: "https://www.katom.com/",
+    affiliateUrl: "",
+    sellerType: "Supplier lead"
+  },
+  {
+    id: "starter-refrigeration",
+    title: "Undercounter refrigeration unit",
+    category: "Refrigeration",
+    city: "New England",
+    price: 2300,
+    description: "Cold storage equipment listing example for prep and service line upgrades.",
+    contactUrl: "https://www.gofoodservice.com/",
+    affiliateUrl: "",
+    sellerType: "Supplier lead"
+  }
+];
+
+const cityCoordinates = {
+  "lowell, ma": { x: 42, y: 70 },
+  "manchester, nh": { x: 43, y: 55 },
+  "concord, nh": { x: 44, y: 43 },
+  "nashua, nh": { x: 40, y: 65 },
+  "milford, nh": { x: 35, y: 60 },
+  "hampton, nh": { x: 58, y: 60 },
+  "portsmouth, nh": { x: 60, y: 52 },
+  "deerfield, nh": { x: 52, y: 47 },
+  "contocook, nh": { x: 38, y: 42 },
+  "lancaster, nh": { x: 37, y: 11 },
+  "keene, nh": { x: 24, y: 54 },
+  "rochester, nh": { x: 58, y: 45 },
+  "newbury, nh": { x: 33, y: 36 },
+  "north conway, nh": { x: 63, y: 25 },
+  "sunapee, nh": { x: 31, y: 38 },
+  "wolfeboro, nh": { x: 57, y: 38 },
+  "salem, nh": { x: 45, y: 67 },
+  "derry, nh": { x: 46, y: 62 },
+  "peterborough, nh": { x: 30, y: 57 },
+  "exeter, nh": { x: 56, y: 58 },
+  "bennington, vt": { x: 9, y: 59 },
+  "burlington, vt": { x: 12, y: 22 },
+  "quechee, vt": { x: 20, y: 37 },
+  "west springfield, ma": { x: 20, y: 78 },
+  "topsfield, ma": { x: 52, y: 74 },
+  "cambridge, ma": { x: 47, y: 80 },
+  "marshfield, ma": { x: 57, y: 88 },
+  "durham, ct": { x: 22, y: 93 },
+  "norwalk, ct": { x: 28, y: 98 },
+  "unity, me": { x: 86, y: 20 },
+  "new england": { x: 48, y: 50 }
+};
+
 const defaultWeeklyPlan = [
   {
     day: "Monday",
@@ -1887,6 +2020,8 @@ function showScreen(id) {
   navItems.forEach((item) => {
     item.classList.toggle("active", item.dataset.screen === id);
   });
+
+  document.querySelector(".sidebar").classList.remove("nav-open");
 }
 
 function getSalesStats() {
@@ -2060,6 +2195,30 @@ function getSquareImports() {
 
 function saveSquareImports(imports) {
   saveCollection(storageKeys.squareImports, imports);
+}
+
+function getSquareDemoTransactions() {
+  return getSavedCollection(storageKeys.squareDemoTransactions);
+}
+
+function saveSquareDemoTransactions(transactions) {
+  saveCollection(storageKeys.squareDemoTransactions, transactions);
+}
+
+function getMarketplaceListings() {
+  return getSavedCollection(storageKeys.marketplaceListings);
+}
+
+function saveMarketplaceListings(listings) {
+  saveCollection(storageKeys.marketplaceListings, listings);
+}
+
+function getFeedbackRecords() {
+  return getSavedCollection(storageKeys.feedback);
+}
+
+function saveFeedbackRecords(records) {
+  saveCollection(storageKeys.feedback, records);
 }
 
 function getSupplierPartners() {
@@ -2412,6 +2571,7 @@ function saveCheckin() {
   renderDashboard();
   renderDetail();
   renderResults();
+  renderReports();
 
   saveCheckinToDatabase(checkin).then((savedToDatabase) => {
     checkinStatus.textContent = savedToDatabase
@@ -2426,6 +2586,7 @@ function clearCheckins() {
   renderDashboard();
   renderDetail();
   renderResults();
+  renderReports();
   checkinStatus.textContent = "Sales log cleared from this browser.";
 }
 
@@ -2996,6 +3157,238 @@ function saveSupplierPartner() {
   renderSuppliers();
 }
 
+function getAllMarketplaceListings() {
+  return [...getMarketplaceListings(), ...starterMarketplaceListings];
+}
+
+function getFilteredMarketplaceListings() {
+  const query = marketplaceQuery.value.trim().toLowerCase();
+  const category = marketplaceCategory.value;
+
+  return getAllMarketplaceListings().filter((listing) => {
+    const matchesCategory = category === "all" || listing.category === category;
+    const searchText = [listing.title, listing.category, listing.city, listing.description, listing.sellerType]
+      .join(" ")
+      .toLowerCase();
+
+    return matchesCategory && (!query || searchText.includes(query));
+  });
+}
+
+function renderMarketplace() {
+  const listings = getFilteredMarketplaceListings();
+
+  marketplaceSummary.textContent = `${listings.length} marketplace listing${listings.length === 1 ? "" : "s"} found.`;
+  marketplaceGrid.innerHTML = listings
+    .map(
+      (listing) => `
+        <article class="marketplace-card">
+          <p class="eyebrow">${listing.category}</p>
+          <h3>${listing.title}</h3>
+          <p class="helper-text">${listing.city}</p>
+          <div class="marketplace-price">$${Number(listing.price || 0).toLocaleString()}</div>
+          <p>${listing.description}</p>
+          <p class="helper-text">${listing.sellerType || "Seller listing"}</p>
+          <div class="button-row">
+            ${
+              listing.contactUrl
+                ? `<a class="source-link supplier-source" href="${listing.contactUrl}" target="_blank" rel="noreferrer">Contact seller</a>`
+                : ""
+            }
+            ${
+              listing.affiliateUrl
+                ? `<a class="source-link supplier-source affiliate-link" href="${listing.affiliateUrl}" target="_blank" rel="noreferrer">Partner deal</a>`
+                : ""
+            }
+          </div>
+        </article>
+      `
+    )
+    .join("");
+}
+
+function loadSettings() {
+  const savedSettings = appStorage.getItem(storageKeys.settings);
+  let settings = {};
+
+  try {
+    settings = savedSettings ? JSON.parse(savedSettings) : {};
+  } catch (error) {
+    settings = {};
+  }
+
+  const savedProfile = appStorage.getItem(storageKeys.profile);
+  let profile = {};
+
+  try {
+    profile = savedProfile ? JSON.parse(savedProfile) : {};
+  } catch (error) {
+    profile = {};
+  }
+
+  settingsBusinessName.value = settings.businessName || profile.businessName || document.querySelector("#business-name").value;
+  settingsHomeBase.value = settings.homeBase || appStorage.getItem(storageKeys.homeBase) || homeBase.value;
+  settingsFoodType.value = settings.foodType || document.querySelector("#food-type").value;
+  settingsRadius.value = settings.radius || 50;
+}
+
+function saveSettings() {
+  const settings = {
+    businessName: settingsBusinessName.value.trim(),
+    homeBase: settingsHomeBase.value.trim(),
+    foodType: settingsFoodType.value,
+    radius: Number(settingsRadius.value) || 50
+  };
+
+  appStorage.setItem(storageKeys.settings, JSON.stringify(settings));
+  document.querySelector("#business-name").value = settings.businessName;
+  document.querySelector("#city").value = settings.homeBase;
+  homeBase.value = settings.homeBase;
+  document.querySelector("#food-type").value = settings.foodType;
+  appStorage.setItem(storageKeys.homeBase, settings.homeBase);
+  settingsStatus.textContent = "Settings saved for this browser.";
+  renderCalendar();
+}
+
+function saveFeedback() {
+  if (!feedbackMessage.value.trim()) {
+    return;
+  }
+
+  const record = {
+    id: `${Date.now()}`,
+    area: feedbackArea.value.trim() || "General",
+    message: feedbackMessage.value.trim(),
+    email: feedbackEmail.value.trim(),
+    createdAt: new Date().toLocaleString()
+  };
+
+  saveFeedbackRecords([record, ...getFeedbackRecords()]);
+  feedbackArea.value = "";
+  feedbackMessage.value = "";
+  feedbackEmail.value = "";
+  renderFeedback();
+}
+
+function renderFeedback() {
+  const feedback = getFeedbackRecords();
+
+  feedbackList.innerHTML = feedback.length
+    ? feedback
+        .slice(0, 5)
+        .map(
+          (item) => `
+            <div class="mini-list-item">
+              <strong>${item.area}</strong>
+              <span>${item.message} ${item.email ? `- ${item.email}` : ""}</span>
+            </div>
+          `
+        )
+        .join("")
+    : `<p class="helper-text">Feedback saved here will be included in exported tester data.</p>`;
+}
+
+function collectDemoData() {
+  return {
+    profile: appStorage.getItem(storageKeys.profile),
+    settings: appStorage.getItem(storageKeys.settings),
+    checkins: getSavedCheckins(),
+    weeklyPlan: getSavedPlan(),
+    customLocations: getSavedCustomLocations(),
+    pipeline: getPipelineRecords(),
+    prices: getPriceRecords(),
+    reminders: getReminderRecords(),
+    supplierPartners: getSupplierPartners(),
+    publicListings: getPublicListings(),
+    marketplaceListings: getMarketplaceListings(),
+    squareImports: getSquareImports(),
+    feedback: getFeedbackRecords(),
+    exportedAt: new Date().toISOString()
+  };
+}
+
+function exportDemoData() {
+  const blob = new Blob([JSON.stringify(collectDemoData(), null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+
+  link.href = url;
+  link.download = "food-truck-planner-demo-data.json";
+  link.click();
+  URL.revokeObjectURL(url);
+  dataToolsStatus.textContent = "Demo data exported.";
+}
+
+function resetDemoData() {
+  [
+    storageKeys.weeklyPlan,
+    storageKeys.checkins,
+    storageKeys.customLocations,
+    storageKeys.pipeline,
+    storageKeys.prices,
+    storageKeys.reminders,
+    storageKeys.supplierPartners,
+    storageKeys.publicListings,
+    storageKeys.squareImports,
+    storageKeys.squareDemoTransactions,
+    storageKeys.marketplaceListings,
+    storageKeys.feedback
+  ].forEach((key) => appStorage.removeItem(key));
+
+  dataToolsStatus.textContent = "Demo data reset in this browser.";
+  loadCustomLocations();
+  renderAllDataViews();
+}
+
+function renderAllDataViews() {
+  renderDashboard();
+  renderDetail();
+  renderResults();
+  renderSuppliers();
+  renderMarketplace();
+  renderPublicListings();
+  renderPrices();
+  renderReminders();
+  renderCalendar();
+  renderSquareTransactions();
+  renderSquareHistory();
+  renderReports();
+  renderWeeklyPlan();
+  renderCheckinHistory();
+  renderFeedback();
+}
+
+function saveMarketplaceListing() {
+  if (!marketplaceTitleInput.value.trim()) {
+    marketplaceStatus.textContent = "Add a listing title first.";
+    return;
+  }
+
+  const listing = {
+    id: makeLocationId(marketplaceTitleInput.value.trim(), marketplaceCity.value.trim() || "marketplace"),
+    title: marketplaceTitleInput.value.trim(),
+    category: marketplaceListingCategory.value,
+    city: marketplaceCity.value.trim() || "New England",
+    price: Number(marketplacePrice.value) || 0,
+    description: marketplaceDescription.value.trim() || "Seller did not add a description yet.",
+    contactUrl: marketplaceContact.value.trim(),
+    affiliateUrl: marketplaceAffiliate.value.trim(),
+    sellerType: marketplaceAffiliate.value.trim() ? "Partner listing" : "Seller listing",
+    createdAt: new Date().toISOString()
+  };
+  const listings = getMarketplaceListings().filter((item) => item.id !== listing.id);
+
+  saveMarketplaceListings([listing, ...listings]);
+  marketplaceStatus.textContent = `${listing.title} was published to the marketplace.`;
+  marketplaceTitleInput.value = "";
+  marketplaceCity.value = "";
+  marketplacePrice.value = "";
+  marketplaceContact.value = "";
+  marketplaceAffiliate.value = "";
+  marketplaceDescription.value = "";
+  renderMarketplace();
+}
+
 function getDirectoryListings() {
   const researchedListings = locations
     .filter((location) => location.sourceUrl)
@@ -3113,6 +3506,7 @@ function savePipelineRecord() {
   renderCalendar();
   renderDashboard();
   renderResults();
+  renderReports();
 }
 
 function savePriceRecord() {
@@ -3135,6 +3529,7 @@ function savePriceRecord() {
   priceValue.value = "";
   priceUnit.value = "";
   renderPrices();
+  renderReports();
 }
 
 function renderPrices() {
@@ -3175,6 +3570,7 @@ function saveReminderRecord() {
   reminderDate.value = "";
   renderReminders();
   renderCalendar();
+  renderReports();
 }
 
 function renderReminders() {
@@ -3200,6 +3596,13 @@ function estimateDistanceMiles(fromCity, toCity) {
     return 0;
   }
 
+  const fromCoords = getCityCoordinates(fromCity);
+  const toCoords = getCityCoordinates(toCity);
+
+  if (fromCoords && toCoords) {
+    return Math.round(Math.hypot(toCoords.x - fromCoords.x, toCoords.y - fromCoords.y) * 3.6);
+  }
+
   const knownDistances = {
     "lowell, ma|manchester, nh": 34,
     "lowell, ma|concord, nh": 58,
@@ -3217,6 +3620,123 @@ function estimateDistanceMiles(fromCity, toCity) {
   return knownDistances[key] || knownDistances[reverseKey] || Math.max(15, Math.min(180, Math.round(toCity.length * 4.5)));
 }
 
+function normalizeCity(city) {
+  return (city || "New England").split("&")[0].trim().toLowerCase();
+}
+
+function getCityCoordinates(city) {
+  const normalized = normalizeCity(city);
+
+  return cityCoordinates[normalized] || cityCoordinates[normalized.replace(/\s+/g, " ")] || cityCoordinates["new england"];
+}
+
+function getRouteStopCount() {
+  if (routePeriod.value === "year") {
+    return 24;
+  }
+
+  if (routePeriod.value === "month") {
+    return 12;
+  }
+
+  return 5;
+}
+
+function getRouteStops() {
+  return [...locations]
+    .sort((a, b) => getLocationScore(b) - getLocationScore(a))
+    .slice(0, getRouteStopCount());
+}
+
+function getRouteLegs(stops, baseCity) {
+  const routePoints = [{ name: "Home Base", city: baseCity }, ...stops];
+
+  return routePoints.slice(0, -1).map((stop, index) => {
+    const nextStop = routePoints[index + 1];
+
+    return {
+      from: stop.name,
+      to: nextStop.name,
+      fromCity: stop.city,
+      toCity: nextStop.city,
+      miles: estimateDistanceMiles(stop.city, nextStop.city)
+    };
+  });
+}
+
+function getSupplierRouteMatches(stops, baseCity) {
+  const routeCities = new Set([baseCity, ...stops.map((stop) => stop.city || "")].map((city) => normalizeCity(city)));
+
+  return suppliers
+    .filter((supplier) => {
+      const normalizedSupplierCity = normalizeCity(supplier.city);
+      return [...routeCities].some((city) => normalizedSupplierCity.includes(city.split(",")[0]) || supplier.city.includes("NH") || supplier.city.includes("Statewide"));
+    })
+    .slice(0, 5);
+}
+
+function renderRouteMap(stops, baseCity) {
+  const mapStops = [{ name: "Home", city: baseCity, isHome: true }, ...stops];
+  const points = mapStops.map((stop) => ({
+    ...stop,
+    coords: getCityCoordinates(stop.city)
+  }));
+  const polyline = points.map((point) => `${point.coords.x},${point.coords.y}`).join(" ");
+
+  routeMapTitle.textContent = `${routePeriod.value[0].toUpperCase()}${routePeriod.value.slice(1)} route`;
+  routeMap.innerHTML = `
+    <svg viewBox="0 0 100 100" role="img" aria-label="Route map">
+      <rect x="0" y="0" width="100" height="100" rx="4" class="map-bg"></rect>
+      <path d="M 12 18 C 28 22, 34 18, 46 28 S 75 34, 84 20" class="map-road soft"></path>
+      <path d="M 15 80 C 30 70, 42 82, 55 70 S 78 65, 86 78" class="map-road soft"></path>
+      <polyline points="${polyline}" class="route-line"></polyline>
+      ${points
+        .map(
+          (point, index) => `
+            <g>
+              <circle cx="${point.coords.x}" cy="${point.coords.y}" r="${point.isHome ? 3.5 : 2.8}" class="${point.isHome ? "home-dot" : "stop-dot"}"></circle>
+              <text x="${Math.min(92, point.coords.x + 3)}" y="${Math.max(8, point.coords.y - 3)}">${index === 0 ? "Home" : index}</text>
+            </g>
+          `
+        )
+        .join("")}
+    </svg>
+  `;
+}
+
+function renderRoutePlanning() {
+  const baseCity = homeBase.value.trim() || "Lowell, MA";
+  const stops = getRouteStops();
+  const legs = getRouteLegs(stops, baseCity);
+  const totalMiles = legs.reduce((sum, leg) => sum + leg.miles, 0);
+  const vendors = getSupplierRouteMatches(stops, baseCity);
+
+  renderRouteMap(stops, baseCity);
+  routeMileageTotal.textContent = `${totalMiles.toLocaleString()} miles`;
+  routeLegList.innerHTML = legs
+    .map(
+      (leg) => `
+        <div class="mini-list-item">
+          <strong>${leg.from} to ${leg.to}</strong>
+          <span>${leg.fromCity || "Unknown"} to ${leg.toCity || "Unknown"} - ${leg.miles} miles</span>
+        </div>
+      `
+    )
+    .join("");
+  routeVendorList.innerHTML = vendors.length
+    ? vendors
+        .map(
+          (vendor) => `
+            <div class="mini-list-item">
+              <strong>${vendor.name}</strong>
+              <span>${vendor.category} - ${vendor.city}</span>
+            </div>
+          `
+        )
+        .join("")
+    : `<p class="helper-text">No suppliers matched this route yet.</p>`;
+}
+
 function getOpportunityDate(location) {
   const dateMatch = location.events && location.events.match(/(January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2}/i);
 
@@ -3232,6 +3752,7 @@ function renderCalendar() {
   appStorage.setItem(storageKeys.homeBase, base);
   routeEstimateTitle.textContent = `${base} route estimates`;
   routeEstimateCopy.textContent = "Distances are planning estimates until live map routing is connected.";
+  renderRoutePlanning();
   calendarList.innerHTML = topLocations
     .map((location) => {
       const pipeline = records.find((item) => item.locationId === location.id);
@@ -3307,11 +3828,89 @@ function disconnectSquare() {
   squareImportStatus.textContent = "Square sandbox disconnected.";
 }
 
+function createDemoSquareTransactions() {
+  const items = [
+    { item: "Street tacos", sales: 286, costs: 92 },
+    { item: "Loaded fries", sales: 174, costs: 58 },
+    { item: "Lemonade", sales: 132, costs: 24 },
+    { item: "Chicken rice bowl", sales: 218, costs: 76 },
+    { item: "Churros", sales: 96, costs: 26 },
+    { item: "Burger special", sales: 242, costs: 94 }
+  ];
+
+  return items.map((item, index) => ({
+    id: `sq-demo-${Date.now()}-${index}`,
+    time: `${11 + Math.floor(index / 2)}:${index % 2 === 0 ? "15" : "45"}`,
+    item: item.item,
+    sales: item.sales,
+    costs: item.costs,
+    selected: true
+  }));
+}
+
+function ensureSquareDemoTransactions() {
+  if (getSquareDemoTransactions().length === 0) {
+    saveSquareDemoTransactions(createDemoSquareTransactions());
+  }
+}
+
+function renderSquareTransactions() {
+  ensureSquareDemoTransactions();
+  squareTransactionList.innerHTML = getSquareDemoTransactions()
+    .map(
+      (transaction) => `
+        <label class="transaction-row">
+          <input type="checkbox" class="square-transaction-check" value="${transaction.id}" ${transaction.selected ? "checked" : ""}>
+          <span>${transaction.time}</span>
+          <strong>${transaction.item}</strong>
+          <span>$${transaction.sales.toLocaleString()}</span>
+          <span>$${(transaction.sales - transaction.costs).toLocaleString()} profit</span>
+        </label>
+      `
+    )
+    .join("");
+
+  document.querySelectorAll(".square-transaction-check").forEach((checkbox) => {
+    checkbox.addEventListener("change", () => {
+      const updatedTransactions = getSquareDemoTransactions().map((transaction) => ({
+        ...transaction,
+        selected: transaction.id === checkbox.value ? checkbox.checked : transaction.selected
+      }));
+
+      saveSquareDemoTransactions(updatedTransactions);
+    });
+  });
+}
+
+function setSquareTransactionSelection(selected) {
+  saveSquareDemoTransactions(
+    getSquareDemoTransactions().map((transaction) => ({
+      ...transaction,
+      selected
+    }))
+  );
+  renderSquareTransactions();
+}
+
+function refreshSquareDemoBatch() {
+  saveSquareDemoTransactions(createDemoSquareTransactions());
+  renderSquareTransactions();
+  squareImportStatus.textContent = "Loaded a fresh Square demo transaction batch.";
+}
+
 function importSquareDemoSale() {
   const location = locations.find((item) => item.id === squareImportLocation.value) || selectedLocation;
   const today = new Date().toISOString().slice(0, 10);
-  const sales = Number(squareImportSales.value) || 0;
-  const costs = Number(squareImportCosts.value) || 0;
+  const selectedTransactions = getSquareDemoTransactions().filter((transaction) => transaction.selected);
+
+  if (selectedTransactions.length === 0) {
+    squareImportStatus.textContent = "Select at least one Square transaction to import.";
+    return;
+  }
+
+  const sales = selectedTransactions.reduce((sum, transaction) => sum + transaction.sales, 0);
+  const costs = selectedTransactions.reduce((sum, transaction) => sum + transaction.costs, 0);
+  const items = selectedTransactions.map((transaction) => transaction.item).join(", ");
   const importRecord = {
     id: `${Date.now()}`,
     syncedDate: today,
@@ -3319,7 +3918,8 @@ function importSquareDemoSale() {
     locationId: location.id,
     sales,
     costs,
-    items: squareImportItems.value.trim()
+    items,
+    transactionCount: selectedTransactions.length
   };
   const checkin = {
     id: `square-${importRecord.id}`,
@@ -3330,19 +3930,22 @@ function importSquareDemoSale() {
     endTime: "14:00",
     sales,
     costs,
-    bestSellers: importRecord.items,
+    bestSellers: items,
     competitors: "",
-    notes: "Imported from Square demo sync."
+    notes: `Imported ${selectedTransactions.length} Square demo transactions.`
   };
 
   saveSquareImports([importRecord, ...getSquareImports()]);
   saveCheckins([checkin, ...getSavedCheckins()]);
-  squareImportStatus.textContent = `Imported $${sales.toLocaleString()} from Square demo into ${location.name}.`;
+  saveSquareDemoTransactions(getSquareDemoTransactions().filter((transaction) => !transaction.selected));
+  squareImportStatus.textContent = `Imported ${selectedTransactions.length} transactions totaling $${sales.toLocaleString()} into ${location.name}.`;
+  renderSquareTransactions();
   renderSquareHistory();
   renderCheckinHistory();
   renderDashboard();
   renderDetail();
   renderResults();
+  renderReports();
 }
 
 function renderSquareHistory() {
@@ -3368,6 +3971,113 @@ function renderSquareHistory() {
         <td colspan="5">No Square demo imports yet.</td>
       </tr>
     `;
+}
+
+function groupBy(items, keyFn) {
+  return items.reduce((groups, item) => {
+    const key = keyFn(item);
+    groups[key] = groups[key] || [];
+    groups[key].push(item);
+    return groups;
+  }, {});
+}
+
+function renderReportList(element, rows, emptyText) {
+  element.innerHTML = rows.length
+    ? rows
+        .map(
+          (row) => `
+            <div class="mini-list-item">
+              <strong>${row.title}</strong>
+              <span>${row.detail}</span>
+            </div>
+          `
+        )
+        .join("")
+    : `<p class="helper-text">${emptyText}</p>`;
+}
+
+function renderReports() {
+  const checkins = getSavedCheckins();
+  const totalSales = checkins.reduce((sum, checkin) => sum + Number(checkin.sales || 0), 0);
+  const totalCosts = checkins.reduce((sum, checkin) => sum + Number(checkin.costs || 0), 0);
+  const totalProfit = totalSales - totalCosts;
+  const avgProfit = checkins.length ? Math.round(totalProfit / checkins.length) : 0;
+  const byLocation = Object.entries(groupBy(checkins, (checkin) => checkin.location)).map(([location, visits]) => {
+    const sales = visits.reduce((sum, visit) => sum + Number(visit.sales || 0), 0);
+    const profit = visits.reduce((sum, visit) => sum + Number(visit.sales || 0) - Number(visit.costs || 0), 0);
+
+    return { location, visits: visits.length, sales, profit, avgProfit: Math.round(profit / visits.length) };
+  }).sort((a, b) => b.profit - a.profit);
+  const best = byLocation[0];
+  const menuCounts = {};
+
+  checkins.forEach((checkin) => {
+    (checkin.bestSellers || "")
+      .split(",")
+      .map((item) => item.trim())
+      .filter(Boolean)
+      .forEach((item) => {
+        menuCounts[item] = (menuCounts[item] || 0) + 1;
+      });
+  });
+
+  reportTotalSales.textContent = `$${totalSales.toLocaleString()}`;
+  reportTotalProfit.textContent = `$${totalProfit.toLocaleString()}`;
+  reportAvgProfit.textContent = `$${avgProfit.toLocaleString()}`;
+  reportBestLocation.textContent = best ? best.location : "--";
+  renderReportList(
+    reportLocationPerformance,
+    byLocation.slice(0, 6).map((item) => ({
+      title: item.location,
+      detail: `${item.visits} visits, $${item.sales.toLocaleString()} sales, $${item.profit.toLocaleString()} profit`
+    })),
+    "No location sales history yet."
+  );
+  renderReportList(
+    reportMenuDemand,
+    Object.entries(menuCounts)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 6)
+      .map(([item, count]) => ({ title: item, detail: `${count} check-in mention${count === 1 ? "" : "s"}` })),
+    "No best-seller data yet."
+  );
+  renderReportList(
+    reportWeatherImpact,
+    ["Low", "Moderate", "High", "Unknown"].map((risk) => {
+      const riskLocations = locations.filter((location) => location.weather === risk);
+      const avgScore = riskLocations.length
+        ? Math.round(riskLocations.reduce((sum, location) => sum + getLocationScore(location), 0) / riskLocations.length)
+        : 0;
+
+      return { title: `${risk} risk`, detail: `${riskLocations.length} locations, ${avgScore || "--"} avg score` };
+    }),
+    "No weather data yet."
+  );
+  renderReportList(
+    reportPipelineValue,
+    getPipelineRecords().slice(0, 6).map((record) => ({
+      title: `${record.status}: ${record.location}`,
+      detail: `${record.deadline || "No deadline"} - fee ${record.fee ? `$${record.fee}` : "TBD"}`
+    })),
+    "No pipeline records yet."
+  );
+  renderReportList(
+    reportSupplierCosts,
+    getPriceRecords().slice(0, 6).map((price) => ({
+      title: price.item,
+      detail: `$${price.price.toFixed(2)} / ${price.unit} from ${price.supplier}`
+    })),
+    "No supplier prices tracked yet."
+  );
+  renderReportList(
+    reportPosSummary,
+    getSquareImports().slice(0, 6).map((item) => ({
+      title: `${item.transactionCount || 1} Square transaction${item.transactionCount === 1 ? "" : "s"}`,
+      detail: `${item.location}: $${item.sales.toLocaleString()} sales, $${(item.sales - item.costs).toLocaleString()} profit`
+    })),
+    "No POS imports yet."
+  );
 }
 
 navItems.forEach((item) => {
@@ -3399,6 +4109,10 @@ document.querySelector("#search-suppliers").addEventListener("click", renderSupp
 supplierQuery.addEventListener("input", renderSuppliers);
 supplierCategory.addEventListener("change", renderSuppliers);
 document.querySelector("#save-partner").addEventListener("click", saveSupplierPartner);
+document.querySelector("#search-marketplace").addEventListener("click", renderMarketplace);
+marketplaceQuery.addEventListener("input", renderMarketplace);
+marketplaceCategory.addEventListener("change", renderMarketplace);
+document.querySelector("#save-marketplace-listing").addEventListener("click", saveMarketplaceListing);
 document.querySelector("#save-public-listing").addEventListener("click", savePublicListing);
 document.querySelector("#browse-public-listings").addEventListener("click", renderPublicListings);
 document.querySelector("#jump-list-space").addEventListener("click", () => {
@@ -3411,7 +4125,18 @@ document.querySelector("#generate-ai-week").addEventListener("click", generateAi
 document.querySelector("#connect-square").addEventListener("click", connectSquareSandbox);
 document.querySelector("#disconnect-square").addEventListener("click", disconnectSquare);
 document.querySelector("#import-square-demo").addEventListener("click", importSquareDemoSale);
+document.querySelector("#select-all-square").addEventListener("click", () => setSquareTransactionSelection(true));
+document.querySelector("#clear-square-selection").addEventListener("click", () => setSquareTransactionSelection(false));
+document.querySelector("#refresh-square-demo").addEventListener("click", refreshSquareDemoBatch);
+document.querySelector("#save-settings").addEventListener("click", saveSettings);
+document.querySelector("#save-feedback").addEventListener("click", saveFeedback);
+document.querySelector("#export-demo-data").addEventListener("click", exportDemoData);
+document.querySelector("#reset-demo-data").addEventListener("click", resetDemoData);
+navToggle.addEventListener("click", () => {
+  document.querySelector(".sidebar").classList.toggle("nav-open");
+});
 homeBase.addEventListener("input", renderCalendar);
+routePeriod.addEventListener("change", renderCalendar);
 
 document.querySelector("#dashboard-view-details").addEventListener("click", () => {
   setSelectedLocation(getTopLocation().id);
@@ -3473,18 +4198,23 @@ loadCurrentSession().catch((error) => {
 });
 loadCustomLocations();
 homeBase.value = appStorage.getItem(storageKeys.homeBase) || homeBase.value;
+loadSettings();
 renderDashboard();
 renderDetail();
 setDefaultCheckinFields();
 renderCheckinLocationOptions();
 renderResults();
 renderSuppliers();
+renderMarketplace();
 renderPublicListings();
 renderPrices();
 renderReminders();
 renderCalendar();
 renderSquareStatus();
+renderSquareTransactions();
 renderSquareHistory();
+renderReports();
 renderWeeklyPlan();
 renderCheckinHistory();
+renderFeedback();
 refreshWeather(selectedLocation);
