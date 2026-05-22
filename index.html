@@ -28,6 +28,7 @@
           <button class="nav-item" data-screen="calendar">Calendar</button>
           <button class="nav-item" data-screen="operations">Operations</button>
           <button class="nav-item" data-screen="public-site">Public Site</button>
+          <button class="nav-item" data-screen="pos">POS</button>
         </nav>
       </aside>
 
@@ -624,6 +625,66 @@
               <button type="button" class="primary" id="save-reminder">Save Reminder</button>
               <div class="mini-list" id="reminder-list"></div>
             </article>
+          </div>
+        </section>
+
+        <section id="pos" class="screen" aria-labelledby="pos-title">
+          <div class="screen-header">
+            <p class="eyebrow">POS Integration</p>
+            <h2 id="pos-title">Connect Square</h2>
+            <p>Let testers see how POS sales could automatically feed location history, profit, and menu insights.</p>
+          </div>
+
+          <div class="pos-layout">
+            <article class="feature-panel">
+              <p class="eyebrow">Square</p>
+              <h3 id="square-status-title">Not connected</h3>
+              <p id="square-status-copy">This tester build includes a Square connection placeholder. Real OAuth will be added before production.</p>
+              <div class="button-row">
+                <button type="button" class="primary" id="connect-square">Connect Square Sandbox</button>
+                <button type="button" class="secondary" id="disconnect-square">Disconnect</button>
+              </div>
+              <p class="helper-text">Planned sync: payments, item sales, refunds, taxes, tips, timestamps, and location IDs.</p>
+            </article>
+
+            <article class="feature-panel">
+              <p class="eyebrow">Sample Import</p>
+              <h3>Import Square demo sales</h3>
+              <p>Use this during testing to simulate Square sending sales into the app.</p>
+              <label>
+                Match to location
+                <select id="square-import-location"></select>
+              </label>
+              <label>
+                Demo sales total
+                <input id="square-import-sales" type="number" min="0" step="1" value="925">
+              </label>
+              <label>
+                Demo costs
+                <input id="square-import-costs" type="number" min="0" step="1" value="310">
+              </label>
+              <label>
+                Top items
+                <input id="square-import-items" type="text" value="Tacos, lemonade, loaded fries">
+              </label>
+              <button type="button" class="primary" id="import-square-demo">Import Demo Sale</button>
+              <p class="status-message" id="square-import-status" aria-live="polite"></p>
+            </article>
+          </div>
+
+          <div class="table-wrap sales-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>Synced Date</th>
+                  <th>Location</th>
+                  <th>Sales</th>
+                  <th>Profit</th>
+                  <th>Items</th>
+                </tr>
+              </thead>
+              <tbody id="square-sync-history"></tbody>
+            </table>
           </div>
         </section>
       </section>

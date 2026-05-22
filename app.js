@@ -71,6 +71,14 @@ const reminderTitle = document.querySelector("#reminder-title");
 const reminderDate = document.querySelector("#reminder-date");
 const reminderLocation = document.querySelector("#reminder-location");
 const reminderList = document.querySelector("#reminder-list");
+const squareStatusTitle = document.querySelector("#square-status-title");
+const squareStatusCopy = document.querySelector("#square-status-copy");
+const squareImportLocation = document.querySelector("#square-import-location");
+const squareImportSales = document.querySelector("#square-import-sales");
+const squareImportCosts = document.querySelector("#square-import-costs");
+const squareImportItems = document.querySelector("#square-import-items");
+const squareImportStatus = document.querySelector("#square-import-status");
+const squareSyncHistory = document.querySelector("#square-sync-history");
 const salesInsightTitle = document.querySelector("#sales-insight-title");
 const salesInsightCopy = document.querySelector("#sales-insight-copy");
 const bestSalesLocation = document.querySelector("#best-sales-location");
@@ -145,6 +153,8 @@ const storageKeys = {
   reminders: "foodTruckAiReminders",
   supplierPartners: "foodTruckAiSupplierPartners",
   publicListings: "foodTruckAiPublicListings",
+  posConnection: "foodTruckAiPosConnection",
+  squareImports: "foodTruckAiSquareImports",
   homeBase: "foodTruckAiHomeBase",
   activeBusinessProfileId: "foodTruckAiBusinessProfileId",
   activeUserId: "foodTruckAiUserId"
@@ -2043,6 +2053,14 @@ function saveReminderRecords(records) {
   saveCollection(storageKeys.reminders, records);
 }
 
+function getSquareImports() {
+  return getSavedCollection(storageKeys.squareImports);
+}
+
+function saveSquareImports(imports) {
+  saveCollection(storageKeys.squareImports, imports);
+}
+
 function getSupplierPartners() {
   return getSavedCollection(storageKeys.supplierPartners);
 }
@@ -2271,6 +2289,13 @@ function renderCheckinLocationOptions() {
   }
 
   renderOpsLocationOptions();
+  renderSquareLocationOptions();
+}
+
+function renderSquareLocationOptions() {
+  squareImportLocation.innerHTML = locations
+    .map((location) => `<option value="${location.id}">${location.name}</option>`)
+    .join("");
 }
 
 function renderCheckinHistory() {
@@ -3247,6 +3272,91 @@ function generateAiWeek() {
   aiWeekCopy.textContent = `Suggested ${ranked.length} stops using score, weather risk, sales history, and pipeline status.`;
 }
 
+function renderSquareStatus() {
+  const status = appStorage.getItem(storageKeys.posConnection);
+
+  if (status === "square-sandbox") {
+    squareStatusTitle.textContent = "Square sandbox connected";
+    squareStatusCopy.textContent = "Tester mode is active. Demo imports will create sales history as if Square synced them.";
+  } else {
+    squareStatusTitle.textContent = "Not connected";
+    squareStatusCopy.textContent = "This tester build includes a Square connection placeholder. Real OAuth will be added before production.";
+  }
+}
+
+function connectSquareSandbox() {
+  appStorage.setItem(storageKeys.posConnection, "square-sandbox");
+  renderSquareStatus();
+}
+
+function disconnectSquare() {
+  appStorage.removeItem(storageKeys.posConnection);
+  renderSquareStatus();
+}
+
+function importSquareDemoSale() {
+  const location = locations.find((item) => item.id === squareImportLocation.value) || selectedLocation;
+  const today = new Date().toISOString().slice(0, 10);
+  const sales = Number(squareImportSales.value) || 0;
+  const costs = Number(squareImportCosts.value) || 0;
+  const importRecord = {
+    id: `${Date.now()}`,
+    syncedDate: today,
+    location: location.name,
+    locationId: location.id,
+    sales,
+    costs,
+    items: squareImportItems.value.trim()
+  };
+  const checkin = {
+    id: `square-${importRecord.id}`,
+    location: location.name,
+    locationId: location.id,
+    date: today,
+    startTime: "11:00",
+    endTime: "14:00",
+    sales,
+    costs,
+    bestSellers: importRecord.items,
+    competitors: "",
+    notes: "Imported from Square demo sync."
+  };
+
+  saveSquareImports([importRecord, ...getSquareImports()]);
+  saveCheckins([checkin, ...getSavedCheckins()]);
+  squareImportStatus.textContent = `Imported $${sales.toLocaleString()} from Square demo into ${location.name}.`;
+  renderSquareHistory();
+  renderCheckinHistory();
+  renderDashboard();
+  renderDetail();
+  renderResults();
+}
+
+function renderSquareHistory() {
+  const imports = getSquareImports();
+
+  squareSyncHistory.innerHTML = imports.length
+    ? imports
+        .slice(0, 8)
+        .map(
+          (item) => `
+            <tr>
+              <td>${item.syncedDate}</td>
+              <td>${item.location}</td>
+              <td>$${Number(item.sales).toLocaleString()}</td>
+              <td>$${(Number(item.sales || 0) - Number(item.costs || 0)).toLocaleString()}</td>
+              <td>${item.items || ""}</td>
+            </tr>
+          `
+        )
+        .join("")
+    : `
+      <tr>
+        <td colspan="5">No Square demo imports yet.</td>
+      </tr>
+    `;
+}
+
 navItems.forEach((item) => {
   item.addEventListener("click", () => showScreen(item.dataset.screen));
 });
@@ -3285,6 +3395,9 @@ document.querySelector("#save-ops-location").addEventListener("click", savePipel
 document.querySelector("#save-price").addEventListener("click", savePriceRecord);
 document.querySelector("#save-reminder").addEventListener("click", saveReminderRecord);
 document.querySelector("#generate-ai-week").addEventListener("click", generateAiWeek);
+document.querySelector("#connect-square").addEventListener("click", connectSquareSandbox);
+document.querySelector("#disconnect-square").addEventListener("click", disconnectSquare);
+document.querySelector("#import-square-demo").addEventListener("click", importSquareDemoSale);
 homeBase.addEventListener("input", renderCalendar);
 
 document.querySelector("#dashboard-view-details").addEventListener("click", () => {
@@ -3357,6 +3470,8 @@ renderPublicListings();
 renderPrices();
 renderReminders();
 renderCalendar();
+renderSquareStatus();
+renderSquareHistory();
 renderWeeklyPlan();
 renderCheckinHistory();
 refreshWeather(selectedLocation);

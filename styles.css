@@ -618,6 +618,14 @@ select {
   margin-bottom: 18px;
 }
 
+.pos-layout {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.9fr) minmax(280px, 1fr);
+  gap: 16px;
+  align-items: start;
+  margin-bottom: 18px;
+}
+
 .metric-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -693,6 +701,7 @@ tr:last-child td {
   .dashboard-grid,
   .detail-layout,
   .checkin-layout,
+  .pos-layout,
   .calendar-card,
   .ops-grid,
   .planner-toolbar,
