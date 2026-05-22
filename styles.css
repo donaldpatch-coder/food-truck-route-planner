@@ -992,6 +992,10 @@ textarea {
   align-items: start;
 }
 
+.single-column-help {
+  grid-template-columns: 1fr;
+}
+
 .help-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1035,6 +1039,26 @@ textarea {
   margin-top: 18px;
 }
 
+.forum-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 18px;
+  align-items: start;
+}
+
+.forum-compose-panel {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.forum-compose-panel h3,
+.forum-compose-panel .eyebrow,
+.forum-compose-panel .helper-text,
+.forum-compose-panel button {
+  grid-column: 1 / -1;
+}
+
 .forum-post {
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -1051,6 +1075,34 @@ textarea {
 .forum-post span {
   color: var(--muted);
   font-size: 13px;
+}
+
+.payment-options {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px;
+}
+
+.payment-options legend {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 800;
+  padding: 0 6px;
+}
+
+.payment-options label {
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.payment-options input {
+  min-height: auto;
+  width: auto;
 }
 
 .ops-grid .feature-panel {
@@ -1522,8 +1574,11 @@ tr:last-child td {
   .settings-grid,
   .help-layout,
   .help-grid,
+  .forum-layout,
+  .forum-compose-panel,
   .marketing-layout,
   .marketing-question-grid,
+  .payment-options,
   .planner-toolbar,
   .public-layout,
   .public-listing-grid,
