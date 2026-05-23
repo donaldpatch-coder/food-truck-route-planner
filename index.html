@@ -31,6 +31,7 @@
           <button class="nav-item" data-screen="pos">POS</button>
           <button class="nav-item" data-screen="reports">Reports</button>
           <button class="nav-item" data-screen="marketplace">Marketplace</button>
+          <button class="nav-item" data-screen="forum">Forum</button>
           <button class="nav-item" data-screen="settings">Settings</button>
           <button class="nav-item help-nav" data-screen="help">Help</button>
         </nav>
@@ -617,54 +618,108 @@
             </div>
 
             <div class="marketing-question-grid">
-              <label>
-                What is your truck name?
-                <input id="truck-profile-name" type="text" placeholder="Lowell Bites">
-              </label>
-              <label>
-                What city or area do you serve?
-                <input id="truck-profile-city" type="text" placeholder="Manchester, NH">
-              </label>
-              <label>
-                What type of food do you sell?
-                <input id="truck-profile-cuisine" type="text" placeholder="Tacos, BBQ, coffee, desserts">
-              </label>
-              <label>
-                Where should customers book or contact you?
-                <input id="truck-profile-link" type="url" placeholder="https://...">
-              </label>
-              <label class="wide-field">
-                How would you describe your services?
-                <textarea id="truck-profile-description" rows="3" placeholder="Catering, lunch stops, private events, breweries, weddings..."></textarea>
-              </label>
-              <label class="wide-field">
-                What is today's special?
-                <input id="truck-profile-special" type="text" placeholder="Friday: brisket tacos with street corn for $14">
-              </label>
-              <label class="wide-field">
-                What is on your menu?
-                <textarea id="truck-profile-menu" rows="4" placeholder="One menu item per line"></textarea>
-              </label>
-              <div class="wide-field menu-tools-panel">
-                <p class="eyebrow">Menu Tools</p>
-                <label>
-                  Upload or photograph menu
-                  <input id="truck-profile-menu-file" type="file" accept="image/*,.pdf" capture="environment">
-                </label>
-                <div class="button-row">
-                  <button type="button" class="secondary" id="convert-menu-ai">AI Draft Menu</button>
-                  <button type="button" class="secondary" id="connect-toast-menu">Connect Toast Sandbox</button>
+              <div class="profile-form-section wide-field">
+                <p class="eyebrow">Core Business Details</p>
+                <div class="marketing-question-grid">
+                  <label>Business name<input id="truck-profile-name" type="text" placeholder="Lowell Bites"></label>
+                  <label>Owner / contact name<input id="truck-profile-owner" type="text" placeholder="Maria Lopez"></label>
+                  <label>Phone number<input id="truck-profile-phone" type="tel" placeholder="(603) 555-0198"></label>
+                  <label>Email address<input id="truck-profile-email" type="email" placeholder="hello@lowellbites.com"></label>
+                  <label>Website or ordering link<input id="truck-profile-link" type="url" placeholder="https://..."></label>
+                  <label class="wide-field">Social media links<textarea id="truck-profile-social-links" rows="3" placeholder="Instagram: https://...&#10;Facebook: https://...&#10;TikTok: https://..."></textarea></label>
+                  <label>Logo URL<input id="truck-profile-logo" type="url" placeholder="https://..."></label>
                 </div>
-                <p class="helper-text" id="truck-menu-tools-status">Upload a picture or PDF, then use AI Draft Menu to test menu conversion.</p>
               </div>
-              <label class="wide-field">
-                Where will you be this week?
-                <textarea id="truck-profile-calendar" rows="4" placeholder="Fri 5-9 PM - Manchester Night Market"></textarea>
-              </label>
-              <label class="wide-field">
-                Add picture URLs, up to 10
-                <textarea id="truck-profile-images" rows="4" placeholder="One image URL per line"></textarea>
-              </label>
+
+              <div class="profile-form-section wide-field">
+                <p class="eyebrow">Truck / Cart Information</p>
+                <div class="marketing-question-grid">
+                  <label>Type of vendor<select id="truck-profile-vendor-type"><option>Food truck</option><option>Food cart</option><option>Trailer</option><option>Pop-up</option><option>Catering tent</option></select></label>
+                  <label>Year established<input id="truck-profile-established" type="number" min="1900" max="2100" placeholder="2021"></label>
+                  <label class="wide-field">Truck/cart description<textarea id="truck-profile-truck-description" rows="3" placeholder="Bright blue trailer with hand-painted taco art, neon sign, and open kitchen window."></textarea></label>
+                  <label>Photo of truck/cart URL<input id="truck-profile-truck-photo" type="url" placeholder="https://..."></label>
+                  <label class="wide-field">Licenses or permits, optional<textarea id="truck-profile-permits" rows="2" placeholder="Health permit, fire inspection, insured for events..."></textarea></label>
+                </div>
+              </div>
+
+              <div class="profile-form-section wide-field">
+                <p class="eyebrow">Menu & Food Style</p>
+                <div class="marketing-question-grid">
+                  <label>Cuisine type<input id="truck-profile-cuisine" type="text" placeholder="BBQ, Mexican, Vegan, Desserts, Fusion"></label>
+                  <label>Price range<select id="truck-profile-price-range"><option>$</option><option>$$</option><option>$$$</option></select></label>
+                  <label class="wide-field">Signature dishes, top 3-5<textarea id="truck-profile-signature-dishes" rows="3" placeholder="Birria tacos&#10;Chicken verde bowl&#10;Street corn cups"></textarea></label>
+                  <label class="wide-field">Dietary options<textarea id="truck-profile-dietary" rows="2" placeholder="Vegan options, gluten-free buns, halal chicken, nut-free desserts"></textarea></label>
+                  <div class="wide-field menu-tools-panel">
+                    <p class="eyebrow">Full Menu</p>
+                    <label>Direct menu link<input id="truck-profile-menu-link" type="url" placeholder="https://yourtruck.com/menu"></label>
+                    <label>Add a menu photo or PDF<input id="truck-profile-menu-file" type="file" accept="image/*,.pdf" capture="environment"></label>
+                    <p class="helper-text" id="truck-menu-tools-status">Customers can use a menu link or a menu picture.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="profile-form-section wide-field">
+                <p class="eyebrow">Brand Story & Personality</p>
+                <div class="marketing-question-grid">
+                  <label class="wide-field">About the business<textarea id="truck-profile-description" rows="3" placeholder="How you started, your mission, inspiration, and what customers should know."></textarea></label>
+                  <label class="wide-field">What makes you unique?<textarea id="truck-profile-unique" rows="3" placeholder="Family recipes, cultural roots, special ingredients, local sourcing..."></textarea></label>
+                  <label>Fun fact<input id="truck-profile-fun-fact" type="text" placeholder="Our salsa recipe is three generations old."></label>
+                  <label>Awards or press mentions<input id="truck-profile-awards" type="text" placeholder="Best Taco Truck 2025, WMUR feature..."></label>
+                </div>
+              </div>
+
+              <div class="profile-form-section wide-field">
+                <p class="eyebrow">Location & Schedule</p>
+                <div class="marketing-question-grid">
+                  <label>Primary service area<input id="truck-profile-city" type="text" placeholder="Manchester, Nashua, Lowell"></label>
+                  <label>Real-time location link<input id="truck-profile-live-location" type="url" placeholder="StreetFoodFinder, Instagram, calendar link..."></label>
+                  <label class="wide-field">Typical weekly schedule<textarea id="truck-profile-calendar" rows="4" placeholder="Fri 5-9 PM - Manchester Night Market"></textarea></label>
+                  <label>Available for events?<select id="truck-profile-events-available"><option>Yes</option><option>No</option><option>Ask us</option></select></label>
+                  <label>Event types<input id="truck-profile-event-types" type="text" placeholder="Weddings, corporate events, festivals, private parties"></label>
+                </div>
+              </div>
+
+              <div class="profile-form-section wide-field">
+                <p class="eyebrow">Photos</p>
+                <label>High-quality food, truck, and staff photo URLs, up to 10<textarea id="truck-profile-images" rows="4" placeholder="One image URL per line"></textarea></label>
+              </div>
+
+              <div class="profile-form-section wide-field">
+                <p class="eyebrow">Ordering & Payment</p>
+                <div class="marketing-question-grid">
+                  <label class="wide-field">Delivery service links<textarea id="truck-profile-delivery-links" rows="3" placeholder="Uber Eats: https://...&#10;DoorDash: https://...&#10;Grubhub: https://..."></textarea></label>
+                  <label class="wide-field">Pre-order options<textarea id="truck-profile-preorder" rows="2" placeholder="Order online, call ahead, use Toast/Square link, text for large orders..."></textarea></label>
+                  <fieldset class="wide-field payment-options">
+                    <legend>Accepted payment methods</legend>
+                    <label><input class="truck-payment-option" type="checkbox" value="Cash"> Cash</label>
+                    <label><input class="truck-payment-option" type="checkbox" value="Credit cards"> Credit cards</label>
+                    <label><input class="truck-payment-option" type="checkbox" value="Apple Pay"> Apple Pay</label>
+                    <label><input class="truck-payment-option" type="checkbox" value="Google Pay"> Google Pay</label>
+                    <label><input class="truck-payment-option" type="checkbox" value="Venmo"> Venmo</label>
+                    <label><input class="truck-payment-option" type="checkbox" value="Cash App"> Cash App</label>
+                  </fieldset>
+                </div>
+              </div>
+
+              <div class="profile-form-section wide-field">
+                <p class="eyebrow">Marketing & Promotion</p>
+                <div class="marketing-question-grid">
+                  <label>Tagline or slogan<input id="truck-profile-tagline" type="text" placeholder="Bold street tacos, made from family recipes."></label>
+                  <label>Special offers or promotions<input id="truck-profile-promotions" type="text" placeholder="Free agua fresca with two taco plates on Fridays."></label>
+                  <label class="wide-field">Keywords for search<textarea id="truck-profile-keywords" rows="2" placeholder="tacos, vegan, comfort food, late-night, birria"></textarea></label>
+                  <label class="wide-field">Preferred hashtags<textarea id="truck-profile-hashtags" rows="2" placeholder="#lowellbites #foodtruck #birria"></textarea></label>
+                </div>
+              </div>
+
+              <div class="profile-form-section wide-field">
+                <p class="eyebrow">Optional Add-ons</p>
+                <div class="marketing-question-grid">
+                  <label class="wide-field">Customer reviews or testimonials<textarea id="truck-profile-testimonials" rows="3" placeholder="One review per line"></textarea></label>
+                  <label>Video introduction link<input id="truck-profile-video" type="url" placeholder="YouTube, Instagram Reel, TikTok..."></label>
+                  <label>Catering menu link<input id="truck-profile-catering-menu" type="url" placeholder="https://..."></label>
+                  <label class="wide-field">Seasonal specials<textarea id="truck-profile-seasonal-specials" rows="3" placeholder="Summer lobster tacos&#10;Fall cider donuts&#10;Holiday catering trays"></textarea></label>
+                </div>
+              </div>
             </div>
 
             <div class="marketing-status-row">
@@ -1161,10 +1216,10 @@
           <div class="screen-header">
             <p class="eyebrow">Help Center</p>
             <h2 id="help-title">Help & Owner Forum</h2>
-            <p>Quick guides, screenshots, and a place for food truck owners to share questions and advice.</p>
+            <p>Quick guides and screenshots for using the app.</p>
           </div>
 
-          <div class="help-layout">
+          <div class="help-layout single-column-help">
             <section>
               <div class="help-grid">
                 <article class="help-card">
@@ -1233,9 +1288,20 @@
               </div>
             </section>
 
-            <aside class="feature-panel">
-              <p class="eyebrow">Owner Forum</p>
-              <h3>Ask other owners</h3>
+          </div>
+        </section>
+
+        <section id="forum" class="screen" aria-labelledby="forum-title-heading">
+          <div class="screen-header">
+            <p class="eyebrow">Owner Community</p>
+            <h2 id="forum-title-heading">Food Truck Owner Forum</h2>
+            <p>Post questions, quick needs, buy/sell requests, permit tips, and location advice for other owners.</p>
+          </div>
+
+          <div class="forum-layout">
+            <article class="feature-panel forum-compose-panel">
+              <p class="eyebrow">New Post</p>
+              <h3>Ask, offer, or request help</h3>
               <label>
                 Topic
                 <select id="forum-topic">
@@ -1250,15 +1316,51 @@
                 </select>
               </label>
               <label>
-                Title
-                <input id="forum-title" type="text" placeholder="Best events near Manchester?">
+                Urgency
+                <select id="forum-urgency">
+                  <option>Normal</option>
+                  <option>Today</option>
+                  <option>This week</option>
+                  <option>Emergency</option>
+                </select>
               </label>
               <label>
+                Location
+                <input id="forum-location" type="text" placeholder="Manchester, NH or Lowell event">
+              </label>
+              <label>
+                Contact
+                <input id="forum-contact" type="text" placeholder="Phone, email, or app username">
+              </label>
+              <label class="wide-field">
+                Title
+                <input id="forum-title" type="text" placeholder="Does anyone have extra mustard I can buy today?">
+              </label>
+              <label class="wide-field">
                 Message
-                <input id="forum-message" type="text" placeholder="Ask a question or share a tip">
+                <textarea id="forum-message" rows="4" placeholder="Share what you need, where you are, timing, and how someone should respond."></textarea>
               </label>
               <button type="button" class="primary" id="save-forum-post">Post to Forum</button>
               <p class="helper-text">Tester forum posts are saved in this browser. Production forum posts will sync to the database.</p>
+            </article>
+
+            <aside class="feature-panel">
+              <p class="eyebrow">Browse</p>
+              <label>
+                Filter by topic
+                <select id="forum-filter">
+                  <option value="all">All topics</option>
+                  <option>Need / Buy / Borrow</option>
+                  <option>Locations</option>
+                  <option>Permits</option>
+                  <option>POS</option>
+                  <option>Suppliers</option>
+                  <option>Equipment</option>
+                  <option>Routes</option>
+                  <option>General</option>
+                </select>
+              </label>
+              <p class="helper-text">Use the forum for peer help, quick supplies, route warnings, event tips, and operator-to-operator support.</p>
             </aside>
           </div>
 
