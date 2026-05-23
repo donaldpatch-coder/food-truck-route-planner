@@ -66,45 +66,17 @@ const publicSpaceLink = document.querySelector("#public-space-link");
 const publicSpaceNotes = document.querySelector("#public-space-notes");
 const publicListingStatus = document.querySelector("#public-listing-status");
 const truckProfileName = document.querySelector("#truck-profile-name");
-const truckProfileOwner = document.querySelector("#truck-profile-owner");
-const truckProfilePhone = document.querySelector("#truck-profile-phone");
-const truckProfileEmail = document.querySelector("#truck-profile-email");
 const truckProfileCity = document.querySelector("#truck-profile-city");
 const truckProfileCuisine = document.querySelector("#truck-profile-cuisine");
 const truckProfileLink = document.querySelector("#truck-profile-link");
-const truckProfileSocialLinks = document.querySelector("#truck-profile-social-links");
-const truckProfileLogo = document.querySelector("#truck-profile-logo");
 const truckProfileDescription = document.querySelector("#truck-profile-description");
 const truckProfileSpecial = document.querySelector("#truck-profile-special");
-const truckProfileVendorType = document.querySelector("#truck-profile-vendor-type");
-const truckProfileEstablished = document.querySelector("#truck-profile-established");
-const truckProfileTruckDescription = document.querySelector("#truck-profile-truck-description");
-const truckProfileTruckPhoto = document.querySelector("#truck-profile-truck-photo");
-const truckProfilePermits = document.querySelector("#truck-profile-permits");
-const truckProfilePriceRange = document.querySelector("#truck-profile-price-range");
-const truckProfileSignatureDishes = document.querySelector("#truck-profile-signature-dishes");
-const truckProfileDietary = document.querySelector("#truck-profile-dietary");
 const truckProfileMenuLink = document.querySelector("#truck-profile-menu-link");
 const truckProfileMenuFile = document.querySelector("#truck-profile-menu-file");
 const truckMenuToolsStatus = document.querySelector("#truck-menu-tools-status");
-const truckProfileUnique = document.querySelector("#truck-profile-unique");
-const truckProfileFunFact = document.querySelector("#truck-profile-fun-fact");
-const truckProfileAwards = document.querySelector("#truck-profile-awards");
-const truckProfileLiveLocation = document.querySelector("#truck-profile-live-location");
-const truckProfileEventsAvailable = document.querySelector("#truck-profile-events-available");
-const truckProfileEventTypes = document.querySelector("#truck-profile-event-types");
 const truckProfileCalendar = document.querySelector("#truck-profile-calendar");
 const truckProfileImages = document.querySelector("#truck-profile-images");
 const truckProfileDeliveryLinks = document.querySelector("#truck-profile-delivery-links");
-const truckProfilePreorder = document.querySelector("#truck-profile-preorder");
-const truckProfileTagline = document.querySelector("#truck-profile-tagline");
-const truckProfilePromotions = document.querySelector("#truck-profile-promotions");
-const truckProfileKeywords = document.querySelector("#truck-profile-keywords");
-const truckProfileHashtags = document.querySelector("#truck-profile-hashtags");
-const truckProfileTestimonials = document.querySelector("#truck-profile-testimonials");
-const truckProfileVideo = document.querySelector("#truck-profile-video");
-const truckProfileCateringMenu = document.querySelector("#truck-profile-catering-menu");
-const truckProfileSeasonalSpecials = document.querySelector("#truck-profile-seasonal-specials");
 const truckPaymentOptions = document.querySelectorAll(".truck-payment-option");
 const truckProfileStatus = document.querySelector("#truck-profile-status");
 const truckProfilePreview = document.querySelector("#truck-profile-preview");
@@ -4093,45 +4065,17 @@ function getActiveTruckProfile() {
   return (
     profile || {
       truckName: settings.businessName || document.querySelector("#business-name").value || "Your Food Truck",
-      ownerName: "",
-      phone: "",
-      email: "",
       city: settings.homeBase || homeBase.value || "New England",
       cuisine: settings.foodType || document.querySelector("#food-type").value || "Street food",
       contactUrl: "",
-      socialLinks: [],
-      logoUrl: "",
       description: "Add your services, catering details, and best public stops.",
       dailySpecial: "",
-      vendorType: "Food truck",
-      yearEstablished: "",
-      truckDescription: "",
-      truckPhotoUrl: "",
-      permits: "",
-      priceRange: "$$",
-      signatureDishes: [],
-      dietaryOptions: [],
       menuUrl: "",
       menuFileName: "",
-      uniqueDetails: "",
-      funFact: "",
-      awards: "",
-      liveLocationUrl: "",
-      eventsAvailable: "Yes",
-      eventTypes: "",
       calendarItems: [],
       imageUrls: [],
       deliveryLinks: [],
-      preorderOptions: "",
-      paymentTypes: [],
-      tagline: "",
-      promotions: "",
-      keywords: [],
-      hashtags: [],
-      testimonials: [],
-      videoUrl: "",
-      cateringMenuUrl: "",
-      seasonalSpecials: []
+      paymentTypes: []
     }
   );
 }
@@ -4142,14 +4086,12 @@ function renderTruckProfilePreview() {
   const calendarItems = (profile.calendarItems || []).slice(0, 5);
 
   truckProfilePreview.innerHTML = `
-    ${profile.logoUrl ? `<img src="${profile.logoUrl}" alt="${profile.truckName} logo preview">` : image ? `<img src="${image}" alt="${profile.truckName} food truck preview">` : ""}
+    ${image ? `<img src="${image}" alt="${profile.truckName} food truck preview">` : ""}
     <p class="eyebrow">${profile.cuisine || "Food truck"}</p>
     <h3>${profile.truckName}</h3>
-    <p><strong>${profile.tagline || profile.city}</strong></p>
-    <p>${profile.city}</p>
+    <p><strong>${profile.city}</strong></p>
     ${profile.dailySpecial ? `<p class="daily-special-preview"><strong>Daily special:</strong> ${profile.dailySpecial}</p>` : ""}
     <p>${profile.description || "Add a description so customers know what you serve and where you go."}</p>
-    ${(profile.signatureDishes || []).length ? `<p class="helper-text">Signature dishes: ${profile.signatureDishes.join(", ")}</p>` : ""}
     <p class="helper-text">Menu: ${profile.menuUrl ? "online link" : profile.menuFileName || "not added yet"}</p>
     ${(profile.paymentTypes || []).length ? `<p class="helper-text">Payments: ${profile.paymentTypes.join(", ")}</p>` : ""}
     <div class="profile-mini-list">
@@ -4164,17 +4106,14 @@ function renderMarketingChecklist() {
   const profile = getActiveTruckProfile();
   const checks = [
     ["Truck name", Boolean(profile.truckName && profile.truckName !== "Your Food Truck")],
-    ["Contact details", Boolean(profile.phone || profile.email || profile.contactUrl)],
-    ["Brand story", Boolean(profile.description && !profile.description.includes("Add your services"))],
-    ["Signature dishes", Boolean((profile.signatureDishes || []).length)],
+    ["Services description", Boolean(profile.description && !profile.description.includes("Add your services"))],
     ["Menu link or photo", Boolean(profile.menuUrl || profile.menuFileName)],
-    ["Truck/cart info", Boolean(profile.vendorType && profile.truckDescription)],
+    ["Daily special", Boolean(profile.dailySpecial)],
     ["Public calendar", Boolean((profile.calendarItems || []).length)],
     ["Photos", Boolean((profile.imageUrls || []).length)],
-    ["Events info", Boolean(profile.eventsAvailable && profile.eventTypes)],
+    ["Booking link", Boolean(profile.contactUrl)],
     ["Delivery links", Boolean((profile.deliveryLinks || []).length)],
-    ["Payment types", Boolean((profile.paymentTypes || []).length)],
-    ["Marketing extras", Boolean(profile.tagline || (profile.keywords || []).length)]
+    ["Payment types", Boolean((profile.paymentTypes || []).length)]
   ];
   const completeCount = checks.filter(([, complete]) => complete).length;
 
@@ -4194,44 +4133,16 @@ function renderMarketingChecklist() {
 function getTruckProfileFields() {
   return [
     truckProfileName,
-    truckProfileOwner,
-    truckProfilePhone,
-    truckProfileEmail,
     truckProfileCity,
     truckProfileCuisine,
     truckProfileLink,
-    truckProfileSocialLinks,
-    truckProfileLogo,
     truckProfileDescription,
     truckProfileSpecial,
-    truckProfileVendorType,
-    truckProfileEstablished,
-    truckProfileTruckDescription,
-    truckProfileTruckPhoto,
-    truckProfilePermits,
-    truckProfilePriceRange,
-    truckProfileSignatureDishes,
-    truckProfileDietary,
     truckProfileMenuLink,
     truckProfileMenuFile,
-    truckProfileUnique,
-    truckProfileFunFact,
-    truckProfileAwards,
-    truckProfileLiveLocation,
-    truckProfileEventsAvailable,
-    truckProfileEventTypes,
     truckProfileCalendar,
     truckProfileImages,
     truckProfileDeliveryLinks,
-    truckProfilePreorder,
-    truckProfileTagline,
-    truckProfilePromotions,
-    truckProfileKeywords,
-    truckProfileHashtags,
-    truckProfileTestimonials,
-    truckProfileVideo,
-    truckProfileCateringMenu,
-    truckProfileSeasonalSpecials,
     ...truckPaymentOptions
   ];
 }
@@ -4251,43 +4162,15 @@ function loadTruckProfileForm() {
 
   editingTruckProfileId = profile.id || "";
   truckProfileName.value = profile.truckName || "";
-  truckProfileOwner.value = profile.ownerName || "";
-  truckProfilePhone.value = profile.phone || "";
-  truckProfileEmail.value = profile.email || "";
   truckProfileCity.value = profile.city || "";
   truckProfileCuisine.value = profile.cuisine || "";
   truckProfileLink.value = profile.contactUrl || "";
-  truckProfileSocialLinks.value = (profile.socialLinks || []).join("\n");
-  truckProfileLogo.value = profile.logoUrl || "";
   truckProfileDescription.value = profile.description || "";
   truckProfileSpecial.value = profile.dailySpecial || "";
-  truckProfileVendorType.value = profile.vendorType || "Food truck";
-  truckProfileEstablished.value = profile.yearEstablished || "";
-  truckProfileTruckDescription.value = profile.truckDescription || "";
-  truckProfileTruckPhoto.value = profile.truckPhotoUrl || "";
-  truckProfilePermits.value = profile.permits || "";
-  truckProfilePriceRange.value = profile.priceRange || "$$";
-  truckProfileSignatureDishes.value = (profile.signatureDishes || profile.menuItems || []).join("\n");
-  truckProfileDietary.value = (profile.dietaryOptions || []).join("\n");
   truckProfileMenuLink.value = profile.menuUrl || "";
-  truckProfileUnique.value = profile.uniqueDetails || "";
-  truckProfileFunFact.value = profile.funFact || "";
-  truckProfileAwards.value = profile.awards || "";
-  truckProfileLiveLocation.value = profile.liveLocationUrl || "";
-  truckProfileEventsAvailable.value = profile.eventsAvailable || "Yes";
-  truckProfileEventTypes.value = profile.eventTypes || "";
   truckProfileCalendar.value = (profile.calendarItems || []).join("\n");
   truckProfileImages.value = (profile.imageUrls || []).join("\n");
   truckProfileDeliveryLinks.value = (profile.deliveryLinks || []).join("\n");
-  truckProfilePreorder.value = profile.preorderOptions || "";
-  truckProfileTagline.value = profile.tagline || "";
-  truckProfilePromotions.value = profile.promotions || "";
-  truckProfileKeywords.value = (profile.keywords || []).join("\n");
-  truckProfileHashtags.value = (profile.hashtags || []).join("\n");
-  truckProfileTestimonials.value = (profile.testimonials || []).join("\n");
-  truckProfileVideo.value = profile.videoUrl || "";
-  truckProfileCateringMenu.value = profile.cateringMenuUrl || "";
-  truckProfileSeasonalSpecials.value = (profile.seasonalSpecials || []).join("\n");
   truckPaymentOptions.forEach((option) => {
     option.checked = (profile.paymentTypes || []).includes(option.value);
   });
@@ -4303,45 +4186,17 @@ function getTruckProfileDraftFromForm() {
   return {
     id: editingTruckProfileId || makeLocationId(truckName || "truck-profile", city || "truck"),
     truckName: truckName || "Your Food Truck",
-    ownerName: truckProfileOwner.value.trim(),
-    phone: truckProfilePhone.value.trim(),
-    email: truckProfileEmail.value.trim(),
     city: city || "New England",
     cuisine: truckProfileCuisine.value.trim() || "Food truck",
     contactUrl: truckProfileLink.value.trim(),
-    socialLinks: splitProfileLines(truckProfileSocialLinks.value),
-    logoUrl: truckProfileLogo.value.trim(),
     description: truckProfileDescription.value.trim() || "Owner has not added a service description yet.",
     dailySpecial: truckProfileSpecial.value.trim(),
-    vendorType: truckProfileVendorType.value,
-    yearEstablished: truckProfileEstablished.value,
-    truckDescription: truckProfileTruckDescription.value.trim(),
-    truckPhotoUrl: truckProfileTruckPhoto.value.trim(),
-    permits: truckProfilePermits.value.trim(),
-    priceRange: truckProfilePriceRange.value,
-    signatureDishes: splitProfileLines(truckProfileSignatureDishes.value),
-    dietaryOptions: splitProfileLines(truckProfileDietary.value),
     menuUrl: truckProfileMenuLink.value.trim(),
     menuFileName: truckProfileMenuFile.files[0]?.name || getActiveTruckProfile().menuFileName || "",
-    uniqueDetails: truckProfileUnique.value.trim(),
-    funFact: truckProfileFunFact.value.trim(),
-    awards: truckProfileAwards.value.trim(),
-    liveLocationUrl: truckProfileLiveLocation.value.trim(),
-    eventsAvailable: truckProfileEventsAvailable.value,
-    eventTypes: truckProfileEventTypes.value.trim(),
     calendarItems: splitProfileLines(truckProfileCalendar.value),
-    imageUrls: [truckProfileTruckPhoto.value.trim(), ...splitProfileLines(truckProfileImages.value)].filter(Boolean).slice(0, 10),
+    imageUrls: splitProfileLines(truckProfileImages.value).slice(0, 10),
     deliveryLinks: splitProfileLines(truckProfileDeliveryLinks.value),
-    preorderOptions: truckProfilePreorder.value.trim(),
     paymentTypes: Array.from(truckPaymentOptions).filter((option) => option.checked).map((option) => option.value),
-    tagline: truckProfileTagline.value.trim(),
-    promotions: truckProfilePromotions.value.trim(),
-    keywords: splitProfileLines(truckProfileKeywords.value),
-    hashtags: splitProfileLines(truckProfileHashtags.value),
-    testimonials: splitProfileLines(truckProfileTestimonials.value),
-    videoUrl: truckProfileVideo.value.trim(),
-    cateringMenuUrl: truckProfileCateringMenu.value.trim(),
-    seasonalSpecials: splitProfileLines(truckProfileSeasonalSpecials.value),
     published: false,
     publishedAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
