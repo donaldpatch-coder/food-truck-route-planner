@@ -320,6 +320,81 @@ textarea {
   gap: 16px;
 }
 
+.dashboard-kpis {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.dashboard-kpis small {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.dashboard-layout {
+  display: grid;
+  grid-template-columns: minmax(320px, 1.1fr) repeat(2, minmax(260px, 0.8fr));
+  gap: 16px;
+  align-items: start;
+}
+
+.dashboard-hero-panel {
+  grid-row: span 2;
+}
+
+.dashboard-charts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.dashboard-list,
+.dashboard-chart {
+  display: grid;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.dashboard-list-item {
+  box-shadow: none;
+}
+
+.dashboard-bar-row {
+  display: grid;
+  grid-template-columns: minmax(92px, 0.7fr) minmax(120px, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+}
+
+.dashboard-bar-row span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dashboard-bar-row strong {
+  font-size: 13px;
+}
+
+.dashboard-bar-track {
+  height: 12px;
+  border-radius: 999px;
+  background: #edf2f6;
+  overflow: hidden;
+}
+
+.dashboard-bar-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--blue);
+}
+
 .feature-panel {
   padding: 22px;
 }
@@ -462,6 +537,15 @@ textarea {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
+}
+
+.profile-form-section {
+  display: grid;
+  gap: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fbfcfe;
+  padding: 16px;
 }
 
 .marketing-status-row {
@@ -1578,7 +1662,10 @@ tr:last-child td {
     padding: 24px;
   }
 
+  .dashboard-kpis,
   .dashboard-grid,
+  .dashboard-layout,
+  .dashboard-charts,
   .detail-layout,
   .checkin-layout,
   .pos-layout,

@@ -85,23 +85,40 @@
             <button type="button" class="secondary" data-next="settings">Open Settings</button>
           </div>
 
-          <div class="dashboard-grid">
-            <article class="feature-panel large">
-              <p class="eyebrow">Today's Best Spot</p>
+          <div class="dashboard-kpis">
+            <article class="metric"><span>Sales</span><strong id="dashboard-kpi-sales">$0</strong><small id="dashboard-kpi-sales-note">No check-ins yet</small></article>
+            <article class="metric"><span>Profit</span><strong id="dashboard-kpi-profit">$0</strong><small id="dashboard-kpi-profit-note">Costs minus sales</small></article>
+            <article class="metric"><span>Avg / Hour</span><strong id="dashboard-kpi-hour">$0</strong><small id="dashboard-kpi-hour-note">Use timer for better data</small></article>
+            <article class="metric"><span>Open Tasks</span><strong id="dashboard-kpi-tasks">0</strong><small id="dashboard-kpi-tasks-note">Pipeline and reminders</small></article>
+          </div>
+
+          <div class="dashboard-layout">
+            <article class="feature-panel dashboard-hero-panel">
+              <p class="eyebrow">Best Decision Today</p>
               <h3 id="dashboard-best-name">Downtown Lowell - Lunch Hours</h3>
               <div class="score" id="dashboard-best-score">87/100</div>
               <p><strong>Best Time:</strong> <span id="dashboard-best-time">11 AM - 2 PM</span></p>
               <p><strong>Reason:</strong> <span id="dashboard-best-reason">High office traffic + low competition</span></p>
-              <button class="primary" id="dashboard-view-details" type="button">View Details</button>
+              <p><strong>Sales Opportunity:</strong> <span id="dashboard-sales">$850 - $1,250</span></p>
+              <div class="button-row">
+                <button class="primary" id="dashboard-view-details" type="button">View Details</button>
+                <button class="secondary" type="button" data-next="plan">Open Route Plan</button>
+              </div>
             </article>
 
             <article class="feature-panel">
-              <p class="eyebrow">Top 3 Events Near You</p>
-              <ul class="tight-list">
-                <li>Canalway Lunch Market</li>
-                <li>University Night Game</li>
-                <li>Brewery Patio Series</li>
-              </ul>
+              <p class="eyebrow">Today / Upcoming Schedule</p>
+              <div class="dashboard-list" id="dashboard-schedule-list"></div>
+            </article>
+
+            <article class="feature-panel">
+              <p class="eyebrow">To-Do Queue</p>
+              <div class="dashboard-list" id="dashboard-task-list"></div>
+            </article>
+
+            <article class="feature-panel">
+              <p class="eyebrow">Accounting Snapshot</p>
+              <div class="dashboard-list" id="dashboard-accounting-list"></div>
             </article>
 
             <article class="feature-panel">
@@ -112,15 +129,24 @@
             </article>
 
             <article class="feature-panel">
-              <p class="eyebrow">Estimated Sales Opportunity</p>
-              <h3 id="dashboard-sales">$850 - $1,250</h3>
-              <p>Based on traffic, weather, nearby events, and competition.</p>
-            </article>
-
-            <article class="feature-panel">
               <p class="eyebrow">Learning From Sales</p>
               <h3 id="dashboard-learning-title">No sales logged yet</h3>
               <p id="dashboard-learning-copy">Check in after a service to teach the planner which spots actually perform.</p>
+            </article>
+          </div>
+
+          <div class="dashboard-charts">
+            <article class="feature-panel">
+              <p class="eyebrow">Sales Trend</p>
+              <div class="dashboard-chart" id="dashboard-sales-chart"></div>
+            </article>
+            <article class="feature-panel">
+              <p class="eyebrow">Top Menu Items</p>
+              <div class="dashboard-chart" id="dashboard-menu-chart"></div>
+            </article>
+            <article class="feature-panel">
+              <p class="eyebrow">Best Locations</p>
+              <div class="dashboard-chart" id="dashboard-location-chart"></div>
             </article>
           </div>
         </section>
@@ -618,63 +644,108 @@
             </div>
 
             <div class="marketing-question-grid">
-              <label>
-                What is your truck name?
-                <input id="truck-profile-name" type="text" placeholder="Lowell Bites">
-              </label>
-              <label>
-                What city or area do you serve?
-                <input id="truck-profile-city" type="text" placeholder="Manchester, NH">
-              </label>
-              <label>
-                What type of food do you sell?
-                <input id="truck-profile-cuisine" type="text" placeholder="Tacos, BBQ, coffee, desserts">
-              </label>
-              <label>
-                Where should customers book or contact you?
-                <input id="truck-profile-link" type="url" placeholder="https://...">
-              </label>
-              <label class="wide-field">
-                How would you describe your services?
-                <textarea id="truck-profile-description" rows="3" placeholder="Catering, lunch stops, private events, breweries, weddings..."></textarea>
-              </label>
-              <label class="wide-field">
-                What is today's special?
-                <input id="truck-profile-special" type="text" placeholder="Friday: brisket tacos with street corn for $14">
-              </label>
-              <div class="wide-field menu-tools-panel">
-                <p class="eyebrow">Menu</p>
-                <label>
-                  Direct menu link
-                  <input id="truck-profile-menu-link" type="url" placeholder="https://yourtruck.com/menu">
-                </label>
-                <label>
-                  Add a menu photo or PDF
-                  <input id="truck-profile-menu-file" type="file" accept="image/*,.pdf" capture="environment">
-                </label>
-                <p class="helper-text" id="truck-menu-tools-status">For now, customers can use a menu link or a menu picture. Full menu conversion can come back later.</p>
+              <div class="profile-form-section wide-field">
+                <p class="eyebrow">Core Business Details</p>
+                <div class="marketing-question-grid">
+                  <label>Business name<input id="truck-profile-name" type="text" placeholder="Lowell Bites"></label>
+                  <label>Owner / contact name<input id="truck-profile-owner" type="text" placeholder="Maria Lopez"></label>
+                  <label>Phone number<input id="truck-profile-phone" type="tel" placeholder="(603) 555-0198"></label>
+                  <label>Email address<input id="truck-profile-email" type="email" placeholder="hello@lowellbites.com"></label>
+                  <label>Website or ordering link<input id="truck-profile-link" type="url" placeholder="https://..."></label>
+                  <label class="wide-field">Social media links<textarea id="truck-profile-social-links" rows="3" placeholder="Instagram: https://...&#10;Facebook: https://...&#10;TikTok: https://..."></textarea></label>
+                  <label>Logo URL<input id="truck-profile-logo" type="url" placeholder="https://..."></label>
+                </div>
               </div>
-              <label class="wide-field">
-                What calendar should appear on the public site?
-                <textarea id="truck-profile-calendar" rows="4" placeholder="Fri 5-9 PM - Manchester Night Market"></textarea>
-              </label>
-              <label class="wide-field">
-                Add up to 10 picture URLs of the truck, food, and staff
-                <textarea id="truck-profile-images" rows="4" placeholder="One image URL per line"></textarea>
-              </label>
-              <label class="wide-field">
-                Delivery service links
-                <textarea id="truck-profile-delivery-links" rows="3" placeholder="Uber Eats: https://...&#10;DoorDash: https://...&#10;Grubhub: https://..."></textarea>
-              </label>
-              <fieldset class="wide-field payment-options">
-                <legend>What payments do you accept?</legend>
-                <label><input class="truck-payment-option" type="checkbox" value="Cash"> Cash</label>
-                <label><input class="truck-payment-option" type="checkbox" value="Credit cards"> Credit cards</label>
-                <label><input class="truck-payment-option" type="checkbox" value="Apple Pay"> Apple Pay</label>
-                <label><input class="truck-payment-option" type="checkbox" value="Google Pay"> Google Pay</label>
-                <label><input class="truck-payment-option" type="checkbox" value="Venmo"> Venmo</label>
-                <label><input class="truck-payment-option" type="checkbox" value="Cash App"> Cash App</label>
-              </fieldset>
+
+              <div class="profile-form-section wide-field">
+                <p class="eyebrow">Truck / Cart Information</p>
+                <div class="marketing-question-grid">
+                  <label>Type of vendor<select id="truck-profile-vendor-type"><option>Food truck</option><option>Food cart</option><option>Trailer</option><option>Pop-up</option><option>Catering tent</option></select></label>
+                  <label>Year established<input id="truck-profile-established" type="number" min="1900" max="2100" placeholder="2021"></label>
+                  <label class="wide-field">Truck/cart description<textarea id="truck-profile-truck-description" rows="3" placeholder="Bright blue trailer with hand-painted taco art, neon sign, and open kitchen window."></textarea></label>
+                  <label>Photo of truck/cart URL<input id="truck-profile-truck-photo" type="url" placeholder="https://..."></label>
+                  <label class="wide-field">Licenses or permits, optional<textarea id="truck-profile-permits" rows="2" placeholder="Health permit, fire inspection, insured for events..."></textarea></label>
+                </div>
+              </div>
+
+              <div class="profile-form-section wide-field">
+                <p class="eyebrow">Menu & Food Style</p>
+                <div class="marketing-question-grid">
+                  <label>Cuisine type<input id="truck-profile-cuisine" type="text" placeholder="BBQ, Mexican, Vegan, Desserts, Fusion"></label>
+                  <label>Price range<select id="truck-profile-price-range"><option>$</option><option>$$</option><option>$$$</option></select></label>
+                  <label class="wide-field">Signature dishes, top 3-5<textarea id="truck-profile-signature-dishes" rows="3" placeholder="Birria tacos&#10;Chicken verde bowl&#10;Street corn cups"></textarea></label>
+                  <label class="wide-field">Dietary options<textarea id="truck-profile-dietary" rows="2" placeholder="Vegan options, gluten-free buns, halal chicken, nut-free desserts"></textarea></label>
+                  <div class="wide-field menu-tools-panel">
+                    <p class="eyebrow">Full Menu</p>
+                    <label>Direct menu link<input id="truck-profile-menu-link" type="url" placeholder="https://yourtruck.com/menu"></label>
+                    <label>Add a menu photo or PDF<input id="truck-profile-menu-file" type="file" accept="image/*,.pdf" capture="environment"></label>
+                    <p class="helper-text" id="truck-menu-tools-status">Customers can use a menu link or a menu picture.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="profile-form-section wide-field">
+                <p class="eyebrow">Brand Story & Personality</p>
+                <div class="marketing-question-grid">
+                  <label class="wide-field">About the business<textarea id="truck-profile-description" rows="3" placeholder="How you started, your mission, inspiration, and what customers should know."></textarea></label>
+                  <label class="wide-field">What makes you unique?<textarea id="truck-profile-unique" rows="3" placeholder="Family recipes, cultural roots, special ingredients, local sourcing..."></textarea></label>
+                  <label>Fun fact<input id="truck-profile-fun-fact" type="text" placeholder="Our salsa recipe is three generations old."></label>
+                  <label>Awards or press mentions<input id="truck-profile-awards" type="text" placeholder="Best Taco Truck 2025, WMUR feature..."></label>
+                </div>
+              </div>
+
+              <div class="profile-form-section wide-field">
+                <p class="eyebrow">Location & Schedule</p>
+                <div class="marketing-question-grid">
+                  <label>Primary service area<input id="truck-profile-city" type="text" placeholder="Manchester, Nashua, Lowell"></label>
+                  <label>Real-time location link<input id="truck-profile-live-location" type="url" placeholder="StreetFoodFinder, Instagram, calendar link..."></label>
+                  <label class="wide-field">Typical weekly schedule<textarea id="truck-profile-calendar" rows="4" placeholder="Fri 5-9 PM - Manchester Night Market"></textarea></label>
+                  <label>Available for events?<select id="truck-profile-events-available"><option>Yes</option><option>No</option><option>Ask us</option></select></label>
+                  <label>Event types<input id="truck-profile-event-types" type="text" placeholder="Weddings, corporate events, festivals, private parties"></label>
+                </div>
+              </div>
+
+              <div class="profile-form-section wide-field">
+                <p class="eyebrow">Photos</p>
+                <label>High-quality food, truck, and staff photo URLs, up to 10<textarea id="truck-profile-images" rows="4" placeholder="One image URL per line"></textarea></label>
+              </div>
+
+              <div class="profile-form-section wide-field">
+                <p class="eyebrow">Ordering & Payment</p>
+                <div class="marketing-question-grid">
+                  <label class="wide-field">Delivery service links<textarea id="truck-profile-delivery-links" rows="3" placeholder="Uber Eats: https://...&#10;DoorDash: https://...&#10;Grubhub: https://..."></textarea></label>
+                  <label class="wide-field">Pre-order options<textarea id="truck-profile-preorder" rows="2" placeholder="Order online, call ahead, use Toast/Square link, text for large orders..."></textarea></label>
+                  <fieldset class="wide-field payment-options">
+                    <legend>Accepted payment methods</legend>
+                    <label><input class="truck-payment-option" type="checkbox" value="Cash"> Cash</label>
+                    <label><input class="truck-payment-option" type="checkbox" value="Credit cards"> Credit cards</label>
+                    <label><input class="truck-payment-option" type="checkbox" value="Apple Pay"> Apple Pay</label>
+                    <label><input class="truck-payment-option" type="checkbox" value="Google Pay"> Google Pay</label>
+                    <label><input class="truck-payment-option" type="checkbox" value="Venmo"> Venmo</label>
+                    <label><input class="truck-payment-option" type="checkbox" value="Cash App"> Cash App</label>
+                  </fieldset>
+                </div>
+              </div>
+
+              <div class="profile-form-section wide-field">
+                <p class="eyebrow">Marketing & Promotion</p>
+                <div class="marketing-question-grid">
+                  <label>Tagline or slogan<input id="truck-profile-tagline" type="text" placeholder="Bold street tacos, made from family recipes."></label>
+                  <label>Special offers or promotions<input id="truck-profile-promotions" type="text" placeholder="Free agua fresca with two taco plates on Fridays."></label>
+                  <label class="wide-field">Keywords for search<textarea id="truck-profile-keywords" rows="2" placeholder="tacos, vegan, comfort food, late-night, birria"></textarea></label>
+                  <label class="wide-field">Preferred hashtags<textarea id="truck-profile-hashtags" rows="2" placeholder="#lowellbites #foodtruck #birria"></textarea></label>
+                </div>
+              </div>
+
+              <div class="profile-form-section wide-field">
+                <p class="eyebrow">Optional Add-ons</p>
+                <div class="marketing-question-grid">
+                  <label class="wide-field">Customer reviews or testimonials<textarea id="truck-profile-testimonials" rows="3" placeholder="One review per line"></textarea></label>
+                  <label>Video introduction link<input id="truck-profile-video" type="url" placeholder="YouTube, Instagram Reel, TikTok..."></label>
+                  <label>Catering menu link<input id="truck-profile-catering-menu" type="url" placeholder="https://..."></label>
+                  <label class="wide-field">Seasonal specials<textarea id="truck-profile-seasonal-specials" rows="3" placeholder="Summer lobster tacos&#10;Fall cider donuts&#10;Holiday catering trays"></textarea></label>
+                </div>
+              </div>
             </div>
 
             <div class="marketing-status-row">
