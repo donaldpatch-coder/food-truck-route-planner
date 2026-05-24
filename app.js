@@ -5904,6 +5904,13 @@ document.querySelector("#dashboard-view-details").addEventListener("click", () =
   setSelectedLocation(getTopLocation().id);
   showScreen("detail");
 });
+document.querySelector("#dashboard-start-broadcast").addEventListener("click", () => {
+  showScreen("broadcast");
+});
+document.querySelector("#dashboard-generate-broadcast").addEventListener("click", () => {
+  showScreen("broadcast");
+  generateBroadcastCaptions();
+});
 
 document.querySelector("#generate-plan").addEventListener("click", generateWeeklyPlan);
 document.querySelector("#refresh-route-plan").addEventListener("click", () => {

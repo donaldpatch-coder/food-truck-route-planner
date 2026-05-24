@@ -13,28 +13,26 @@
           <div class="brand-mark">FT</div>
           <div>
             <p class="eyebrow">Food Truck AI</p>
-            <h1>Broadcast</h1>
+            <h1>Dashboard</h1>
           </div>
         </div>
         <button type="button" class="secondary nav-toggle" id="nav-toggle">Menu</button>
 
         <nav class="nav" aria-label="App screens">
           <p class="nav-section-label">Core MVP</p>
-          <button class="nav-item active" data-screen="broadcast">Broadcast</button>
-          <button class="nav-item" data-screen="marketing">Public Profile</button>
-          <a class="nav-item nav-link-item" href="public-trucks.html" target="_blank">Truck Finder Site</a>
+          <button class="nav-item active" data-screen="dashboard">Dashboard</button>
           <button class="nav-item" data-screen="login">Account</button>
 
           <details class="nav-advanced">
             <summary>Advanced Tools</summary>
-            <button class="nav-item" data-screen="dashboard">Dashboard</button>
+            <button class="nav-item" data-screen="broadcast">Broadcast Flow</button>
             <button class="nav-item" data-screen="find">Find Locations</button>
             <button class="nav-item" data-screen="plan">Route Plan</button>
             <button class="nav-item" data-screen="checkins">Sales Log</button>
             <button class="nav-item" data-screen="reports">Reports</button>
             <button class="nav-item" data-screen="operations">Operations</button>
             <button class="nav-item" data-screen="suppliers">Suppliers</button>
-            <button class="nav-item" data-screen="public-site">List Spaces</button>
+            <button class="nav-item" data-screen="marketing">Truck Finder Profile</button>
             <button class="nav-item" data-screen="pos">POS</button>
             <button class="nav-item" data-screen="marketplace">Marketplace</button>
             <button class="nav-item" data-screen="forum">Forum</button>
@@ -80,7 +78,7 @@
           </form>
         </section>
 
-        <section id="dashboard" class="screen" aria-labelledby="dashboard-title">
+        <section id="dashboard" class="screen active" aria-labelledby="dashboard-title">
           <div class="screen-header">
             <p class="eyebrow">Dashboard</p>
             <h2 id="dashboard-title">Dashboard</h2>
@@ -88,9 +86,9 @@
           </div>
 
           <div class="tester-banner">
-            <strong>Tester build</strong>
-            <span>Use Settings to send feedback, export demo data, or reset your local test data.</span>
-            <button type="button" class="secondary" data-next="settings">Open Settings</button>
+            <strong>Start your shift</strong>
+            <span>Review the recommendation, then generate today’s customer posts.</span>
+            <button type="button" class="primary" id="dashboard-start-broadcast">Start Broadcast</button>
           </div>
 
           <div class="dashboard-kpis">
@@ -109,6 +107,7 @@
               <p><strong>Reason:</strong> <span id="dashboard-best-reason">High office traffic + low competition</span></p>
               <p><strong>Sales Opportunity:</strong> <span id="dashboard-sales">$850 - $1,250</span></p>
               <div class="button-row">
+                <button class="primary" id="dashboard-generate-broadcast" type="button">Accept & Generate Posts</button>
                 <button class="primary" id="dashboard-view-details" type="button">View Details</button>
                 <button class="secondary" type="button" data-next="plan">Open Route Plan</button>
               </div>
@@ -159,7 +158,7 @@
           </div>
         </section>
 
-        <section id="broadcast" class="screen active" aria-labelledby="broadcast-title">
+        <section id="broadcast" class="screen" aria-labelledby="broadcast-title">
           <div class="mvp-focus-banner">
             <div>
               <p class="eyebrow">Core MVP</p>
@@ -167,8 +166,7 @@
               <p>Start here each shift: pick the best location, generate customer posts, approve them, and show your truck as live.</p>
             </div>
             <div class="button-row">
-              <button type="button" class="secondary" data-next="marketing">Set Up Public Profile</button>
-              <a class="secondary button-link" href="public-trucks.html" target="_blank">View Truck Finder</a>
+              <button type="button" class="secondary" data-next="dashboard">Back to Dashboard</button>
             </div>
           </div>
 

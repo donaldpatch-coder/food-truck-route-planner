@@ -5,10 +5,10 @@ Use this checklist to test the Food Truck Route Planner MVP.
 ## Suggested Test Flow
 
 1. Open the app.
-2. Start on **Broadcast**.
-3. Review the daily recommendation.
-4. Pick another saved location if the recommendation is not right.
-5. Click **Accept & Generate Posts**.
+2. Start on **Dashboard**.
+3. Review the best recommendation.
+4. Click **Start Broadcast** to open the full flow, or **Accept & Generate Posts** to jump straight to caption review.
+5. Pick another saved location if the recommendation is not right.
 6. Review and edit the Instagram, Facebook, and Google Business captions.
 7. Optionally attach a food photo.
 8. Click **Approve & Blast Socials**.

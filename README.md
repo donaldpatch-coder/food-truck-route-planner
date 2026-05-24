@@ -13,7 +13,7 @@ The simplified tester flow is **Check In & Broadcast**:
 
 See `docs/check-in-broadcast-mvp.md` for the product flow and integration checklist.
 
-The app navigation now puts this flow first. Planning, reports, POS, suppliers, marketplace, and forum remain available under **Advanced Tools** so testers can focus on the daily broadcast workflow before exploring secondary features.
+The app navigation now puts the **Dashboard** first, with the broadcast action built into the dashboard. Planning, reports, POS, suppliers, marketplace, forum, and Truck Finder profile tools remain available under **Advanced Tools** so testers can focus on the daily operating workflow before exploring secondary features.
 
 ## Current Testing Build
 
