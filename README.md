@@ -2,6 +2,19 @@
 
 Food Truck Route Planner is a browser-based MVP for food truck operators. It helps owners find event spaces, track check-ins and sales, monitor weather risk, plan weekly routes, manage applications, search suppliers, and collect public space listings.
 
+## Core MVP Flow
+
+The simplified tester flow is **Check In & Broadcast**:
+
+1. Open the app to the daily recommendation.
+2. Accept the suggested location and generate social posts.
+3. Review/edit Instagram, Facebook, and Google Business captions.
+4. Approve the posts and show the truck as live at that location.
+
+See `docs/check-in-broadcast-mvp.md` for the product flow and integration checklist.
+
+The app navigation now puts this flow first. Planning, reports, POS, suppliers, marketplace, and forum remain available under **Advanced Tools** so testers can focus on the daily broadcast workflow before exploring secondary features.
+
 ## Current Testing Build
 
 This build is a static web app. It can run from a local folder, a local server, Netlify, Vercel, Cloudflare Pages, or any static host.

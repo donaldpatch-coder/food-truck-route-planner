@@ -5,23 +5,30 @@ Use this checklist to test the Food Truck Route Planner MVP.
 ## Suggested Test Flow
 
 1. Open the app.
-2. Go to **Find Locations**.
-3. Review a few opportunities.
-4. Open a location detail page.
-5. Refresh weather from the dashboard.
-6. Add a location to the weekly plan.
-7. Go to **Sales Log**.
-8. Start the service timer.
-9. Enter sales, costs, best sellers, competitors, and notes.
-10. Stop and save the check-in.
-11. Return to **Find Locations** and confirm the location history appears.
-12. Go to **Suppliers** and search/filter suppliers.
-13. Add a supplier partner with an affiliate link.
-14. Go to **Calendar** and click **Suggest My Week**.
-15. Go to **Operations** and add a permit/application pipeline record.
-16. Add a wholesale price and a reminder.
-17. Go to **Public Site** and submit a public space listing.
-18. Confirm the submitted public listing appears as an opportunity.
+2. Start on **Broadcast**.
+3. Review the daily recommendation.
+4. Pick another saved location if the recommendation is not right.
+5. Click **Accept & Generate Posts**.
+6. Review and edit the Instagram, Facebook, and Google Business captions.
+7. Optionally attach a food photo.
+8. Click **Approve & Blast Socials**.
+9. Confirm the success screen shows the truck as active at the location.
+10. Use **Close up early / Change location** and repeat the flow.
+
+## Secondary Test Flow
+
+After testing the core broadcast flow:
+
+1. Go to **Find Locations**.
+2. Review a few opportunities.
+3. Open a location detail page.
+4. Add a location to the route plan.
+5. Go to **Sales Log**.
+6. Start the service timer.
+7. Enter sales, costs, best sellers, competitors, and notes.
+8. Stop and save the check-in.
+9. Return to **Find Locations** and confirm the location history appears.
+10. Go to **Reports** and confirm the sales data appears.
 
 ## Feedback Questions
 

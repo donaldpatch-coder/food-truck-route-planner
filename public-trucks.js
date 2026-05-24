@@ -125,9 +125,12 @@ function profileMatches(profile) {
 
 function renderImages(profile) {
   const imageUrls = (profile.imageUrls || []).slice(0, 3);
+  const imageFileNames = (profile.imageFileNames || []).slice(0, 3);
 
   if (imageUrls.length === 0) {
-    return `<div class="truck-photo-placeholder">No photos yet</div>`;
+    return imageFileNames.length
+      ? `<div class="truck-photo-placeholder">Photos added: ${imageFileNames.join(", ")}</div>`
+      : `<div class="truck-photo-placeholder">No photos yet</div>`;
   }
 
   return `

@@ -88,6 +88,15 @@ textarea {
   gap: 8px;
 }
 
+.nav-section-label {
+  margin: 12px 0 2px;
+  color: #a9d8bd;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
 .nav-toggle {
   display: none;
   width: 100%;
@@ -106,9 +115,39 @@ textarea {
   cursor: pointer;
 }
 
+.nav-link-item {
+  display: grid;
+  align-items: center;
+  text-decoration: none;
+}
+
 .nav-item.active,
 .nav-item:hover {
   background: #223248;
+}
+
+.nav-advanced {
+  display: grid;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.nav-advanced summary {
+  min-height: 44px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  color: #eff5fb;
+  cursor: pointer;
+  font-weight: 800;
+  padding: 12px;
+}
+
+.nav-advanced[open] summary {
+  background: #223248;
+}
+
+.nav-advanced .nav-item {
+  margin-top: 8px;
 }
 
 .content {
@@ -393,6 +432,168 @@ textarea {
   height: 100%;
   border-radius: inherit;
   background: var(--blue);
+}
+
+.mvp-focus-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  max-width: 960px;
+  margin: 0 auto 18px;
+  border: 1px solid #c8dfd1;
+  border-radius: 8px;
+  background: #f2faf5;
+  padding: 18px;
+}
+
+.mvp-focus-banner h2,
+.mvp-focus-banner p {
+  margin: 0;
+}
+
+.mvp-focus-banner p:last-child {
+  color: var(--muted);
+  margin-top: 6px;
+}
+
+.broadcast-phone {
+  display: grid;
+  gap: 18px;
+  max-width: 560px;
+  min-height: calc(100vh - 72px);
+  margin: 0 auto;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: var(--shadow);
+  padding: 20px;
+}
+
+.broadcast-topbar {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.broadcast-topbar h2,
+.broadcast-suggestion-card h3,
+.broadcast-greeting {
+  margin: 0;
+}
+
+.broadcast-topbar span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.broadcast-progress {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.broadcast-progress span {
+  height: 8px;
+  border-radius: 999px;
+  background: #e7edf4;
+}
+
+.broadcast-progress span.active {
+  background: var(--green);
+}
+
+.broadcast-step {
+  display: none;
+  gap: 16px;
+}
+
+.broadcast-step.active {
+  display: grid;
+}
+
+.broadcast-greeting {
+  font-size: 24px;
+  font-weight: 900;
+  line-height: 1.2;
+}
+
+.broadcast-suggestion-card {
+  display: grid;
+  gap: 14px;
+  border: 1px solid #c8dfd1;
+  border-radius: 8px;
+  background: #f2faf5;
+  padding: 18px;
+}
+
+.broadcast-suggestion-card p {
+  margin: 0;
+}
+
+.broadcast-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.broadcast-meta-grid span {
+  display: grid;
+  gap: 4px;
+  border: 1px solid #d6e6dd;
+  border-radius: 8px;
+  background: #ffffff;
+  padding: 12px;
+}
+
+.broadcast-meta-grid small {
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.broadcast-primary {
+  width: 100%;
+  min-height: 56px;
+  font-size: 16px;
+}
+
+.broadcast-upload input {
+  padding: 10px;
+}
+
+.broadcast-upload span {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.broadcast-success-mark {
+  display: grid;
+  place-items: center;
+  width: 78px;
+  height: 78px;
+  border-radius: 999px;
+  background: var(--green);
+  color: #ffffff;
+  font-size: 44px;
+  font-weight: 900;
+}
+
+.broadcast-live-links {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.broadcast-live-links a {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--blue-dark);
+  font-weight: 900;
+  padding: 12px;
+  text-align: center;
+  text-decoration: none;
 }
 
 .feature-panel {
@@ -1662,10 +1863,17 @@ tr:last-child td {
     padding: 24px;
   }
 
+  .mvp-focus-banner {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
   .dashboard-kpis,
   .dashboard-grid,
   .dashboard-layout,
   .dashboard-charts,
+  .broadcast-meta-grid,
+  .broadcast-live-links,
   .detail-layout,
   .checkin-layout,
   .pos-layout,

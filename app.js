@@ -1,5 +1,6 @@
 const screens = document.querySelectorAll(".screen");
 const navItems = document.querySelectorAll(".nav-item");
+const navAdvanced = document.querySelector(".nav-advanced");
 const navToggle = document.querySelector("#nav-toggle");
 const resultList = document.querySelector("#results-list");
 const zipCode = document.querySelector("#zip-code");
@@ -74,6 +75,7 @@ const truckProfileCuisine = document.querySelector("#truck-profile-cuisine");
 const truckProfileLink = document.querySelector("#truck-profile-link");
 const truckProfileSocialLinks = document.querySelector("#truck-profile-social-links");
 const truckProfileLogo = document.querySelector("#truck-profile-logo");
+const truckProfileLogoFile = document.querySelector("#truck-profile-logo-file");
 const truckProfileDescription = document.querySelector("#truck-profile-description");
 const truckProfileSpecial = document.querySelector("#truck-profile-special");
 const truckProfileVendorType = document.querySelector("#truck-profile-vendor-type");
@@ -95,6 +97,8 @@ const truckProfileEventsAvailable = document.querySelector("#truck-profile-event
 const truckProfileEventTypes = document.querySelector("#truck-profile-event-types");
 const truckProfileCalendar = document.querySelector("#truck-profile-calendar");
 const truckProfileImages = document.querySelector("#truck-profile-images");
+const truckProfileImagesFiles = document.querySelector("#truck-profile-images-files");
+const truckProfilePhotoStatus = document.querySelector("#truck-profile-photo-status");
 const truckProfileDeliveryLinks = document.querySelector("#truck-profile-delivery-links");
 const truckProfilePreorder = document.querySelector("#truck-profile-preorder");
 const truckProfileTagline = document.querySelector("#truck-profile-tagline");
@@ -241,6 +245,30 @@ const dashboardLearningTitle = document.querySelector("#dashboard-learning-title
 const dashboardLearningCopy = document.querySelector("#dashboard-learning-copy");
 const weatherSummary = document.querySelector("#weather-summary");
 const weatherDetail = document.querySelector("#weather-detail");
+const broadcastStepLabel = document.querySelector("#broadcast-step-label");
+const broadcastDots = {
+  recommendation: document.querySelector("#broadcast-dot-recommend"),
+  preview: document.querySelector("#broadcast-dot-preview"),
+  success: document.querySelector("#broadcast-dot-success")
+};
+const broadcastSteps = {
+  recommendation: document.querySelector("#broadcast-recommendation-step"),
+  preview: document.querySelector("#broadcast-preview-step"),
+  success: document.querySelector("#broadcast-success-step")
+};
+const broadcastGreeting = document.querySelector("#broadcast-greeting");
+const broadcastLocationName = document.querySelector("#broadcast-location-name");
+const broadcastWeatherSummary = document.querySelector("#broadcast-weather-summary");
+const broadcastBestTime = document.querySelector("#broadcast-best-time");
+const broadcastScore = document.querySelector("#broadcast-score");
+const broadcastLocationSelect = document.querySelector("#broadcast-location-select");
+const broadcastInstagram = document.querySelector("#broadcast-instagram");
+const broadcastFacebook = document.querySelector("#broadcast-facebook");
+const broadcastGoogle = document.querySelector("#broadcast-google");
+const broadcastPhoto = document.querySelector("#broadcast-photo");
+const broadcastPhotoStatus = document.querySelector("#broadcast-photo-status");
+const broadcastPublishStatus = document.querySelector("#broadcast-publish-status");
+const broadcastLiveStatus = document.querySelector("#broadcast-live-status");
 
 const detailName = document.querySelector("#detail-name");
 const detailReason = document.querySelector("#detail-reason");
@@ -313,6 +341,8 @@ const storageKeys = {
   settings: "foodTruckAiSettings",
   feedback: "foodTruckAiFeedback",
   forumPosts: "foodTruckAiForumPosts",
+  broadcasts: "foodTruckAiBroadcasts",
+  activeBroadcast: "foodTruckAiActiveBroadcast",
   homeBase: "foodTruckAiHomeBase",
   activeBusinessProfileId: "foodTruckAiBusinessProfileId",
   activeUserId: "foodTruckAiUserId"
@@ -2219,7 +2249,16 @@ function showScreen(id) {
     item.classList.toggle("active", item.dataset.screen === id);
   });
 
+  if (navAdvanced) {
+    const activeAdvancedItem = navAdvanced.querySelector(`[data-screen="${id}"]`);
+    navAdvanced.open = Boolean(activeAdvancedItem);
+  }
+
   document.querySelector(".sidebar").classList.remove("nav-open");
+
+  if (id === "broadcast") {
+    renderBroadcastRecommendation();
+  }
 }
 
 function getSalesStats() {
@@ -2288,6 +2327,150 @@ function renderDashboardBarChart(element, rows, emptyText) {
       </div>
     `;
   }).join("");
+}
+
+function getBroadcastBusinessName() {
+  const activeTruck = getActiveTruckProfile();
+  const savedProfile = appStorage.getItem(storageKeys.profile);
+
+  if (activeTruck.truckName && activeTruck.truckName !== "Your Food Truck") {
+    return activeTruck.truckName;
+  }
+
+  try {
+    const profile = savedProfile ? JSON.parse(savedProfile) : null;
+    if (profile?.businessName) {
+      return profile.businessName;
+    }
+  } catch (error) {
+    return document.querySelector("#business-name").value.trim() || "Your Food Truck";
+  }
+
+  return document.querySelector("#business-name").value.trim() || "Your Food Truck";
+}
+
+function getBroadcastLocation() {
+  const selectedId = broadcastLocationSelect.value;
+  return locations.find((location) => location.id === selectedId) || getTopLocation();
+}
+
+function getBroadcastWeatherText(location) {
+  if (location.weather === "High") {
+    return `Weather risk is high today, so ${location.name} is a safer choice if it has cover, indoor traffic, or a nearby brewery crowd.`;
+  }
+
+  if (location.weather === "Moderate") {
+    return `Mixed weather, but ${location.name} still looks workable during ${location.bestTime}. Keep the post clear and watch the sky.`;
+  }
+
+  return `Perfect day for ${location.name}. Good weather, strong foot traffic, and a ${location.bestTime} service window make this a strong shift pick.`;
+}
+
+function showBroadcastStep(step) {
+  Object.entries(broadcastSteps).forEach(([key, element]) => {
+    element.classList.toggle("active", key === step);
+  });
+
+  Object.entries(broadcastDots).forEach(([key, element]) => {
+    element.classList.toggle("active", key === step);
+  });
+
+  broadcastStepLabel.textContent = step === "recommendation"
+    ? "Step 1 of 3"
+    : step === "preview"
+      ? "Step 2 of 3"
+      : "Step 3 of 3";
+}
+
+function renderBroadcastRecommendation() {
+  const businessName = getBroadcastBusinessName();
+  const trackedIds = getSavedLocationIds();
+  const optionLocations = trackedIds.length
+    ? locations.filter((location) => trackedIds.includes(location.id))
+    : locations.slice(0, 12);
+  const bestLocation = getTopLocation();
+
+  broadcastGreeting.textContent = `Good morning, ${businessName}!`;
+  broadcastLocationSelect.innerHTML = optionLocations.map((location) => `
+    <option value="${location.id}">${location.name} - ${location.city}</option>
+  `).join("");
+  broadcastLocationSelect.value = optionLocations.some((location) => location.id === bestLocation.id)
+    ? bestLocation.id
+    : optionLocations[0]?.id || bestLocation.id;
+
+  updateBroadcastRecommendation();
+  showBroadcastStep("recommendation");
+}
+
+function updateBroadcastRecommendation() {
+  const location = getBroadcastLocation();
+
+  broadcastLocationName.textContent = location.name;
+  broadcastWeatherSummary.textContent = getBroadcastWeatherText(location);
+  broadcastBestTime.textContent = location.bestTime;
+  broadcastScore.textContent = `${getLocationScore(location)}/100`;
+}
+
+function generateBroadcastCaptions() {
+  const businessName = getBroadcastBusinessName();
+  const profile = getActiveTruckProfile();
+  const location = getBroadcastLocation();
+  const cuisine = profile.cuisine || document.querySelector("#food-type").value || "fresh food";
+  const special = profile.dailySpecial || profile.seasonalSpecials || "today's favorites";
+  const addressLine = location.source ? `Details: ${location.source}` : `${location.city}`;
+  const hashtagBase = (profile.preferredHashtags || ["foodtruck", "streetfood", cuisine])
+    .slice(0, 5)
+    .map((tag) => `#${tag.replace(/^#/, "").replace(/\s+/g, "")}`)
+    .join(" ");
+
+  broadcastInstagram.value = `${businessName} is rolling into ${location.name} today during ${location.bestTime}. Come grab ${special} while it is hot. ${hashtagBase}`;
+  broadcastFacebook.value = `${businessName} will be at ${location.name} in ${location.city} today from ${location.bestTime}. We are serving ${cuisine}, including ${special}. Stop by, bring a friend, and check our page for updates if weather changes.`;
+  broadcastGoogle.value = `${businessName} is open today at ${location.name}, ${addressLine}, from ${location.bestTime}. Serving ${cuisine}.`;
+  broadcastPublishStatus.textContent = "";
+  showBroadcastStep("preview");
+}
+
+function publishBroadcast() {
+  const location = getBroadcastLocation();
+  const record = {
+    id: `broadcast-${Date.now()}`,
+    locationId: location.id,
+    location: location.name,
+    city: location.city,
+    bestTime: location.bestTime,
+    date: new Date().toISOString(),
+    instagram: broadcastInstagram.value.trim(),
+    facebook: broadcastFacebook.value.trim(),
+    google: broadcastGoogle.value.trim(),
+    photoName: broadcastPhoto.files[0]?.name || ""
+  };
+
+  broadcastPublishStatus.textContent = "Publishing demo posts...";
+
+  setTimeout(() => {
+    const broadcasts = getSavedCollection(storageKeys.broadcasts);
+    saveCollection(storageKeys.broadcasts, [record, ...broadcasts].slice(0, 25));
+    appStorage.setItem(storageKeys.activeBroadcast, JSON.stringify(record));
+    renderBroadcastSuccess(record);
+    showBroadcastStep("success");
+  }, 900);
+}
+
+function renderBroadcastSuccess(record) {
+  const currentRecord = record || getActiveBroadcast();
+  const locationText = currentRecord?.location || getBroadcastLocation().name;
+  const timeText = currentRecord?.bestTime || getBroadcastLocation().bestTime;
+
+  broadcastLiveStatus.textContent = `Current Status: Active at ${locationText} until ${timeText.split("-").pop().trim()}.`;
+}
+
+function getActiveBroadcast() {
+  try {
+    const activeBroadcast = appStorage.getItem(storageKeys.activeBroadcast);
+    return activeBroadcast ? JSON.parse(activeBroadcast) : null;
+  } catch (error) {
+    return null;
+  }
 }
 
 function setSelectedLocation(locationId) {
@@ -4234,12 +4417,15 @@ function getActiveTruckProfile() {
 function renderTruckProfilePreview() {
   const profile = arguments.length ? arguments[0] : getActiveTruckProfile();
   const image = (profile.imageUrls || [])[0];
+  const fallbackImageName = (profile.imageFileNames || [])[0];
   const calendarItems = (profile.calendarItems || []).slice(0, 5);
 
   truckProfilePreview.innerHTML = `
     ${profile.logoUrl ? `<img src="${profile.logoUrl}" alt="${profile.truckName} logo preview">` : image ? `<img src="${image}" alt="${profile.truckName} food truck preview">` : ""}
     <p class="eyebrow">${profile.cuisine || "Food truck"}</p>
     <h3>${profile.truckName}</h3>
+    ${profile.logoFileName && !profile.logoUrl ? `<p><strong>Logo file:</strong> ${profile.logoFileName}</p>` : ""}
+    ${fallbackImageName && !image ? `<p><strong>Photo file:</strong> ${fallbackImageName}</p>` : ""}
     <p><strong>${profile.tagline || profile.city}</strong></p>
     <p>${profile.city}</p>
     ${profile.dailySpecial ? `<p class="daily-special-preview"><strong>Daily special:</strong> ${profile.dailySpecial}</p>` : ""}
@@ -4297,6 +4483,7 @@ function getTruckProfileFields() {
     truckProfileLink,
     truckProfileSocialLinks,
     truckProfileLogo,
+    truckProfileLogoFile,
     truckProfileDescription,
     truckProfileSpecial,
     truckProfileVendorType,
@@ -4317,6 +4504,7 @@ function getTruckProfileFields() {
     truckProfileEventTypes,
     truckProfileCalendar,
     truckProfileImages,
+    truckProfileImagesFiles,
     truckProfileDeliveryLinks,
     truckProfilePreorder,
     truckProfileTagline,
@@ -4354,6 +4542,7 @@ function loadTruckProfileForm() {
   truckProfileLink.value = profile.contactUrl || "";
   truckProfileSocialLinks.value = (profile.socialLinks || []).join("\n");
   truckProfileLogo.value = profile.logoUrl || "";
+  truckProfileLogoFile.value = "";
   truckProfileDescription.value = profile.description || "";
   truckProfileSpecial.value = profile.dailySpecial || "";
   truckProfileVendorType.value = profile.vendorType || "Food truck";
@@ -4373,6 +4562,10 @@ function loadTruckProfileForm() {
   truckProfileEventTypes.value = profile.eventTypes || "";
   truckProfileCalendar.value = (profile.calendarItems || []).join("\n");
   truckProfileImages.value = (profile.imageUrls || []).join("\n");
+  truckProfileImagesFiles.value = "";
+  truckProfilePhotoStatus.textContent = profile.imageFileNames?.length
+    ? `${profile.imageFileNames.length} photo file${profile.imageFileNames.length === 1 ? "" : "s"} saved for the tester profile.`
+    : "Add links now, or choose photo files for the tester profile.";
   truckProfileDeliveryLinks.value = (profile.deliveryLinks || []).join("\n");
   truckProfilePreorder.value = profile.preorderOptions || "";
   truckProfileTagline.value = profile.tagline || "";
@@ -4406,6 +4599,7 @@ function getTruckProfileDraftFromForm() {
     contactUrl: truckProfileLink.value.trim(),
     socialLinks: splitProfileLines(truckProfileSocialLinks.value),
     logoUrl: truckProfileLogo.value.trim(),
+    logoFileName: truckProfileLogoFile.files[0]?.name || getActiveTruckProfile().logoFileName || "",
     description: truckProfileDescription.value.trim() || "Owner has not added a service description yet.",
     dailySpecial: truckProfileSpecial.value.trim(),
     vendorType: truckProfileVendorType.value,
@@ -4426,6 +4620,7 @@ function getTruckProfileDraftFromForm() {
     eventTypes: truckProfileEventTypes.value.trim(),
     calendarItems: splitProfileLines(truckProfileCalendar.value),
     imageUrls: [truckProfileTruckPhoto.value.trim(), ...splitProfileLines(truckProfileImages.value)].filter(Boolean).slice(0, 10),
+    imageFileNames: Array.from(truckProfileImagesFiles.files).map((file) => file.name).slice(0, 10).concat(getActiveTruckProfile().imageFileNames || []).slice(0, 10),
     deliveryLinks: splitProfileLines(truckProfileDeliveryLinks.value),
     preorderOptions: truckProfilePreorder.value.trim(),
     paymentTypes: Array.from(truckPaymentOptions).filter((option) => option.checked).map((option) => option.value),
@@ -5645,9 +5840,22 @@ editTruckProfile.addEventListener("click", () => {
   truckProfileName.focus();
   truckProfileStatus.textContent = "Editing profile.";
 });
-getTruckProfileFields().filter((input) => input !== truckProfileMenuFile).forEach((input) => {
+getTruckProfileFields().filter((input) => input.type !== "file").forEach((input) => {
   const eventName = input.type === "checkbox" ? "change" : "input";
   input.addEventListener(eventName, () => renderTruckProfilePreview(getTruckProfileDraftFromForm()));
+});
+truckProfileLogoFile.addEventListener("change", () => {
+  truckProfileStatus.textContent = truckProfileLogoFile.files[0]
+    ? `${truckProfileLogoFile.files[0].name} added as the logo upload.`
+    : "";
+  renderTruckProfilePreview(getTruckProfileDraftFromForm());
+});
+truckProfileImagesFiles.addEventListener("change", () => {
+  const count = truckProfileImagesFiles.files.length;
+  truckProfilePhotoStatus.textContent = count
+    ? `${count} photo file${count === 1 ? "" : "s"} selected. Save or publish to keep them on the tester profile.`
+    : "Add links now, or choose photo files for the tester profile.";
+  renderTruckProfilePreview(getTruckProfileDraftFromForm());
 });
 truckProfileMenuFile.addEventListener("change", () => {
   truckMenuToolsStatus.textContent = truckProfileMenuFile.files[0]
@@ -5716,6 +5924,19 @@ findEndDate.addEventListener("change", () => {
   renderResults();
 });
 document.querySelector("#refresh-weather").addEventListener("click", () => refreshWeather(selectedLocation));
+broadcastLocationSelect.addEventListener("change", updateBroadcastRecommendation);
+document.querySelector("#broadcast-generate-posts").addEventListener("click", generateBroadcastCaptions);
+document.querySelector("#broadcast-back-to-recommendation").addEventListener("click", () => showBroadcastStep("recommendation"));
+document.querySelector("#broadcast-publish").addEventListener("click", publishBroadcast);
+document.querySelector("#broadcast-change-location").addEventListener("click", () => {
+  appStorage.removeItem(storageKeys.activeBroadcast);
+  renderBroadcastRecommendation();
+});
+broadcastPhoto.addEventListener("change", () => {
+  broadcastPhotoStatus.textContent = broadcastPhoto.files[0]
+    ? `${broadcastPhoto.files[0].name} attached to this demo broadcast.`
+    : "Tap to add today's food photo.";
+});
 
 document.querySelector("#add-to-plan").addEventListener("click", () => {
   const added = addLocationToPlan(selectedLocation);
@@ -5771,6 +5992,7 @@ loadCustomLocations();
 homeBase.value = appStorage.getItem(storageKeys.homeBase) || homeBase.value;
 loadSettings();
 renderDashboard();
+renderBroadcastRecommendation();
 renderDetail();
 setDefaultCheckinFields();
 setDefaultRoutePlanDates();
