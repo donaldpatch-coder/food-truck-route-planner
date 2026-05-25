@@ -1,23 +1,1825 @@
-# Sales Log
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Food Truck AI SaaS MVP</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="app-shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-mark">FT</div>
+          <div>
+            <p class="eyebrow">Food Truck AI</p>
+            <h1>Dashboard</h1>
+          </div>
+        </div>
+        <button type="button" class="secondary nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="app-nav">Menu</button>
 
-![Sales Log screenshot](../../assets/help/sales-log.png)
+        <nav class="nav" id="app-nav" aria-label="App screens">
+          <p class="nav-section-label">Core MVP</p>
+          <button class="nav-item active" data-screen="dashboard">Dashboard</button>
+          <button class="nav-item" data-screen="login">Account</button>
 
-Use Sales Log when the truck starts service.
+          <details class="nav-advanced">
+            <summary>Advanced Tools</summary>
+            <button class="nav-item" data-screen="broadcast">Broadcast Flow</button>
+            <button class="nav-item" data-screen="find">Find Locations</button>
+            <button class="nav-item" data-screen="plan">Route Plan</button>
+            <button class="nav-item" data-screen="checkins">Sales Log</button>
+            <button class="nav-item" data-screen="reports">Reports</button>
+            <button class="nav-item" data-screen="operations">Operations</button>
+            <button class="nav-item" data-screen="suppliers">Suppliers</button>
+            <button class="nav-item" data-screen="marketing">Truck Finder Profile</button>
+            <button class="nav-item" data-screen="socialQueue">Social Queue</button>
+            <button class="nav-item" data-screen="pos">POS</button>
+            <button class="nav-item" data-screen="marketplace">Marketplace</button>
+          <button class="nav-item" data-screen="forum">TruckNet Community</button>
+          </details>
 
-## What To Do
+          <button class="nav-item" data-screen="settings">Settings</button>
+          <button class="nav-item help-nav" data-screen="help">Help</button>
+        </nav>
+      </aside>
 
-1. Choose the location.
-2. Click **Start Service**.
-3. Enter sales as orders come in.
-4. Add costs, best sellers, competitor count, and notes.
-5. Choose whether to appear in the visible owner list for that location.
-6. Click **Stop & Fill Time**.
-7. Save the check-in.
+      <section class="content">
+        <section id="login" class="screen" aria-labelledby="login-title">
+          <div class="screen-header">
+            <p class="eyebrow">Account</p>
+            <h2 id="login-title">Login / Sign Up</h2>
+            <p>Save your truck profile and start planning profitable stops.</p>
+          </div>
 
-## Why It Matters
+          <form class="form-panel">
+            <label>
+              Email
+              <input id="email" type="email" value="owner@lowellbites.com">
+            </label>
+            <label>
+              Password
+              <input id="password" type="password" value="foodtruck">
+            </label>
+            <label>
+              Business name
+              <input id="business-name" type="text" value="Lowell Bites">
+            </label>
+            <label>
+              City
+              <input id="profile-city" type="text" value="Lowell, MA">
+            </label>
+            <div class="button-row">
+              <button type="button" class="primary" id="create-account">Create Account</button>
+              <button type="button" class="secondary" id="log-in">Log In</button>
+              <button type="button" class="secondary" id="resend-verification">Resend Verification Email</button>
+            </div>
+            <p class="status-message" id="account-status" aria-live="polite"></p>
+            <p class="helper-text" id="database-status"></p>
+          </form>
+        </section>
 
-Saved check-ins power location history, reports, profit per visit, owner visibility, and future recommendations.
+        <section id="dashboard" class="screen active" aria-labelledby="dashboard-title">
+          <div class="screen-header">
+            <p class="eyebrow">Dashboard</p>
+            <h2 id="dashboard-title">Dashboard</h2>
+            <p>Today's best opportunities at a glance.</p>
+          </div>
 
-## Privacy Note
+          <div class="tester-banner">
+            <strong>Start your shift</strong>
+            <span>Review the recommendation, then generate today’s customer posts.</span>
+            <button type="button" class="primary" id="dashboard-start-broadcast">Start Broadcast</button>
+          </div>
 
-Visible check-ins are optional. If the owner does not turn that option on, the app still saves their private sales history without listing them for other owners.
+          <div class="dashboard-kpis">
+            <article class="metric"><span>Sales</span><strong id="dashboard-kpi-sales">$0</strong><small id="dashboard-kpi-sales-note">No check-ins yet</small></article>
+            <article class="metric"><span>Profit</span><strong id="dashboard-kpi-profit">$0</strong><small id="dashboard-kpi-profit-note">Costs minus sales</small></article>
+            <article class="metric"><span>Avg / Hour</span><strong id="dashboard-kpi-hour">$0</strong><small id="dashboard-kpi-hour-note">Use timer for better data</small></article>
+            <article class="metric"><span>Open Tasks</span><strong id="dashboard-kpi-tasks">0</strong><small id="dashboard-kpi-tasks-note">Pipeline and reminders</small></article>
+          </div>
+
+          <div class="dashboard-layout">
+            <article class="feature-panel dashboard-hero-panel">
+              <p class="eyebrow">Best Decision Today</p>
+              <h3 id="dashboard-best-name">Downtown Lowell - Lunch Hours</h3>
+              <div class="score" id="dashboard-best-score">87/100</div>
+              <p><strong>Best Time:</strong> <span id="dashboard-best-time">11 AM - 2 PM</span></p>
+              <p><strong>Reason:</strong> <span id="dashboard-best-reason">High office traffic + low competition</span></p>
+              <p><strong>Sales Opportunity:</strong> <span id="dashboard-sales">$850 - $1,250</span></p>
+              <div class="button-row">
+                <button class="primary" id="dashboard-generate-broadcast" type="button">Accept & Generate Posts</button>
+                <button class="primary" id="dashboard-view-details" type="button">View Details</button>
+                <button class="secondary" type="button" data-next="plan">Open Route Plan</button>
+              </div>
+            </article>
+
+            <article class="feature-panel">
+              <p class="eyebrow">Today / Upcoming Schedule</p>
+              <div class="dashboard-list" id="dashboard-schedule-list"></div>
+            </article>
+
+            <article class="feature-panel">
+              <p class="eyebrow">To-Do Queue</p>
+              <div class="dashboard-list" id="dashboard-task-list"></div>
+            </article>
+
+            <article class="feature-panel">
+              <p class="eyebrow">Accounting Snapshot</p>
+              <div class="dashboard-list" id="dashboard-accounting-list"></div>
+            </article>
+
+            <article class="feature-panel">
+              <p class="eyebrow">Live Weather</p>
+              <h3 id="weather-summary">Weather not loaded</h3>
+              <p id="weather-detail">Refresh weather to check service risk for the selected city.</p>
+              <button class="secondary" type="button" id="refresh-weather">Refresh Weather</button>
+            </article>
+
+            <article class="feature-panel">
+              <p class="eyebrow">Learning From Sales</p>
+              <h3 id="dashboard-learning-title">No sales logged yet</h3>
+              <p id="dashboard-learning-copy">Check in after a service to teach the planner which spots actually perform.</p>
+            </article>
+          </div>
+
+          <div class="dashboard-charts">
+            <article class="feature-panel">
+              <p class="eyebrow">Sales Trend</p>
+              <div class="dashboard-chart" id="dashboard-sales-chart"></div>
+            </article>
+            <article class="feature-panel">
+              <p class="eyebrow">Top Menu Items</p>
+              <div class="dashboard-chart" id="dashboard-menu-chart"></div>
+            </article>
+            <article class="feature-panel">
+              <p class="eyebrow">Best Locations</p>
+              <div class="dashboard-chart" id="dashboard-location-chart"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="broadcast" class="screen" aria-labelledby="broadcast-title">
+          <div class="mvp-focus-banner">
+            <div>
+              <p class="eyebrow">Core MVP</p>
+              <h2>Check In & Broadcast</h2>
+              <p>Start here each shift: pick the best location, generate customer posts, approve them, and show your truck as live.</p>
+            </div>
+            <div class="button-row">
+              <button type="button" class="secondary" data-next="dashboard">Back to Dashboard</button>
+            </div>
+          </div>
+
+          <div class="broadcast-phone">
+            <div class="broadcast-topbar">
+              <div>
+                <p class="eyebrow">Check In & Broadcast</p>
+                <h2 id="broadcast-title">Daily Shift</h2>
+              </div>
+              <span id="broadcast-step-label">Step 1 of 3</span>
+            </div>
+
+            <div class="broadcast-progress" aria-hidden="true">
+              <span class="active" id="broadcast-dot-recommend"></span>
+              <span id="broadcast-dot-preview"></span>
+              <span id="broadcast-dot-success"></span>
+            </div>
+
+            <article class="broadcast-step active" id="broadcast-recommendation-step">
+              <p class="broadcast-greeting" id="broadcast-greeting">Good morning!</p>
+              <div class="broadcast-suggestion-card">
+                <p class="eyebrow">AI Suggestion</p>
+                <h3 id="broadcast-location-name">Downtown Lowell</h3>
+                <p id="broadcast-weather-summary">Checking today's weather and traffic pattern.</p>
+                <div class="broadcast-meta-grid">
+                  <span><strong id="broadcast-best-time">11 AM - 2 PM</strong><small>Best time</small></span>
+                  <span><strong id="broadcast-score">87/100</strong><small>Location score</small></span>
+                </div>
+              </div>
+              <label>
+                Not parking there? Pick another saved location
+                <select id="broadcast-location-select"></select>
+              </label>
+              <button type="button" class="primary broadcast-primary" id="broadcast-generate-posts">Accept & Generate Posts</button>
+            </article>
+
+            <article class="broadcast-step" id="broadcast-preview-step">
+              <p class="broadcast-greeting">Review before posting</p>
+              <div class="integration-status-card" id="broadcast-posting-status-card">
+                <strong>Posting service</strong>
+                <span id="broadcast-posting-service-label">Demo mode - posts will be saved inside this tester app.</span>
+              </div>
+              <label>
+                Instagram
+                <textarea id="broadcast-instagram" rows="5"></textarea>
+              </label>
+              <label>
+                Facebook
+                <textarea id="broadcast-facebook" rows="5"></textarea>
+              </label>
+              <label>
+                Google Business Profile
+                <textarea id="broadcast-google" rows="4"></textarea>
+              </label>
+              <label class="broadcast-upload">
+                Today's food photo optional
+                <input id="broadcast-photo" type="file" accept="image/*">
+                <span id="broadcast-photo-status">Tap to add today's food photo.</span>
+              </label>
+              <div class="button-row">
+                <button type="button" class="secondary" id="broadcast-back-to-recommendation">Back</button>
+                <button type="button" class="primary broadcast-primary" id="broadcast-publish">Approve & Broadcast Demo</button>
+              </div>
+              <p class="status-message" id="broadcast-publish-status" aria-live="polite"></p>
+            </article>
+
+            <article class="broadcast-step" id="broadcast-success-step">
+              <div class="broadcast-success-mark">✓</div>
+              <p class="broadcast-greeting">Truck Status: Broadcasted!</p>
+              <p id="broadcast-live-status">Current Status: Active at Downtown Common until 8:00 PM.</p>
+              <div class="broadcast-live-links">
+                <a href="https://www.instagram.com/" target="_blank">Instagram</a>
+                <a href="https://www.facebook.com/" target="_blank">Facebook</a>
+                <a href="https://www.google.com/maps" target="_blank">Google Maps</a>
+              </div>
+              <div class="button-row">
+                <button type="button" class="primary" data-next="socialQueue">Open Posting Queue</button>
+                <button type="button" class="secondary" id="broadcast-change-location">Close up early / Change location</button>
+                <button type="button" class="primary" data-next="dashboard">Open Dashboard</button>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section id="socialQueue" class="screen" aria-labelledby="social-queue-title">
+          <div class="screen-header">
+            <p class="eyebrow">Built-In Posting Assistant</p>
+            <h2 id="social-queue-title">Social Queue</h2>
+            <p>Approved broadcasts are saved here so owners can copy captions, open each social platform, and mark posts as posted.</p>
+          </div>
+
+          <div class="social-queue-layout">
+            <article class="feature-panel">
+              <p class="eyebrow">Why This Saves Money</p>
+              <h3>Scaled-down Ayrshare alternative</h3>
+              <p>This version avoids monthly API fees while testers prove the workflow. It does not post automatically, but it gives owners a fast copy-and-open station with posting history.</p>
+              <div class="mini-list">
+                <div class="mini-list-item"><strong>Included now</strong><span>Queue, captions, copy buttons, open links, posted status, history.</span></div>
+                <div class="mini-list-item"><strong>Later upgrade</strong><span>Meta, Google, or Ayrshare API posting when revenue supports it.</span></div>
+              </div>
+            </article>
+
+            <article class="feature-panel large">
+              <div class="title-row">
+                <div>
+                  <p class="eyebrow">Approved Posts</p>
+                  <h3>Ready to Post</h3>
+                </div>
+                <button type="button" class="secondary" id="refresh-social-queue">Refresh Queue</button>
+              </div>
+              <p class="status-message" id="social-queue-status" aria-live="polite"></p>
+              <div class="social-queue-list" id="social-queue-list"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="find" class="screen" aria-labelledby="find-title">
+          <div class="screen-header">
+            <p class="eyebrow">Search</p>
+            <div class="title-row">
+              <h2 id="find-title">Find Locations</h2>
+              <div class="segmented-actions" aria-label="Location result view">
+                <button type="button" class="secondary active" id="show-all-locations">All Locations</button>
+                <button type="button" class="secondary" id="show-saved-locations">Saved Locations</button>
+              </div>
+            </div>
+            <p>Search for profitable spots by city, time, and food type.</p>
+          </div>
+
+          <form class="search-panel">
+            <label>
+              City
+              <input id="city" type="text" value="Lowell, MA">
+            </label>
+            <label>
+              ZIP code
+              <input id="zip-code" type="text" inputmode="numeric" placeholder="01852">
+            </label>
+            <label>
+              Start date
+              <input id="find-start-date" type="date" value="2026-05-22">
+            </label>
+            <label>
+              End date
+              <input id="find-end-date" type="date" value="2026-05-28">
+            </label>
+            <label>
+              Time
+              <input type="time" value="11:30">
+            </label>
+            <label>
+              Food type
+              <select id="food-type">
+                <option>Tacos</option>
+                <option>Burgers</option>
+                <option>Coffee</option>
+                <option>Dessert</option>
+              </select>
+            </label>
+            <label>
+              Distance range
+              <select>
+                <option>5 miles</option>
+                <option>10 miles</option>
+                <option>25 miles</option>
+              </select>
+            </label>
+            <button type="button" class="primary" id="find-spots">Find Best Spots</button>
+          </form>
+
+          <details class="add-location-panel">
+            <summary>Add your own location</summary>
+            <form class="custom-location-form">
+              <label>
+                Location name
+                <input id="custom-location-name" type="text" placeholder="Town common, office park, brewery...">
+              </label>
+              <label>
+                City
+                <input id="custom-location-city" type="text" placeholder="Lowell, MA">
+              </label>
+              <label>
+                Type
+                <select id="custom-location-type">
+                  <option>Custom spot</option>
+                  <option>County fair</option>
+                  <option>Festival</option>
+                  <option>Farmers market</option>
+                  <option>Brewery</option>
+                  <option>Private event</option>
+                  <option>Street service</option>
+                </select>
+              </label>
+              <label>
+                Best time
+                <input id="custom-location-time" type="text" placeholder="11 AM - 2 PM">
+              </label>
+              <label>
+                Score
+                <input id="custom-location-score" type="number" min="1" max="100" value="75">
+              </label>
+              <label>
+                Source or contact link
+                <input id="custom-location-source" type="url" placeholder="https://...">
+              </label>
+              <label class="wide-field">
+                Notes
+                <input id="custom-location-notes" type="text" placeholder="Permit contact, power, fee, past sales, parking notes">
+              </label>
+              <button type="button" class="primary" id="save-custom-location">Save Location</button>
+              <p class="status-message" id="custom-location-status" aria-live="polite"></p>
+            </form>
+          </details>
+
+          <div class="results-toolbar">
+            <p class="helper-text" id="results-summary"></p>
+            <button type="button" class="secondary" id="generate-plan">Build Route Plan</button>
+          </div>
+          <div class="results-list" id="results-list" aria-live="polite"></div>
+        </section>
+
+        <section id="detail" class="screen" aria-labelledby="detail-title">
+          <div class="screen-header">
+            <p class="eyebrow">Recommendation</p>
+            <h2 id="detail-title">Location Details</h2>
+            <p>Explain why a spot is recommended.</p>
+          </div>
+
+          <div class="detail-layout">
+            <article class="feature-panel large">
+              <p class="eyebrow">AI Recommendation</p>
+              <h3 id="detail-name">Downtown Lowell</h3>
+              <p id="detail-reason">This location is strong for lunch because nearby offices create high foot traffic. Best operating time is 11:30 AM-2:00 PM.</p>
+              <div class="button-row">
+                <button class="primary" id="save-location">Save Location</button>
+                <button class="secondary" id="add-to-plan">Add to Route Plan</button>
+                <button class="secondary" id="check-in-location">Check In Here</button>
+              </div>
+            </article>
+
+            <div class="metric-grid">
+              <div class="metric"><span>Location Score</span><strong id="detail-score">87/100</strong></div>
+              <div class="metric"><span>Foot Traffic Estimate</span><strong id="detail-traffic">High</strong></div>
+              <div class="metric"><span>Nearby Events</span><strong id="detail-events">3</strong></div>
+              <div class="metric"><span>Competitors Nearby</span><strong id="detail-competition">2</strong></div>
+              <div class="metric"><span>Weather Impact</span><strong id="detail-weather">Low risk</strong></div>
+              <div class="metric"><span>Parking Notes</span><strong id="detail-parking">Metered curb spots</strong></div>
+            </div>
+          </div>
+
+          <article class="feature-panel location-history-panel">
+            <p class="eyebrow">Past Visits</p>
+            <h3 id="detail-history-title">No history yet</h3>
+            <div class="visit-history-list" id="detail-history-list"></div>
+          </article>
+        </section>
+
+        <section id="plan" class="screen" aria-labelledby="plan-title">
+          <div class="screen-header">
+            <p class="eyebrow">Planner</p>
+            <h2 id="plan-title">Route Plan</h2>
+            <p>Plan where to park, how far to travel, and which vendors are close to the route.</p>
+          </div>
+
+          <div class="planner-toolbar">
+            <label>
+              Route view
+              <select id="route-plan-period">
+                <option value="week">Weekly</option>
+                <option value="month">Monthly</option>
+                <option value="range">Date range</option>
+              </select>
+            </label>
+            <label>
+              Start date
+              <input id="route-plan-start" type="date">
+            </label>
+            <label>
+              End date
+              <input id="route-plan-end" type="date">
+            </label>
+            <button type="button" class="primary" id="refresh-route-plan">Refresh Route Plan</button>
+          </div>
+
+          <div class="route-map-layout">
+            <article class="feature-panel route-map-panel">
+              <p class="eyebrow">Route Map</p>
+              <h3 id="plan-route-map-title">Route plan map</h3>
+              <div class="route-map" id="plan-route-map"></div>
+            </article>
+
+            <article class="feature-panel">
+              <p class="eyebrow">Mileage & Vendors</p>
+              <h3 id="plan-route-mileage-total">0 miles</h3>
+              <div class="route-leg-list" id="plan-route-leg-list"></div>
+              <p class="eyebrow route-vendor-heading">Vendors near route</p>
+              <div class="route-vendor-list" id="plan-route-vendor-list"></div>
+            </article>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Date / Day</th>
+                  <th>Best Location</th>
+                  <th>Best Time</th>
+                  <th>Score</th>
+                </tr>
+              </thead>
+              <tbody id="weekly-plan-body"></tbody>
+            </table>
+          </div>
+
+          <div class="button-row">
+            <button class="primary" id="export-plan">Export Plan</button>
+            <button class="secondary" id="send-calendar">Send to Calendar</button>
+          </div>
+          <p class="status-message" id="plan-status" aria-live="polite"></p>
+
+          <div class="dashboard-grid route-planner-insights">
+            <article class="feature-panel">
+              <p class="eyebrow">AI Route Recommendation</p>
+              <h3 id="ai-week-title">Ready to plan</h3>
+              <p id="ai-week-copy">Build a route recommendation using weather, history, deadlines, fees, and opportunity score.</p>
+            </article>
+            <article class="feature-panel">
+              <p class="eyebrow">Route Estimate</p>
+              <h3 id="route-estimate-title">Home base not calculated</h3>
+              <p id="route-estimate-copy">Route notes use city distance estimates for planning until map routing is connected.</p>
+            </article>
+          </div>
+
+          <div class="calendar-list" id="calendar-list"></div>
+        </section>
+
+        <section id="checkins" class="screen" aria-labelledby="checkins-title">
+          <div class="screen-header">
+            <p class="eyebrow">Sales Log</p>
+            <h2 id="checkins-title">Check In & Record Sales</h2>
+            <p>Capture where the truck parked, when service happened, and how much it made.</p>
+          </div>
+
+          <div class="checkin-layout">
+            <form class="form-panel">
+              <label>
+                Location
+                <select id="checkin-location"></select>
+              </label>
+              <label>
+                Service date
+                <input id="checkin-date" type="date">
+              </label>
+              <label>
+                Start time
+                <input id="checkin-start" type="time">
+              </label>
+              <label>
+                End time
+                <input id="checkin-end" type="time">
+              </label>
+              <label>
+                Sales
+                <input id="checkin-sales" type="number" min="0" step="1" placeholder="950">
+              </label>
+              <label>
+                Costs
+                <input id="checkin-costs" type="number" min="0" step="1" placeholder="280">
+              </label>
+              <label>
+                Best sellers
+                <input id="checkin-best-sellers" type="text" placeholder="Tacos, lemonade, burgers">
+              </label>
+              <label>
+                Competitors
+                <input id="checkin-competitors" type="number" min="0" step="1" placeholder="3">
+              </label>
+              <div class="timer-panel">
+                <div class="timer-readout">
+                  <span>Elapsed Time</span>
+                  <strong id="timer-elapsed">00:00:00</strong>
+                </div>
+                <div class="timer-readout">
+                  <span>Gross Per Hour</span>
+                  <strong id="timer-rate">$0/hr</strong>
+                </div>
+              </div>
+              <div class="button-row">
+                <button type="button" class="primary" id="start-service">Start Service</button>
+                <button type="button" class="secondary" id="stop-service">Stop & Fill Time</button>
+              </div>
+              <label>
+                Notes
+                <input id="checkin-notes" type="text" placeholder="Rain after 3 PM, lunch rush was strong">
+              </label>
+              <label class="inline-check">
+                <input id="checkin-visible" type="checkbox">
+                Show me to other checked-in owners at this location
+              </label>
+              <label>
+                Contact for other owners
+                <input id="checkin-contact" type="text" placeholder="Text number, email, radio channel, Instagram">
+              </label>
+              <button type="button" class="primary" id="save-checkin">Save Check-In</button>
+              <button type="button" class="secondary" id="clear-checkins">Clear Sales Log</button>
+              <p class="status-message" id="checkin-status" aria-live="polite"></p>
+            </form>
+
+            <div class="feature-panel">
+              <p class="eyebrow">AI Learning Snapshot</p>
+              <h3 id="sales-insight-title">Start logging sales</h3>
+              <p id="sales-insight-copy">After a few check-ins, the app can compare average sales by spot and adjust recommendations.</p>
+              <div class="metric-grid compact">
+                <div class="metric"><span>Best Avg Spot</span><strong id="best-sales-location">--</strong></div>
+                <div class="metric"><span>Lowest Avg Spot</span><strong id="lowest-sales-location">--</strong></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="table-wrap sales-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Time</th>
+                  <th>Location</th>
+                  <th>Sales</th>
+                  <th>Profit</th>
+                  <th>Notes</th>
+                </tr>
+              </thead>
+              <tbody id="checkin-history-body"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="suppliers" class="screen" aria-labelledby="suppliers-title">
+          <div class="screen-header">
+            <p class="eyebrow">Wholesale Search</p>
+            <h2 id="suppliers-title">New Hampshire Suppliers</h2>
+            <p>Find wholesale food, produce, seafood, equipment, paper goods, and service vendors.</p>
+          </div>
+
+          <form class="supplier-search-panel">
+            <label>
+              Search
+              <input id="supplier-query" type="search" placeholder="seafood, produce, paper, equipment...">
+            </label>
+            <label>
+              Category
+              <select id="supplier-category">
+                <option value="all">All suppliers</option>
+                <option value="Broadline">Broadline</option>
+                <option value="Local directory">Local directory</option>
+                <option value="Produce">Produce</option>
+                <option value="Seafood">Seafood</option>
+                <option value="Meat">Meat</option>
+                <option value="Equipment">Equipment</option>
+                <option value="Repair">Repair</option>
+                <option value="Paper and cleaning">Paper and cleaning</option>
+                <option value="Refrigeration">Refrigeration</option>
+              </select>
+            </label>
+            <button type="button" class="primary" id="search-suppliers">Search Suppliers</button>
+          </form>
+
+          <details class="add-location-panel">
+            <summary>Add supplier partner</summary>
+            <form class="custom-location-form">
+              <label>
+                Vendor name
+                <input id="partner-name" type="text" placeholder="Restaurant supply, local farm, distributor">
+              </label>
+              <label>
+                Category
+                <select id="partner-category">
+                  <option>Broadline</option>
+                  <option>Local directory</option>
+                  <option>Produce</option>
+                  <option>Seafood</option>
+                  <option>Meat</option>
+                  <option>Equipment</option>
+                  <option>Repair</option>
+                  <option>Paper and cleaning</option>
+                  <option>Refrigeration</option>
+                  <option>Other</option>
+                </select>
+              </label>
+              <label>
+                City / service area
+                <input id="partner-city" type="text" placeholder="Manchester, NH or statewide">
+              </label>
+              <label>
+                Products
+                <input id="partner-products" type="text" placeholder="Paper goods, beef, produce, propane">
+              </label>
+              <label>
+                Affiliate link
+                <input id="partner-link" type="url" placeholder="https://vendor.com/?ref=yourcode">
+              </label>
+              <label>
+                Commission notes
+                <input id="partner-commission" type="text" placeholder="10% referral, $50 signup bonus, pending approval">
+              </label>
+              <label class="wide-field">
+                Listing notes
+                <input id="partner-notes" type="text" placeholder="Best for new trucks, fast delivery, negotiated discount">
+              </label>
+              <button type="button" class="primary" id="save-partner">Save Supplier Partner</button>
+              <p class="status-message" id="partner-status" aria-live="polite"></p>
+            </form>
+          </details>
+
+          <div class="results-toolbar">
+            <p class="helper-text" id="supplier-summary"></p>
+          </div>
+          <div class="supplier-list" id="supplier-list" aria-live="polite"></div>
+        </section>
+
+        <section id="public-site" class="screen" aria-labelledby="public-title">
+          <div class="public-hero">
+            <div>
+              <p class="eyebrow">Public Directory</p>
+              <h2 id="public-title">Find Food Truck Spaces in New England</h2>
+              <p>Help event organizers, property owners, breweries, farms, and markets list truck-friendly spaces while sending qualified opportunities into the operator app.</p>
+              <div class="button-row">
+                <button type="button" class="primary" id="browse-public-listings">Browse Spaces</button>
+                <button type="button" class="secondary" id="jump-list-space">List a Space</button>
+                <a class="secondary button-link" href="public-trucks.html" target="_blank">Open Truck Finder</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="public-layout">
+            <section>
+              <div class="results-toolbar">
+                <p class="helper-text" id="public-listing-summary"></p>
+              </div>
+              <div class="public-listing-grid" id="public-listing-grid"></div>
+            </section>
+
+            <aside class="feature-panel" id="list-space-panel">
+              <p class="eyebrow">For Hosts</p>
+              <h3>List your space or event</h3>
+              <label>
+                Space / event name
+                <input id="public-space-name" type="text" placeholder="Brewery patio, fairground, office park">
+              </label>
+              <label>
+                City
+                <input id="public-space-city" type="text" placeholder="Manchester, NH">
+              </label>
+              <label>
+                Space type
+                <select id="public-space-type">
+                  <option>Brewery</option>
+                  <option>Farmers market</option>
+                  <option>Festival</option>
+                  <option>County fair</option>
+                  <option>Office park</option>
+                  <option>Private lot</option>
+                  <option>Municipal event</option>
+                </select>
+              </label>
+              <label>
+                Best service window
+                <input id="public-space-time" type="text" placeholder="11 AM - 2 PM">
+              </label>
+              <label>
+                Fee / rent
+                <input id="public-space-fee" type="text" placeholder="$100 flat, 10%, free">
+              </label>
+              <label>
+                Contact / application link
+                <input id="public-space-link" type="url" placeholder="https://...">
+              </label>
+              <label>
+                Notes
+                <input id="public-space-notes" type="text" placeholder="Power, parking, permits, expected crowd">
+              </label>
+              <button type="button" class="primary" id="save-public-listing">Submit Listing</button>
+              <p class="status-message" id="public-listing-status" aria-live="polite"></p>
+            </aside>
+          </div>
+
+        </section>
+
+        <section id="marketing" class="screen" aria-labelledby="marketing-title">
+          <div class="screen-header">
+            <p class="eyebrow">Truck Finder Marketing</p>
+            <h2 id="marketing-title">Public Truck Profile</h2>
+            <p>Answer the profile questions, save a draft, then publish when it is ready for the Truck Finder site.</p>
+          </div>
+
+          <article class="feature-panel marketing-editor-panel">
+            <div class="panel-title-row">
+              <div>
+                <p class="eyebrow">Profile Questions</p>
+                <h3>Truck Finder listing</h3>
+              </div>
+              <div class="button-row">
+                <button type="button" class="secondary" id="edit-truck-profile">Edit</button>
+                <button type="button" class="secondary" id="save-truck-draft">Save</button>
+                <button type="button" class="primary" id="save-truck-profile">Publish</button>
+                <a class="secondary button-link" href="public-trucks.html" target="_blank">View Public Site</a>
+              </div>
+            </div>
+
+            <div class="marketing-question-grid">
+              <div class="profile-form-section wide-field">
+                <p class="eyebrow">Core Business Details</p>
+                <div class="marketing-question-grid">
+                  <label>Business name<input id="truck-profile-name" type="text" placeholder="Lowell Bites"></label>
+                  <label>Owner / contact name<input id="truck-profile-owner" type="text" placeholder="Maria Lopez"></label>
+                  <label>Phone number<input id="truck-profile-phone" type="tel" placeholder="(603) 555-0198"></label>
+                  <label>Email address<input id="truck-profile-email" type="email" placeholder="hello@lowellbites.com"></label>
+                  <label>Website or ordering link<input id="truck-profile-link" type="url" placeholder="https://..."></label>
+                  <label class="wide-field">Social media links<textarea id="truck-profile-social-links" rows="3" placeholder="Instagram: https://...&#10;Facebook: https://...&#10;TikTok: https://..."></textarea></label>
+                  <label>Logo link<input id="truck-profile-logo" type="url" placeholder="https://..."></label>
+                  <label>Logo upload<input id="truck-profile-logo-file" type="file" accept="image/*"></label>
+                </div>
+              </div>
+
+              <div class="profile-form-section wide-field">
+                <p class="eyebrow">Truck / Cart Information</p>
+                <div class="marketing-question-grid">
+                  <label>Type of vendor<select id="truck-profile-vendor-type"><option>Food truck</option><option>Food cart</option><option>Trailer</option><option>Pop-up</option><option>Catering tent</option></select></label>
+                  <label>Year established<input id="truck-profile-established" type="number" min="1900" max="2100" placeholder="2021"></label>
+                  <label class="wide-field">Truck/cart description<textarea id="truck-profile-truck-description" rows="3" placeholder="Bright blue trailer with hand-painted taco art, neon sign, and open kitchen window."></textarea></label>
+                  <label>Photo of truck/cart URL<input id="truck-profile-truck-photo" type="url" placeholder="https://..."></label>
+                  <label class="wide-field">Licenses or permits, optional<textarea id="truck-profile-permits" rows="2" placeholder="Health permit, fire inspection, insured for events..."></textarea></label>
+                </div>
+              </div>
+
+              <div class="profile-form-section wide-field">
+                <p class="eyebrow">Menu & Food Style</p>
+                <div class="marketing-question-grid">
+                  <label>Cuisine type<input id="truck-profile-cuisine" type="text" placeholder="BBQ, Mexican, Vegan, Desserts, Fusion"></label>
+                  <label>Price range<select id="truck-profile-price-range"><option>$</option><option>$$</option><option>$$$</option></select></label>
+                  <label class="wide-field">Signature dishes, top 3-5<textarea id="truck-profile-signature-dishes" rows="3" placeholder="Birria tacos&#10;Chicken verde bowl&#10;Street corn cups"></textarea></label>
+                  <label class="wide-field">Dietary options<textarea id="truck-profile-dietary" rows="2" placeholder="Vegan options, gluten-free buns, halal chicken, nut-free desserts"></textarea></label>
+                  <div class="wide-field menu-tools-panel">
+                    <p class="eyebrow">Full Menu</p>
+                    <label>Direct menu link<input id="truck-profile-menu-link" type="url" placeholder="https://yourtruck.com/menu"></label>
+                    <label>Add a menu photo or PDF<input id="truck-profile-menu-file" type="file" accept="image/*,.pdf" capture="environment"></label>
+                    <p class="helper-text" id="truck-menu-tools-status">Customers can use a menu link or a menu picture.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="profile-form-section wide-field">
+                <p class="eyebrow">Brand Story & Personality</p>
+                <div class="marketing-question-grid">
+                  <label class="wide-field">About the business<textarea id="truck-profile-description" rows="3" placeholder="How you started, your mission, inspiration, and what customers should know."></textarea></label>
+                  <label class="wide-field">What makes you unique?<textarea id="truck-profile-unique" rows="3" placeholder="Family recipes, cultural roots, special ingredients, local sourcing..."></textarea></label>
+                  <label>Fun fact<input id="truck-profile-fun-fact" type="text" placeholder="Our salsa recipe is three generations old."></label>
+                  <label>Awards or press mentions<input id="truck-profile-awards" type="text" placeholder="Best Taco Truck 2025, WMUR feature..."></label>
+                </div>
+              </div>
+
+              <div class="profile-form-section wide-field">
+                <p class="eyebrow">Location & Schedule</p>
+                <div class="marketing-question-grid">
+                  <label>Primary service area<input id="truck-profile-city" type="text" placeholder="Manchester, Nashua, Lowell"></label>
+                  <label>Real-time location link<input id="truck-profile-live-location" type="url" placeholder="StreetFoodFinder, Instagram, calendar link..."></label>
+                  <label class="wide-field">Typical weekly schedule<textarea id="truck-profile-calendar" rows="4" placeholder="Fri 5-9 PM - Manchester Night Market"></textarea></label>
+                  <label>Available for events?<select id="truck-profile-events-available"><option>Yes</option><option>No</option><option>Ask us</option></select></label>
+                  <label>Event types<input id="truck-profile-event-types" type="text" placeholder="Weddings, corporate events, festivals, private parties"></label>
+                </div>
+              </div>
+
+              <div class="profile-form-section wide-field">
+                <p class="eyebrow">Photos</p>
+                <label>High-quality food, truck, and staff photo links, up to 10<textarea id="truck-profile-images" rows="4" placeholder="One image URL per line"></textarea></label>
+                <label>Upload food, truck, and staff photos<input id="truck-profile-images-files" type="file" accept="image/*" multiple></label>
+                <p class="helper-text" id="truck-profile-photo-status">Add links now, or choose photo files for the tester profile.</p>
+              </div>
+
+              <div class="profile-form-section wide-field">
+                <p class="eyebrow">Ordering & Payment</p>
+                <div class="marketing-question-grid">
+                  <label class="wide-field">Delivery service links<textarea id="truck-profile-delivery-links" rows="3" placeholder="Uber Eats: https://...&#10;DoorDash: https://...&#10;Grubhub: https://..."></textarea></label>
+                  <label class="wide-field">Pre-order options<textarea id="truck-profile-preorder" rows="2" placeholder="Order online, call ahead, use Toast/Square link, text for large orders..."></textarea></label>
+                  <fieldset class="wide-field payment-options">
+                    <legend>Accepted payment methods</legend>
+                    <label><input class="truck-payment-option" type="checkbox" value="Cash"> Cash</label>
+                    <label><input class="truck-payment-option" type="checkbox" value="Credit cards"> Credit cards</label>
+                    <label><input class="truck-payment-option" type="checkbox" value="Apple Pay"> Apple Pay</label>
+                    <label><input class="truck-payment-option" type="checkbox" value="Google Pay"> Google Pay</label>
+                    <label><input class="truck-payment-option" type="checkbox" value="Venmo"> Venmo</label>
+                    <label><input class="truck-payment-option" type="checkbox" value="Cash App"> Cash App</label>
+                  </fieldset>
+                </div>
+              </div>
+
+              <div class="profile-form-section wide-field">
+                <p class="eyebrow">Marketing & Promotion</p>
+                <div class="marketing-question-grid">
+                  <label>Tagline or slogan<input id="truck-profile-tagline" type="text" placeholder="Bold street tacos, made from family recipes."></label>
+                  <label>Special offers or promotions<input id="truck-profile-promotions" type="text" placeholder="Free agua fresca with two taco plates on Fridays."></label>
+                  <label class="wide-field">Keywords for search<textarea id="truck-profile-keywords" rows="2" placeholder="tacos, vegan, comfort food, late-night, birria"></textarea></label>
+                  <label class="wide-field">Preferred hashtags<textarea id="truck-profile-hashtags" rows="2" placeholder="#lowellbites #foodtruck #birria"></textarea></label>
+                </div>
+              </div>
+
+              <div class="profile-form-section wide-field">
+                <p class="eyebrow">Optional Add-ons</p>
+                <div class="marketing-question-grid">
+                  <label class="wide-field">Customer reviews or testimonials<textarea id="truck-profile-testimonials" rows="3" placeholder="One review per line"></textarea></label>
+                  <label>Video introduction link<input id="truck-profile-video" type="url" placeholder="YouTube, Instagram Reel, TikTok..."></label>
+                  <label>Catering menu link<input id="truck-profile-catering-menu" type="url" placeholder="https://..."></label>
+                  <label class="wide-field">Seasonal specials<textarea id="truck-profile-seasonal-specials" rows="3" placeholder="Summer lobster tacos&#10;Fall cider donuts&#10;Holiday catering trays"></textarea></label>
+                </div>
+              </div>
+            </div>
+
+            <div class="marketing-status-row">
+              <p class="status-message" id="truck-profile-status" aria-live="polite"></p>
+              <p class="status-message" id="ops-marketing-status"></p>
+              <div class="truck-profile-preview hidden-preview" id="truck-profile-preview" aria-hidden="true"></div>
+              <div class="mini-list compact-readiness hidden-preview" id="ops-marketing-checklist" aria-hidden="true"></div>
+            </div>
+          </article>
+        </section>
+
+        <section id="calendar" class="screen legacy-screen" aria-labelledby="calendar-title">
+          <div class="screen-header">
+            <p class="eyebrow">Schedule</p>
+            <h2 id="calendar-title">Calendar & Route Planner</h2>
+            <p>Review upcoming opportunities, deadlines, route notes, and AI weekly suggestions.</p>
+          </div>
+
+          <div class="planner-toolbar">
+            <label>
+              Home base
+              <input id="home-base" type="text" value="Lowell, MA">
+            </label>
+            <label>
+              Route view
+              <select id="route-period">
+                <option value="week">Week</option>
+                <option value="month">Month</option>
+                <option value="year">Year</option>
+              </select>
+            </label>
+            <button type="button" class="primary" id="generate-ai-week">Suggest My Week</button>
+          </div>
+
+          <div class="dashboard-grid">
+            <article class="feature-panel">
+              <p class="eyebrow">AI Weekly Recommendation</p>
+              <h3 id="ai-week-title">Ready to plan</h3>
+              <p id="ai-week-copy">Build a weekly recommendation using weather, history, deadlines, fees, and opportunity score.</p>
+            </article>
+            <article class="feature-panel">
+              <p class="eyebrow">Route Estimate</p>
+              <h3 id="route-estimate-title">Home base not calculated</h3>
+              <p id="route-estimate-copy">Route notes use city distance estimates for planning until map routing is connected.</p>
+            </article>
+          </div>
+
+          <div class="route-map-layout">
+            <article class="feature-panel route-map-panel">
+              <p class="eyebrow">Route Map</p>
+              <h3 id="route-map-title">Weekly route</h3>
+              <div class="route-map" id="route-map"></div>
+            </article>
+            <article class="feature-panel">
+              <p class="eyebrow">Mileage Plan</p>
+              <h3 id="route-mileage-total">0 miles</h3>
+              <div class="route-leg-list" id="route-leg-list"></div>
+              <p class="eyebrow route-vendor-heading">Vendors Along Route</p>
+              <div class="route-vendor-list" id="route-vendor-list"></div>
+            </article>
+          </div>
+
+          <div class="calendar-list" id="calendar-list"></div>
+        </section>
+
+        <section id="operations" class="screen" aria-labelledby="operations-title">
+          <div class="screen-header">
+            <p class="eyebrow">Back Office</p>
+            <h2 id="operations-title">Permits, Pipeline, Prices & Reminders</h2>
+            <p>Track applications, documents, fees, ingredient prices, and deadline reminders.</p>
+          </div>
+
+          <div class="ops-grid">
+            <article class="feature-panel ops-list-panel">
+              <div class="panel-title-row">
+                <div>
+                  <p class="eyebrow">Pipeline List</p>
+                  <h3>Events you are trying to book</h3>
+                  <p class="helper-text">Locations added from Search appear here first. Open details to work the reservation steps, notes, files, and reminders.</p>
+                </div>
+                <label class="inline-check">
+                  <input id="show-hidden-pipeline" type="checkbox">
+                  Show hidden
+                </label>
+              </div>
+              <div class="ops-pipeline-list" id="ops-pipeline-list"></div>
+            </article>
+
+            <article class="feature-panel ops-detail-panel">
+              <p class="eyebrow">Pipeline Details</p>
+              <h3 id="ops-detail-title">Select a pipeline item</h3>
+              <input id="ops-location" type="hidden">
+              <div class="selected-pipeline-summary" id="ops-selected-location-summary">
+                Select an item from the Pipeline List above to edit its details.
+              </div>
+              <label>
+                Status
+                <select id="ops-status">
+                  <option>Interested</option>
+                  <option>Applied</option>
+                  <option>Accepted</option>
+                  <option>Rejected</option>
+                  <option>Paid</option>
+                  <option>Confirmed</option>
+                  <option>Completed</option>
+                </select>
+              </label>
+              <label>
+                Application deadline
+                <input id="ops-deadline" type="date">
+              </label>
+              <label>
+                Permit / booth fee
+                <input id="ops-fee" type="number" min="0" step="1" placeholder="350">
+              </label>
+              <label>
+                Webpage / application link
+                <input id="ops-webpage" type="url" placeholder="https://event.com/vendors">
+              </label>
+              <label>
+                Documents needed / uploaded
+                <input id="ops-documents" type="text" placeholder="COI, health permit, fire inspection">
+              </label>
+              <label>
+                Upload related documents
+                <input id="ops-document-upload" type="file" multiple>
+              </label>
+              <label>
+                Take or upload photos
+                <input id="ops-photo-upload" type="file" accept="image/*" capture="environment" multiple>
+              </label>
+
+              <div class="reservation-steps" aria-labelledby="reservation-steps-title">
+                <h4 id="reservation-steps-title">Reservation steps</h4>
+                <label class="step-check">
+                  <input id="ops-step-form" type="checkbox">
+                  Fill out vendor request form from venue
+                </label>
+                <label class="step-check">
+                  <input id="ops-step-insurance" type="checkbox">
+                  Check insurance, permits, COI, and venue requirements
+                </label>
+                <label class="step-check">
+                  <input id="ops-step-documents" type="checkbox">
+                  Attach application, menu, photos, and required documents
+                </label>
+                <label class="step-check">
+                  <input id="ops-step-fee" type="checkbox">
+                  Pay booth, vendor, or reservation fee
+                </label>
+                <label class="step-check">
+                  <input id="ops-step-confirmation" type="checkbox">
+                  Receive confirmation from venue
+                </label>
+              </div>
+
+              <label>
+                Contact notes
+                <input id="ops-notes" type="text" placeholder="Email, phone, application link, setup notes">
+              </label>
+              <label>
+                AI event/application summary
+                <textarea id="ops-ai-summary-output" rows="5" placeholder="Use AI Summary after adding notes, links, photos, or documents."></textarea>
+              </label>
+              <button type="button" class="secondary" id="ops-ai-summary">Summarize Application</button>
+              <label>
+                Reminder for this location
+                <input id="ops-reminder-title" type="text" placeholder="Call event organizer, submit permit">
+              </label>
+              <label>
+                Reminder date
+                <input id="ops-reminder-date" type="date">
+              </label>
+              <div class="button-row">
+                <button type="button" class="primary" id="save-ops-location">Save Details</button>
+                <button type="button" class="secondary" id="hide-ops-location">Hide From List</button>
+                <button type="button" class="secondary danger-button" id="remove-ops-location">Remove</button>
+              </div>
+              <p class="status-message" id="ops-status-message"></p>
+            </article>
+
+            <article class="feature-panel">
+              <p class="eyebrow">Reminders</p>
+              <label>
+                Reminder
+                <input id="reminder-title" type="text" placeholder="Submit health permit">
+              </label>
+              <label>
+                Due date
+                <input id="reminder-date" type="date">
+              </label>
+              <label>
+                Related location
+                <select id="reminder-location"></select>
+              </label>
+              <button type="button" class="primary" id="save-reminder">Save Reminder</button>
+              <div class="mini-list" id="reminder-list"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="pos" class="screen" aria-labelledby="pos-title">
+          <div class="screen-header">
+            <p class="eyebrow">POS Integration</p>
+            <h2 id="pos-title">Connect Square</h2>
+            <p>Let testers see how POS sales could automatically feed location history, profit, and menu insights.</p>
+          </div>
+
+          <div class="pos-layout">
+            <article class="feature-panel">
+              <p class="eyebrow">Square</p>
+              <h3 id="square-status-title">Not connected</h3>
+              <p id="square-status-copy">This tester build includes a Square connection placeholder. Real OAuth will be added before production.</p>
+              <p class="sandbox-warning">Sandbox simulation only. This does not connect to a real Square account yet.</p>
+              <div class="connection-badge" id="square-connection-badge">Disconnected</div>
+              <div class="button-row">
+                <button type="button" class="primary" id="connect-square">Connect Square Sandbox</button>
+                <button type="button" class="secondary" id="disconnect-square">Disconnect</button>
+              </div>
+              <p class="helper-text">Planned sync: payments, item sales, refunds, taxes, tips, timestamps, and location IDs.</p>
+            </article>
+
+            <article class="feature-panel" id="square-import-panel">
+              <p class="eyebrow">Sample Import</p>
+              <h3>Select Square transactions</h3>
+              <p>Use this during testing to simulate Square sending a batch of transactions into the app.</p>
+              <label>
+                Match to location
+                <select id="square-import-location"></select>
+              </label>
+              <div class="button-row">
+                <button type="button" class="secondary" id="select-all-square">Select All</button>
+                <button type="button" class="secondary" id="clear-square-selection">Clear</button>
+                <button type="button" class="secondary" id="refresh-square-demo">Refresh Demo Batch</button>
+              </div>
+              <div class="transaction-list" id="square-transaction-list"></div>
+              <button type="button" class="primary" id="import-square-demo">Import Selected Transactions</button>
+              <p class="status-message" id="square-import-status" aria-live="polite"></p>
+            </article>
+          </div>
+
+          <div class="table-wrap sales-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>Synced Date</th>
+                  <th>Location</th>
+                  <th>Sales</th>
+                  <th>Profit</th>
+                  <th>Items</th>
+                </tr>
+              </thead>
+              <tbody id="square-sync-history"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="reports" class="screen" aria-labelledby="reports-title">
+          <div class="screen-header">
+            <p class="eyebrow">Analytics</p>
+            <h2 id="reports-title">Business Reports</h2>
+            <p>Turn check-ins, POS imports, supplier prices, weather, and pipeline data into decisions.</p>
+          </div>
+
+          <div class="reports-grid">
+            <article class="metric"><span>Total Sales</span><strong id="report-total-sales">$0</strong></article>
+            <article class="metric"><span>Total Profit</span><strong id="report-total-profit">$0</strong></article>
+            <article class="metric"><span>Avg Profit / Visit</span><strong id="report-avg-profit">$0</strong></article>
+            <article class="metric"><span>Best Location</span><strong id="report-best-location">--</strong></article>
+          </div>
+
+          <div class="report-controls">
+            <label>
+              Pull up venue report
+              <select id="report-location-filter"></select>
+            </label>
+          </div>
+
+          <div class="reports-grid wide">
+            <article class="feature-panel">
+              <p class="eyebrow">Selected Venue</p>
+              <div class="report-list" id="report-selected-location"></div>
+            </article>
+            <article class="feature-panel">
+              <p class="eyebrow">All Venue Performance</p>
+              <div class="report-list" id="report-location-performance"></div>
+            </article>
+            <article class="feature-panel">
+              <p class="eyebrow">Menu Demand</p>
+              <div class="report-list" id="report-menu-demand"></div>
+            </article>
+            <article class="feature-panel">
+              <p class="eyebrow">Weather Impact</p>
+              <div class="report-list" id="report-weather-impact"></div>
+            </article>
+            <article class="feature-panel">
+              <p class="eyebrow">Pipeline Value</p>
+              <div class="report-list" id="report-pipeline-value"></div>
+            </article>
+            <article class="feature-panel">
+              <p class="eyebrow">Supplier Cost Watch</p>
+              <div class="report-list" id="report-supplier-costs"></div>
+            </article>
+            <article class="feature-panel">
+              <p class="eyebrow">POS Sync Summary</p>
+              <div class="report-list" id="report-pos-summary"></div>
+            </article>
+            <article class="feature-panel">
+              <p class="eyebrow">Best Gross Per Hour</p>
+              <div class="report-list" id="report-gross-hour"></div>
+            </article>
+            <article class="feature-panel">
+              <p class="eyebrow">Improve or Avoid</p>
+              <div class="report-list" id="report-low-performers"></div>
+            </article>
+            <article class="feature-panel">
+              <p class="eyebrow">Top Untested Opportunities</p>
+              <div class="report-list" id="report-untested-opportunities"></div>
+            </article>
+            <article class="feature-panel">
+              <p class="eyebrow">Route Mileage Watch</p>
+              <div class="report-list" id="report-route-mileage"></div>
+            </article>
+            <article class="feature-panel">
+              <p class="eyebrow">Nearby Vendor Restock</p>
+              <div class="report-list" id="report-route-vendors"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="marketplace" class="screen" aria-labelledby="marketplace-title">
+          <div class="screen-header">
+            <p class="eyebrow">Buy & Sell</p>
+            <h2 id="marketplace-title">Truck & Equipment Marketplace</h2>
+            <p>Help operators find used trucks, trailers, generators, refrigeration, cooking equipment, and startup bundles.</p>
+          </div>
+
+          <div class="supplier-search-panel">
+            <label>
+              Search
+              <input id="marketplace-query" type="search" placeholder="truck, trailer, generator, fryer...">
+            </label>
+            <label>
+              ZIP code
+              <input id="marketplace-zip" type="text" inputmode="numeric" placeholder="03101">
+            </label>
+            <label>
+              Category
+              <select id="marketplace-category">
+                <option value="all">All listings</option>
+                <option>Food truck</option>
+                <option>Trailer</option>
+                <option>Cooking equipment</option>
+                <option>Refrigeration</option>
+                <option>Power</option>
+                <option>POS</option>
+                <option>Smallwares</option>
+              </select>
+            </label>
+            <button type="button" class="primary" id="search-marketplace">Search Marketplace</button>
+          </div>
+
+          <details class="add-location-panel">
+            <summary>Sell a truck or equipment</summary>
+            <form class="custom-location-form">
+              <label>
+                Listing title
+                <input id="marketplace-title-input" type="text" placeholder="2018 food truck, 24 inch griddle...">
+              </label>
+              <label>
+                Category
+                <select id="marketplace-listing-category">
+                  <option>Food truck</option>
+                  <option>Trailer</option>
+                  <option>Cooking equipment</option>
+                  <option>Refrigeration</option>
+                  <option>Power</option>
+                  <option>POS</option>
+                  <option>Smallwares</option>
+                </select>
+              </label>
+              <label>
+                City / state
+                <input id="marketplace-city" type="text" placeholder="Nashua, NH">
+              </label>
+              <label>
+                ZIP code
+                <input id="marketplace-listing-zip" type="text" inputmode="numeric" placeholder="03060">
+              </label>
+              <label>
+                Price
+                <input id="marketplace-price" type="number" min="0" step="1" placeholder="45000">
+              </label>
+              <label>
+                Contact link
+                <input id="marketplace-contact" type="url" placeholder="https://...">
+              </label>
+              <label>
+                Affiliate / referral link
+                <input id="marketplace-affiliate" type="url" placeholder="Optional monetized link">
+              </label>
+              <label class="wide-field">
+                Description
+                <input id="marketplace-description" type="text" placeholder="Condition, equipment included, mileage, power, inspection notes">
+              </label>
+              <label class="wide-field">
+                Photo URLs, up to 10
+                <textarea id="marketplace-images" rows="4" placeholder="One image URL per line"></textarea>
+              </label>
+              <label>
+                Video link
+                <input id="marketplace-video" type="url" placeholder="YouTube, Vimeo, walkthrough video">
+              </label>
+              <button type="button" class="primary" id="save-marketplace-listing">Publish Listing</button>
+              <p class="status-message" id="marketplace-status" aria-live="polite"></p>
+            </form>
+          </details>
+
+          <div class="results-toolbar">
+            <p class="helper-text" id="marketplace-summary"></p>
+          </div>
+          <div class="marketplace-grid" id="marketplace-grid"></div>
+        </section>
+
+        <section id="settings" class="screen" aria-labelledby="settings-title">
+          <div class="screen-header">
+            <p class="eyebrow">Tester Tools</p>
+            <h2 id="settings-title">Settings & Feedback</h2>
+            <p>Manage basic business defaults, send tester feedback, export demo data, or reset this browser.</p>
+          </div>
+
+          <div class="settings-grid">
+            <article class="feature-panel">
+              <p class="eyebrow">Business Defaults</p>
+              <label>
+                Business name
+                <input id="settings-business-name" type="text" placeholder="Lowell Bites">
+              </label>
+              <label>
+                Home base
+                <input id="settings-home-base" type="text" placeholder="Lowell, MA">
+              </label>
+              <label>
+                Default food type
+                <select id="settings-food-type">
+                  <option>Tacos</option>
+                  <option>Burgers</option>
+                  <option>Coffee</option>
+                  <option>Dessert</option>
+                  <option>BBQ</option>
+                  <option>Seafood</option>
+                  <option>Other</option>
+                </select>
+              </label>
+              <label>
+                Service radius
+                <input id="settings-radius" type="number" min="5" step="5" value="50">
+              </label>
+              <button type="button" class="primary" id="save-settings">Save Settings</button>
+              <p class="status-message" id="settings-status"></p>
+            </article>
+
+            <article class="feature-panel">
+              <p class="eyebrow">Tester Feedback</p>
+              <label>
+                What did you try?
+                <input id="feedback-area" type="text" placeholder="Square import, route map, check-in timer...">
+              </label>
+              <label>
+                Feedback
+                <input id="feedback-message" type="text" placeholder="What was confusing, useful, missing, or broken?">
+              </label>
+              <label>
+                Contact email
+                <input id="feedback-email" type="email" placeholder="Optional">
+              </label>
+              <button type="button" class="primary" id="save-feedback">Save Feedback</button>
+              <div class="mini-list" id="feedback-list"></div>
+            </article>
+
+            <article class="feature-panel">
+              <p class="eyebrow">Demo Data</p>
+              <p>Export this browser's tester data or reset local demo records before another test run.</p>
+              <div class="button-row">
+                <button type="button" class="primary" id="export-demo-data">Export Data</button>
+                <button type="button" class="secondary danger-button" id="reset-demo-data">Reset Demo Data</button>
+              </div>
+              <p class="status-message" id="data-tools-status"></p>
+            </article>
+
+            <article class="feature-panel">
+              <p class="eyebrow">Social Posting</p>
+              <h3>Broadcast service</h3>
+              <p>Use demo mode for testing now. When you are ready, add your provider key in Netlify environment variables and switch this to Ayrshare or Buffer.</p>
+              <label>
+                Posting provider
+                <select id="posting-provider">
+                  <option value="demo">Demo mode</option>
+                  <option value="ayrshare">Ayrshare</option>
+                  <option value="buffer">Buffer</option>
+                  <option value="webhook">Webhook / automation link</option>
+                </select>
+              </label>
+              <label>
+                Webhook URL
+                <input id="posting-webhook-url" type="url" placeholder="Optional Zapier, Make, or custom webhook URL">
+              </label>
+              <div class="checkbox-grid">
+                <label><input class="posting-channel" type="checkbox" value="instagram" checked> Instagram</label>
+                <label><input class="posting-channel" type="checkbox" value="facebook" checked> Facebook</label>
+                <label><input class="posting-channel" type="checkbox" value="gmb" checked> Google Business</label>
+              </div>
+              <div class="button-row">
+                <button type="button" class="primary" id="save-posting-service">Save Posting Setup</button>
+                <button type="button" class="secondary" id="test-posting-service">Test Connection</button>
+              </div>
+              <p class="status-message" id="posting-service-status" aria-live="polite"></p>
+            </article>
+          </div>
+        </section>
+
+        <section id="help" class="screen" aria-labelledby="help-title">
+          <div class="screen-header">
+            <p class="eyebrow">Help Center</p>
+            <h2 id="help-title">Help & Owner Forum</h2>
+            <p>Quick guides and screenshots for using the app.</p>
+          </div>
+
+          <div class="help-layout single-column-help">
+            <section>
+              <div class="help-grid">
+                <article class="help-card">
+                  <img src="assets/help/dashboard.png" alt="Dashboard screenshot">
+                  <div>
+                    <p class="eyebrow">Guide</p>
+                    <h3>Dashboard & Weather</h3>
+                    <p>Understand best spots, weather risk, and sales learning.</p>
+                    <a class="source-link supplier-source" href="docs/help/dashboard-weather.html" target="_blank">Open guide</a>
+                  </div>
+                </article>
+                <article class="help-card">
+                  <img src="assets/help/find-locations.png" alt="Find locations screenshot">
+                  <div>
+                    <p class="eyebrow">Guide</p>
+                    <h3>Find Locations</h3>
+                    <p>Search opportunities, review history, and add custom spaces.</p>
+                    <a class="source-link supplier-source" href="docs/help/find-locations.html" target="_blank">Open guide</a>
+                  </div>
+                </article>
+                <article class="help-card">
+                  <img src="assets/help/sales-log.png" alt="Sales log screenshot">
+                  <div>
+                    <p class="eyebrow">Guide</p>
+                    <h3>Sales Log</h3>
+                    <p>Use the timer, track sales, costs, competitors, and best sellers.</p>
+                    <a class="source-link supplier-source" href="docs/help/sales-log.html" target="_blank">Open guide</a>
+                  </div>
+                </article>
+                <article class="help-card">
+                  <img src="assets/help/pos-reports.png" alt="POS and reports screenshot">
+                  <div>
+                    <p class="eyebrow">Guide</p>
+                    <h3>POS & Reports</h3>
+                    <p>Import Square demo transactions and read business reports.</p>
+                    <a class="source-link supplier-source" href="docs/help/pos-reports.html" target="_blank">Open guide</a>
+                  </div>
+                </article>
+                <article class="help-card">
+                  <img src="assets/help/route-marketplace.png" alt="Route and marketplace screenshot">
+                  <div>
+                    <p class="eyebrow">Guide</p>
+                    <h3>Routes & Marketplace</h3>
+                    <p>Plan mileage, find route vendors, and browse trucks/equipment.</p>
+                    <a class="source-link supplier-source" href="docs/help/routes-marketplace.html" target="_blank">Open guide</a>
+                  </div>
+                </article>
+                <article class="help-card">
+                  <img src="assets/help/marketplace.png" alt="Marketplace screenshot">
+                  <div>
+                    <p class="eyebrow">Guide</p>
+                    <h3>Marketplace Listings</h3>
+                    <p>Add trucks or equipment with ZIP search, photos, video, and affiliate links.</p>
+                    <a class="source-link supplier-source" href="docs/help/marketplace.html" target="_blank">Open guide</a>
+                  </div>
+                </article>
+                <article class="help-card">
+                  <img src="assets/help/help-forum.png" alt="Owner forum screenshot">
+                  <div>
+                    <p class="eyebrow">Guide</p>
+                    <h3>Owner Forum</h3>
+                    <p>Post needs, ask questions, and use visible check-ins to reach nearby owners.</p>
+                    <a class="source-link supplier-source" href="docs/help/community-forum.html" target="_blank">Open guide</a>
+                  </div>
+                </article>
+              </div>
+            </section>
+
+          </div>
+        </section>
+
+        <section id="forum" class="screen" aria-labelledby="forum-title-heading">
+          <div class="screen-header">
+            <p class="eyebrow">Private Owner Network</p>
+            <h2 id="forum-title-heading">TruckNet Community</h2>
+            <p>A private forum for food truck owners to share urgent help, locations, equipment support, vendor reviews, and business advice.</p>
+          </div>
+
+          <section class="trucknet-quick-board">
+            <div>
+              <p class="eyebrow">Quick Need - Live Help Board</p>
+              <h3>Urgent nearby help</h3>
+              <p>Use this first when you are onsite and need supplies, repairs, staff, propane, ice, power, or help right now.</p>
+            </div>
+            <div class="trucknet-map-card">
+              <strong>Live map view</strong>
+              <span>Nearby truck alerts, push notifications, and location privacy controls will connect in production.</span>
+            </div>
+          </section>
+
+          <div class="forum-layout">
+            <article class="feature-panel forum-compose-panel">
+              <p class="eyebrow">Post a Quick Need</p>
+              <h3>What do you need?</h3>
+              <label>
+                What do you need?
+                <input id="forum-title" type="text" placeholder="Propane tank, burger buns, generator help, ice...">
+              </label>
+              <label>
+                Buy or borrow?
+                <select id="forum-need-type">
+                  <option>Buy</option>
+                  <option>Borrow</option>
+                  <option>Either</option>
+                </select>
+              </label>
+              <label>
+                Needed by what time?
+                <input id="forum-needed-by" type="time">
+              </label>
+              <label>
+                Current location
+                <input id="forum-location" type="text" placeholder="Fairgrounds, downtown, event name">
+              </label>
+              <label>
+                How far can you travel?
+                <select id="forum-travel-range">
+                  <option>Need delivery here</option>
+                  <option>Up to 5 miles</option>
+                  <option>Up to 15 miles</option>
+                  <option>Up to 30 miles</option>
+                </select>
+              </label>
+              <label>
+                Phone / contact
+                <input id="forum-contact" type="text" placeholder="Phone, text number, radio, Instagram">
+              </label>
+              <label>
+                Offer payment?
+                <select id="forum-payment-offer">
+                  <option>Yes</option>
+                  <option>No</option>
+                  <option>Trade</option>
+                </select>
+              </label>
+              <label>
+                Urgency level
+                <select id="forum-urgency">
+                  <option>Low</option>
+                  <option>Soon</option>
+                  <option>ASAP</option>
+                  <option>Emergency</option>
+                </select>
+              </label>
+              <label>
+                Expiration timer
+                <select id="forum-expiration">
+                  <option>30 minutes</option>
+                  <option>1 hour</option>
+                  <option>2 hours</option>
+                  <option>End of service</option>
+                </select>
+              </label>
+              <label class="wide-field">
+                Details
+                <textarea id="forum-message" rows="4" placeholder="Add quantity, exact item, parking note, payment amount, or safety details."></textarea>
+              </label>
+              <button type="button" class="secondary" id="forum-ai-cleanup">AI Clean Up Post</button>
+              <button type="button" class="primary" id="save-forum-post">Post Quick Need</button>
+              <p class="helper-text">Tester posts save in this browser. Production will add verified users, maps, push alerts, moderation, and ratings.</p>
+            </article>
+
+            <aside class="feature-panel trucknet-side-panel">
+              <p class="eyebrow">Browse TruckNet</p>
+              <label>
+                Section
+                <select id="forum-filter">
+                  <option value="all">All MVP sections</option>
+                  <option>Quick Need</option>
+                  <option>Locations & Events</option>
+                  <option>Equipment Help</option>
+                  <option>Vendor Reviews</option>
+                </select>
+              </label>
+              <div class="trucknet-score-card">
+                <span>Help Score</span>
+                <strong id="forum-help-score">0</strong>
+                <p>Help someone: +10. Vendor review: +5. Event lead: +5. Helpful answer: +3.</p>
+              </div>
+              <div class="trucknet-trust-list">
+                <span>Trust & Safety</span>
+                <p>Verified business badge</p>
+                <p>Report button</p>
+                <p>Mark solved / closed</p>
+                <p>No-spam rule</p>
+                <p>Moderation queue</p>
+              </div>
+            </aside>
+          </div>
+
+          <div class="trucknet-category-grid">
+            <button type="button" class="trucknet-category active" data-forum-filter="Quick Need"><strong>Quick Need</strong><span>Urgent onsite help</span></button>
+            <button type="button" class="trucknet-category" data-forum-filter="Locations & Events"><strong>Locations & Events</strong><span>Spots, fairs, parking, fees</span></button>
+            <button type="button" class="trucknet-category" data-forum-filter="Equipment Help"><strong>Equipment Help</strong><span>Repairs, POS, refrigeration</span></button>
+            <button type="button" class="trucknet-category" data-forum-filter="Vendor Reviews"><strong>Vendor Reviews</strong><span>Suppliers, propane, ice, mechanics</span></button>
+          </div>
+
+          <div class="trucknet-trending">
+            <p class="eyebrow">Trending Topics</p>
+            <span>Best events this weekend</span>
+            <span>Ice suppliers</span>
+            <span>Generator problems</span>
+            <span>High-fee festivals</span>
+            <span>Best lunch spots</span>
+          </div>
+
+          <div class="forum-list" id="forum-list"></div>
+        </section>
+      </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="app.js?v=site-recovery-1"></script>
+    <script>
+      (function () {
+        function fallbackShowScreen(id) {
+          document.querySelectorAll(".screen").forEach(function (screen) {
+            screen.classList.toggle("active", screen.id === id);
+          });
+
+          document.querySelectorAll(".nav-item").forEach(function (item) {
+            item.classList.toggle("active", item.dataset.screen === id);
+          });
+
+          var advancedNav = document.querySelector(".nav-advanced");
+          if (advancedNav) {
+            advancedNav.open = Boolean(advancedNav.querySelector('[data-screen="' + id + '"]'));
+          }
+
+          var sidebar = document.querySelector(".sidebar");
+          var menuButton = document.querySelector("#nav-toggle");
+          if (sidebar) {
+            sidebar.classList.remove("nav-open");
+          }
+          if (menuButton) {
+            menuButton.setAttribute("aria-expanded", "false");
+          }
+        }
+
+        function fallbackToggleMobileMenu(event) {
+          if (event) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+
+          var sidebar = document.querySelector(".sidebar");
+          var menuButton = document.querySelector("#nav-toggle");
+          if (!sidebar || !menuButton) {
+            return;
+          }
+
+          var isOpen = sidebar.classList.toggle("nav-open");
+          menuButton.setAttribute("aria-expanded", String(isOpen));
+        }
+
+        function fallbackShowBroadcastStep(step) {
+          document.querySelectorAll(".broadcast-step").forEach(function (screen) {
+            screen.classList.toggle("active", screen.id === "broadcast-" + step + "-step");
+          });
+
+          var label = document.querySelector("#broadcast-step-label");
+          if (label) {
+            label.textContent = step === "recommendation" ? "Step 1 of 3" : step === "preview" ? "Step 2 of 3" : "Step 3 of 3";
+          }
+
+          ["recommend", "preview", "success"].forEach(function (name) {
+            var dot = document.querySelector("#broadcast-dot-" + name);
+            if (dot) {
+              dot.classList.toggle("active", name === step || (step === "recommendation" && name === "recommend"));
+            }
+          });
+        }
+
+        function fallbackGenerateCaptions() {
+          var locationName = document.querySelector("#broadcast-location-name")?.textContent || document.querySelector("#dashboard-best-name")?.textContent || "today's location";
+          var bestTime = document.querySelector("#broadcast-best-time")?.textContent || document.querySelector("#dashboard-best-time")?.textContent || "today";
+          var businessName = document.querySelector("#business-name")?.value || "Our food truck";
+          var city = document.querySelector("#profile-city")?.value || document.querySelector("#city")?.value || "nearby";
+          var foodType = document.querySelector("#food-type")?.value || "fresh food";
+          var instagram = document.querySelector("#broadcast-instagram");
+          var facebook = document.querySelector("#broadcast-facebook");
+          var google = document.querySelector("#broadcast-google");
+
+          if (instagram) {
+            instagram.value = businessName + " is rolling into " + locationName + " during " + bestTime + ". Come grab " + foodType + " while it is hot. #foodtruck #streetfood #" + foodType.replace(/\s+/g, "");
+          }
+
+          if (facebook) {
+            facebook.value = businessName + " will be at " + locationName + " in " + city + " from " + bestTime + ". We are serving " + foodType + ". Stop by and check our page for updates if weather changes.";
+          }
+
+          if (google) {
+            google.value = businessName + " is open today at " + locationName + " from " + bestTime + ". Serving " + foodType + ".";
+          }
+
+          fallbackShowBroadcastStep("preview");
+        }
+
+        function fallbackPublishBroadcast() {
+          var status = document.querySelector("#broadcast-publish-status");
+          var liveStatus = document.querySelector("#broadcast-live-status");
+          var locationName = document.querySelector("#broadcast-location-name")?.textContent || document.querySelector("#dashboard-best-name")?.textContent || "today's location";
+          var bestTime = document.querySelector("#broadcast-best-time")?.textContent || document.querySelector("#dashboard-best-time")?.textContent || "today";
+          var endTime = bestTime.indexOf("-") > -1 ? bestTime.split("-").pop().trim() : bestTime;
+          var record = {
+            id: "broadcast-" + Date.now(),
+            location: locationName,
+            bestTime: bestTime,
+            instagram: document.querySelector("#broadcast-instagram")?.value || "",
+            facebook: document.querySelector("#broadcast-facebook")?.value || "",
+            google: document.querySelector("#broadcast-google")?.value || "",
+            createdAt: new Date().toISOString(),
+            demoMode: true
+          };
+
+          if (status) {
+            status.textContent = "Publishing demo broadcast...";
+          }
+
+          try {
+            var saved = JSON.parse(localStorage.getItem("foodTruckAiBroadcasts") || "[]");
+            localStorage.setItem("foodTruckAiBroadcasts", JSON.stringify([record].concat(saved).slice(0, 25)));
+            localStorage.setItem("foodTruckAiActiveBroadcast", JSON.stringify(record));
+          } catch (error) {}
+
+          window.setTimeout(function () {
+            if (liveStatus) {
+              liveStatus.textContent = "Current Status: Active at " + locationName + " until " + endTime + ".";
+            }
+
+            if (status) {
+              status.textContent = "";
+            }
+
+            fallbackShowBroadcastStep("success");
+          }, 700);
+        }
+
+        function openBroadcast(generatePosts) {
+          if (typeof showScreen === "function") {
+            showScreen("broadcast");
+          } else {
+            fallbackShowScreen("broadcast");
+          }
+
+          fallbackShowScreen("broadcast");
+
+          if (generatePosts) {
+            window.setTimeout(function () {
+              if (typeof generateBroadcastCaptions === "function") {
+                try {
+                  generateBroadcastCaptions();
+                  return;
+                } catch (error) {
+                  fallbackGenerateCaptions();
+                  return;
+                }
+              }
+              fallbackGenerateCaptions();
+            }, 50);
+          }
+        }
+
+        var startButton = document.querySelector("#dashboard-start-broadcast");
+        var generateButton = document.querySelector("#dashboard-generate-broadcast");
+        var publishButton = document.querySelector("#broadcast-publish");
+        var mobileMenuButton = document.querySelector("#nav-toggle");
+
+        if (mobileMenuButton && !mobileMenuButton.dataset.fallbackReady) {
+          mobileMenuButton.dataset.fallbackReady = "true";
+          mobileMenuButton.addEventListener("click", fallbackToggleMobileMenu);
+          mobileMenuButton.addEventListener("touchend", fallbackToggleMobileMenu);
+        }
+
+        if (startButton) {
+          startButton.onclick = function () {
+            openBroadcast(false);
+          };
+        }
+
+        if (generateButton) {
+          generateButton.onclick = function () {
+            openBroadcast(true);
+          };
+        }
+
+        var flowGenerateButton = document.querySelector("#broadcast-generate-posts");
+        if (flowGenerateButton) {
+          flowGenerateButton.onclick = function () {
+            openBroadcast(true);
+          };
+        }
+
+        if (publishButton) {
+          publishButton.onclick = function () {
+            if (typeof publishBroadcast === "function") {
+              try {
+                publishBroadcast();
+                return;
+              } catch (error) {
+                fallbackPublishBroadcast();
+                return;
+              }
+            }
+
+            fallbackPublishBroadcast();
+          };
+        }
+      })();
+    </script>
+  </body>
+</html>
