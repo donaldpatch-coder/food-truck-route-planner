@@ -209,7 +209,11 @@ const feedbackMessage = document.querySelector("#feedback-message");
 const feedbackEmail = document.querySelector("#feedback-email");
 const feedbackList = document.querySelector("#feedback-list");
 const dataToolsStatus = document.querySelector("#data-tools-status");
-const forumTopic = document.querySelector("#forum-topic");
+const forumNeedType = document.querySelector("#forum-need-type");
+const forumNeededBy = document.querySelector("#forum-needed-by");
+const forumTravelRange = document.querySelector("#forum-travel-range");
+const forumPaymentOffer = document.querySelector("#forum-payment-offer");
+const forumExpiration = document.querySelector("#forum-expiration");
 const forumUrgency = document.querySelector("#forum-urgency");
 const forumLocation = document.querySelector("#forum-location");
 const forumContact = document.querySelector("#forum-contact");
@@ -217,6 +221,7 @@ const forumTitle = document.querySelector("#forum-title");
 const forumMessage = document.querySelector("#forum-message");
 const forumFilter = document.querySelector("#forum-filter");
 const forumList = document.querySelector("#forum-list");
+const forumHelpScore = document.querySelector("#forum-help-score");
 const salesInsightTitle = document.querySelector("#sales-insight-title");
 const salesInsightCopy = document.querySelector("#sales-insight-copy");
 const bestSalesLocation = document.querySelector("#best-sales-location");
@@ -4229,27 +4234,37 @@ function renderAllDataViews() {
   renderWeeklyPlan();
   renderCheckinHistory();
   renderFeedback();
+  renderForum();
 }
 
 function saveForumPost() {
-  if (!forumTitle.value.trim() || !forumMessage.value.trim()) {
+  if (!forumTitle.value.trim()) {
     return;
   }
 
   const post = {
     id: `${Date.now()}`,
-    topic: forumTopic.value,
+    topic: "Quick Need",
+    needType: forumNeedType.value,
+    neededBy: forumNeededBy.value,
+    travelRange: forumTravelRange.value,
+    paymentOffer: forumPaymentOffer.value,
+    expiration: forumExpiration.value,
     urgency: forumUrgency.value,
     location: forumLocation.value.trim(),
     contact: forumContact.value.trim(),
     title: forumTitle.value.trim(),
-    message: forumMessage.value.trim(),
+    message: forumMessage.value.trim() || "No extra details added yet.",
     author: settingsBusinessName.value || document.querySelector("#business-name").value || "Food truck owner",
     createdAt: new Date().toLocaleString(),
-    replies: []
+    replies: [],
+    solved: false,
+    helpOffers: 0,
+    verified: true
   };
 
   saveForumPosts([post, ...getForumPosts()]);
+  forumNeededBy.value = "";
   forumLocation.value = "";
   forumContact.value = "";
   forumTitle.value = "";
@@ -4261,53 +4276,148 @@ function renderForum() {
   const starterPosts = [
     {
       id: "starter-need",
-      topic: "Need / Buy / Borrow",
-      title: "Example: Anyone have extra mustard I can buy?",
-      message: "Use this topic for quick needs during service: condiments, propane, cups, ice, generator help, staff, or spare ingredients.",
-      author: "Food Truck AI",
+      topic: "Quick Need",
+      title: "Propane tank needed ASAP",
+      message: "Need a 20 lb propane tank near the fairgrounds. Can buy or borrow and can travel up to 5 miles.",
+      author: "Verified demo owner",
       createdAt: "Starter tip",
-      urgency: "Today",
-      location: "Nearby operators"
+      urgency: "ASAP",
+      location: "Fairgrounds",
+      needType: "Buy or borrow",
+      neededBy: "Within 1 hour",
+      travelRange: "Up to 5 miles",
+      paymentOffer: "Yes",
+      expiration: "1 hour",
+      helpOffers: 2,
+      verified: true,
+      solved: false
     },
     {
       id: "starter-permits",
-      topic: "Permits",
-      title: "What permits should I check before a fair?",
-      message: "Ask for health permit requirements, fire inspection rules, insurance certificate needs, booth fees, and setup hours.",
-      author: "Food Truck AI",
+      topic: "Locations & Events",
+      title: "Good location: downtown lunch crowd",
+      message: "Office traffic was strong from 11:30 AM to 1:30 PM. Parking was tight, but sales were worth it.",
+      author: "Lowell Bites",
       createdAt: "Starter tip",
-      urgency: "This week",
-      location: "Any event"
+      urgency: "Low",
+      location: "Downtown",
+      verified: true,
+      solved: false
     },
     {
       id: "starter-routes",
-      topic: "Routes",
-      title: "How do I decide if an event is too far?",
-      message: "Compare expected profit per hour against fuel, labor, prep time, and the chance of repeat bookings.",
-      author: "Food Truck AI",
+      topic: "Equipment Help",
+      title: "Generator troubleshooting checklist",
+      message: "Before calling a mechanic, check oil level, overload reset, fuel line, spark plug, and extension load.",
+      author: "TruckNet Community",
       createdAt: "Starter tip",
-      urgency: "Normal",
-      location: "Route planning"
+      urgency: "Soon",
+      location: "Repair tips",
+      verified: true,
+      solved: false
+    },
+    {
+      id: "starter-vendor-review",
+      topic: "Vendor Reviews",
+      title: "Ice supplier review: reliable weekend pickup",
+      message: "Local ice vendor had fair pricing and Saturday pickup. Would recommend for events.",
+      author: "Verified demo owner",
+      createdAt: "Starter tip",
+      urgency: "Low",
+      location: "Manchester, NH",
+      verified: true,
+      solved: false
     }
   ];
   const filter = forumFilter?.value || "all";
   const posts = [...getForumPosts(), ...starterPosts].filter((post) => filter === "all" || post.topic === filter);
+  const helpScore = getForumPosts().reduce((sum, post) => {
+    if (post.topic === "Quick Need") {
+      sum += 10;
+    } else if (post.topic === "Vendor Reviews") {
+      sum += 5;
+    } else if (post.topic === "Locations & Events") {
+      sum += 5;
+    }
+
+    return sum + Number(post.helpOffers || 0) * 3;
+  }, 0);
+
+  if (forumHelpScore) {
+    forumHelpScore.textContent = helpScore;
+  }
 
   forumList.innerHTML = posts
     .map(
       (post) => `
-        <article class="forum-post">
+        <article class="forum-post ${post.topic === "Quick Need" ? "quick-need-post" : ""}">
           <div>
-            <p class="eyebrow">${post.topic} - ${post.urgency || "Normal"}</p>
+            <p class="eyebrow">${post.topic} - ${post.urgency || "Low"} ${post.verified ? "- Verified" : ""}</p>
             <h3>${post.title}</h3>
             <p>${post.message}</p>
-            <span>${post.location ? `${post.location} - ` : ""}${post.author} - ${post.createdAt}</span>
-            ${post.contact ? `<p class="helper-text">Contact: ${post.contact}</p>` : ""}
+            <div class="trucknet-post-meta">
+              ${post.location ? `<span>${post.location}</span>` : ""}
+              ${post.needType ? `<span>${post.needType}</span>` : ""}
+              ${post.neededBy ? `<span>Needed by ${post.neededBy}</span>` : ""}
+              ${post.travelRange ? `<span>${post.travelRange}</span>` : ""}
+              ${post.paymentOffer ? `<span>Payment: ${post.paymentOffer}</span>` : ""}
+              ${post.expiration ? `<span>Expires: ${post.expiration}</span>` : ""}
+            </div>
+            <span>${post.author} - ${post.createdAt}</span>
+            ${post.contact ? `<p class="helper-text">Contact button: ${post.contact}</p>` : ""}
+            <div class="button-row trucknet-post-actions">
+              <button type="button" class="secondary forum-help-action" data-post-id="${post.id}">I can help (${post.helpOffers || 0})</button>
+              <button type="button" class="secondary forum-solved-action" data-post-id="${post.id}">${post.solved ? "Solved" : "Mark solved"}</button>
+              <button type="button" class="secondary danger-button">Report</button>
+            </div>
           </div>
         </article>
       `
     )
     .join("");
+
+  document.querySelectorAll(".forum-help-action").forEach((button) => {
+    button.addEventListener("click", () => updateForumPost(button.dataset.postId, (post) => ({
+      ...post,
+      helpOffers: Number(post.helpOffers || 0) + 1
+    })));
+  });
+  document.querySelectorAll(".forum-solved-action").forEach((button) => {
+    button.addEventListener("click", () => updateForumPost(button.dataset.postId, (post) => ({
+      ...post,
+      solved: !post.solved
+    })));
+  });
+}
+
+function updateForumPost(postId, updater) {
+  const posts = getForumPosts();
+  const nextPosts = posts.map((post) => post.id === postId ? updater(post) : post);
+
+  if (posts.some((post) => post.id === postId)) {
+    saveForumPosts(nextPosts);
+    renderForum();
+  }
+}
+
+function cleanUpForumPost() {
+  const need = forumTitle.value.trim();
+  const location = forumLocation.value.trim();
+
+  if (!need) {
+    return;
+  }
+
+  forumTitle.value = `Quick Need: ${need}`;
+  forumMessage.value = [
+    location ? `Location: ${location}` : "",
+    `Need: ${need.replace(/^quick need:\s*/i, "")}`,
+    `Type: ${forumNeedType.value}`,
+    `Urgency: ${forumUrgency.value}`,
+    forumNeededBy.value ? `Needed by: ${forumNeededBy.value}` : "",
+    `Travel range: ${forumTravelRange.value}`,
+    `Offer payment: ${forumPaymentOffer.value}`
+  ].filter(Boolean).join("\n");
 }
 
 function saveMarketplaceListing() {
@@ -5892,7 +6002,17 @@ document.querySelector("#save-feedback").addEventListener("click", saveFeedback)
 document.querySelector("#export-demo-data").addEventListener("click", exportDemoData);
 document.querySelector("#reset-demo-data").addEventListener("click", resetDemoData);
 document.querySelector("#save-forum-post").addEventListener("click", saveForumPost);
+document.querySelector("#forum-ai-cleanup").addEventListener("click", cleanUpForumPost);
 forumFilter.addEventListener("change", renderForum);
+document.querySelectorAll(".trucknet-category").forEach((button) => {
+  button.addEventListener("click", () => {
+    forumFilter.value = button.dataset.forumFilter;
+    document.querySelectorAll(".trucknet-category").forEach((item) => {
+      item.classList.toggle("active", item === button);
+    });
+    renderForum();
+  });
+});
 reportLocationFilter.addEventListener("change", renderReports);
 navToggle.addEventListener("click", () => {
   document.querySelector(".sidebar").classList.toggle("nav-open");

@@ -15,6 +15,8 @@ See `docs/check-in-broadcast-mvp.md` for the product flow and integration checkl
 
 The app navigation now puts the **Dashboard** first, with the broadcast action built into the dashboard. Planning, reports, POS, suppliers, marketplace, forum, and Truck Finder profile tools remain available under **Advanced Tools** so testers can focus on the daily operating workflow before exploring secondary features.
 
+The forum module is **TruckNet Community**. Its MVP starts with Quick Need, Locations & Events, Equipment Help, and Vendor Reviews, with Quick Need as the first live help board for urgent onsite needs.
+
 ## Current Testing Build
 
 This build is a static web app. It can run from a local folder, a local server, Netlify, Vercel, Cloudflare Pages, or any static host.

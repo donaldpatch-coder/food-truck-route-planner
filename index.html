@@ -35,7 +35,7 @@
             <button class="nav-item" data-screen="marketing">Truck Finder Profile</button>
             <button class="nav-item" data-screen="pos">POS</button>
             <button class="nav-item" data-screen="marketplace">Marketplace</button>
-            <button class="nav-item" data-screen="forum">Forum</button>
+          <button class="nav-item" data-screen="forum">TruckNet Community</button>
           </details>
 
           <button class="nav-item" data-screen="settings">Settings</button>
@@ -1417,75 +1417,137 @@
 
         <section id="forum" class="screen" aria-labelledby="forum-title-heading">
           <div class="screen-header">
-            <p class="eyebrow">Owner Community</p>
-            <h2 id="forum-title-heading">Food Truck Owner Forum</h2>
-            <p>Post questions, quick needs, buy/sell requests, permit tips, and location advice for other owners.</p>
+            <p class="eyebrow">Private Owner Network</p>
+            <h2 id="forum-title-heading">TruckNet Community</h2>
+            <p>A private forum for food truck owners to share urgent help, locations, equipment support, vendor reviews, and business advice.</p>
           </div>
+
+          <section class="trucknet-quick-board">
+            <div>
+              <p class="eyebrow">Quick Need - Live Help Board</p>
+              <h3>Urgent nearby help</h3>
+              <p>Use this first when you are onsite and need supplies, repairs, staff, propane, ice, power, or help right now.</p>
+            </div>
+            <div class="trucknet-map-card">
+              <strong>Live map view</strong>
+              <span>Nearby truck alerts, push notifications, and location privacy controls will connect in production.</span>
+            </div>
+          </section>
 
           <div class="forum-layout">
             <article class="feature-panel forum-compose-panel">
-              <p class="eyebrow">New Post</p>
-              <h3>Ask, offer, or request help</h3>
+              <p class="eyebrow">Post a Quick Need</p>
+              <h3>What do you need?</h3>
               <label>
-                Topic
-                <select id="forum-topic">
-                  <option>Need / Buy / Borrow</option>
-                  <option>Locations</option>
-                  <option>Permits</option>
-                  <option>POS</option>
-                  <option>Suppliers</option>
-                  <option>Equipment</option>
-                  <option>Routes</option>
-                  <option>General</option>
+                What do you need?
+                <input id="forum-title" type="text" placeholder="Propane tank, burger buns, generator help, ice...">
+              </label>
+              <label>
+                Buy or borrow?
+                <select id="forum-need-type">
+                  <option>Buy</option>
+                  <option>Borrow</option>
+                  <option>Either</option>
                 </select>
               </label>
               <label>
-                Urgency
+                Needed by what time?
+                <input id="forum-needed-by" type="time">
+              </label>
+              <label>
+                Current location
+                <input id="forum-location" type="text" placeholder="Fairgrounds, downtown, event name">
+              </label>
+              <label>
+                How far can you travel?
+                <select id="forum-travel-range">
+                  <option>Need delivery here</option>
+                  <option>Up to 5 miles</option>
+                  <option>Up to 15 miles</option>
+                  <option>Up to 30 miles</option>
+                </select>
+              </label>
+              <label>
+                Phone / contact
+                <input id="forum-contact" type="text" placeholder="Phone, text number, radio, Instagram">
+              </label>
+              <label>
+                Offer payment?
+                <select id="forum-payment-offer">
+                  <option>Yes</option>
+                  <option>No</option>
+                  <option>Trade</option>
+                </select>
+              </label>
+              <label>
+                Urgency level
                 <select id="forum-urgency">
-                  <option>Normal</option>
-                  <option>Today</option>
-                  <option>This week</option>
+                  <option>Low</option>
+                  <option>Soon</option>
+                  <option>ASAP</option>
                   <option>Emergency</option>
                 </select>
               </label>
               <label>
-                Location
-                <input id="forum-location" type="text" placeholder="Manchester, NH or Lowell event">
-              </label>
-              <label>
-                Contact
-                <input id="forum-contact" type="text" placeholder="Phone, email, or app username">
-              </label>
-              <label class="wide-field">
-                Title
-                <input id="forum-title" type="text" placeholder="Does anyone have extra mustard I can buy today?">
-              </label>
-              <label class="wide-field">
-                Message
-                <textarea id="forum-message" rows="4" placeholder="Share what you need, where you are, timing, and how someone should respond."></textarea>
-              </label>
-              <button type="button" class="primary" id="save-forum-post">Post to Forum</button>
-              <p class="helper-text">Tester forum posts are saved in this browser. Production forum posts will sync to the database.</p>
-            </article>
-
-            <aside class="feature-panel">
-              <p class="eyebrow">Browse</p>
-              <label>
-                Filter by topic
-                <select id="forum-filter">
-                  <option value="all">All topics</option>
-                  <option>Need / Buy / Borrow</option>
-                  <option>Locations</option>
-                  <option>Permits</option>
-                  <option>POS</option>
-                  <option>Suppliers</option>
-                  <option>Equipment</option>
-                  <option>Routes</option>
-                  <option>General</option>
+                Expiration timer
+                <select id="forum-expiration">
+                  <option>30 minutes</option>
+                  <option>1 hour</option>
+                  <option>2 hours</option>
+                  <option>End of service</option>
                 </select>
               </label>
-              <p class="helper-text">Use the forum for peer help, quick supplies, route warnings, event tips, and operator-to-operator support.</p>
+              <label class="wide-field">
+                Details
+                <textarea id="forum-message" rows="4" placeholder="Add quantity, exact item, parking note, payment amount, or safety details."></textarea>
+              </label>
+              <button type="button" class="secondary" id="forum-ai-cleanup">AI Clean Up Post</button>
+              <button type="button" class="primary" id="save-forum-post">Post Quick Need</button>
+              <p class="helper-text">Tester posts save in this browser. Production will add verified users, maps, push alerts, moderation, and ratings.</p>
+            </article>
+
+            <aside class="feature-panel trucknet-side-panel">
+              <p class="eyebrow">Browse TruckNet</p>
+              <label>
+                Section
+                <select id="forum-filter">
+                  <option value="all">All MVP sections</option>
+                  <option>Quick Need</option>
+                  <option>Locations & Events</option>
+                  <option>Equipment Help</option>
+                  <option>Vendor Reviews</option>
+                </select>
+              </label>
+              <div class="trucknet-score-card">
+                <span>Help Score</span>
+                <strong id="forum-help-score">0</strong>
+                <p>Help someone: +10. Vendor review: +5. Event lead: +5. Helpful answer: +3.</p>
+              </div>
+              <div class="trucknet-trust-list">
+                <span>Trust & Safety</span>
+                <p>Verified business badge</p>
+                <p>Report button</p>
+                <p>Mark solved / closed</p>
+                <p>No-spam rule</p>
+                <p>Moderation queue</p>
+              </div>
             </aside>
+          </div>
+
+          <div class="trucknet-category-grid">
+            <button type="button" class="trucknet-category active" data-forum-filter="Quick Need"><strong>Quick Need</strong><span>Urgent onsite help</span></button>
+            <button type="button" class="trucknet-category" data-forum-filter="Locations & Events"><strong>Locations & Events</strong><span>Spots, fairs, parking, fees</span></button>
+            <button type="button" class="trucknet-category" data-forum-filter="Equipment Help"><strong>Equipment Help</strong><span>Repairs, POS, refrigeration</span></button>
+            <button type="button" class="trucknet-category" data-forum-filter="Vendor Reviews"><strong>Vendor Reviews</strong><span>Suppliers, propane, ice, mechanics</span></button>
+          </div>
+
+          <div class="trucknet-trending">
+            <p class="eyebrow">Trending Topics</p>
+            <span>Best events this weekend</span>
+            <span>Ice suppliers</span>
+            <span>Generator problems</span>
+            <span>High-fee festivals</span>
+            <span>Best lunch spots</span>
           </div>
 
           <div class="forum-list" id="forum-list"></div>
@@ -1494,6 +1556,114 @@
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="app.js"></script>
+    <script src="app.js?v=generate-post-button-fix-1"></script>
+    <script>
+      (function () {
+        function fallbackShowScreen(id) {
+          document.querySelectorAll(".screen").forEach(function (screen) {
+            screen.classList.toggle("active", screen.id === id);
+          });
+
+          document.querySelectorAll(".nav-item").forEach(function (item) {
+            item.classList.toggle("active", item.dataset.screen === id);
+          });
+
+          var advancedNav = document.querySelector(".nav-advanced");
+          if (advancedNav) {
+            advancedNav.open = Boolean(advancedNav.querySelector('[data-screen="' + id + '"]'));
+          }
+        }
+
+        function fallbackShowBroadcastStep(step) {
+          document.querySelectorAll(".broadcast-step").forEach(function (screen) {
+            screen.classList.toggle("active", screen.id === "broadcast-" + step + "-step");
+          });
+
+          var label = document.querySelector("#broadcast-step-label");
+          if (label) {
+            label.textContent = step === "recommendation" ? "Step 1 of 3" : step === "preview" ? "Step 2 of 3" : "Step 3 of 3";
+          }
+
+          ["recommend", "preview", "success"].forEach(function (name) {
+            var dot = document.querySelector("#broadcast-dot-" + name);
+            if (dot) {
+              dot.classList.toggle("active", name === step || (step === "recommendation" && name === "recommend"));
+            }
+          });
+        }
+
+        function fallbackGenerateCaptions() {
+          var locationName = document.querySelector("#broadcast-location-name")?.textContent || document.querySelector("#dashboard-best-name")?.textContent || "today's location";
+          var bestTime = document.querySelector("#broadcast-best-time")?.textContent || document.querySelector("#dashboard-best-time")?.textContent || "today";
+          var businessName = document.querySelector("#business-name")?.value || "Our food truck";
+          var city = document.querySelector("#profile-city")?.value || document.querySelector("#city")?.value || "nearby";
+          var foodType = document.querySelector("#food-type")?.value || "fresh food";
+          var instagram = document.querySelector("#broadcast-instagram");
+          var facebook = document.querySelector("#broadcast-facebook");
+          var google = document.querySelector("#broadcast-google");
+
+          if (instagram) {
+            instagram.value = businessName + " is rolling into " + locationName + " during " + bestTime + ". Come grab " + foodType + " while it is hot. #foodtruck #streetfood #" + foodType.replace(/\s+/g, "");
+          }
+
+          if (facebook) {
+            facebook.value = businessName + " will be at " + locationName + " in " + city + " from " + bestTime + ". We are serving " + foodType + ". Stop by and check our page for updates if weather changes.";
+          }
+
+          if (google) {
+            google.value = businessName + " is open today at " + locationName + " from " + bestTime + ". Serving " + foodType + ".";
+          }
+
+          fallbackShowBroadcastStep("preview");
+        }
+
+        function openBroadcast(generatePosts) {
+          if (typeof showScreen === "function") {
+            showScreen("broadcast");
+          } else {
+            fallbackShowScreen("broadcast");
+          }
+
+          fallbackShowScreen("broadcast");
+
+          if (generatePosts) {
+            window.setTimeout(function () {
+              if (typeof generateBroadcastCaptions === "function") {
+                try {
+                  generateBroadcastCaptions();
+                  return;
+                } catch (error) {
+                  fallbackGenerateCaptions();
+                  return;
+                }
+              }
+              fallbackGenerateCaptions();
+            }, 50);
+          }
+        }
+
+        var startButton = document.querySelector("#dashboard-start-broadcast");
+        var generateButton = document.querySelector("#dashboard-generate-broadcast");
+
+        if (startButton) {
+          startButton.onclick = function () {
+            openBroadcast(false);
+          };
+        }
+
+        if (generateButton) {
+          generateButton.onclick = function () {
+            openBroadcast(true);
+          };
+        }
+
+        var flowGenerateButton = document.querySelector("#broadcast-generate-posts");
+        if (flowGenerateButton) {
+          flowGenerateButton.onclick = function () {
+            openBroadcast(true);
+          };
+        }
+      })();
+    </script>
   </body>
 </html>

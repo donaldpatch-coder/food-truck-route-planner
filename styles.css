@@ -1325,6 +1325,44 @@ textarea {
   margin-top: 18px;
 }
 
+.trucknet-quick-board {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 360px);
+  gap: 16px;
+  align-items: stretch;
+  border: 1px solid #efc26f;
+  border-radius: 8px;
+  background: #fff8e8;
+  box-shadow: var(--shadow);
+  margin-bottom: 18px;
+  padding: 20px;
+}
+
+.trucknet-quick-board h3,
+.trucknet-quick-board p {
+  margin: 0;
+}
+
+.trucknet-quick-board p:last-child {
+  color: var(--muted);
+  margin-top: 8px;
+}
+
+.trucknet-map-card {
+  display: grid;
+  gap: 8px;
+  border: 1px solid #e7d39c;
+  border-radius: 8px;
+  background: #ffffff;
+  padding: 16px;
+}
+
+.trucknet-map-card span,
+.trucknet-score-card p {
+  color: var(--muted);
+  font-size: 13px;
+}
+
 .forum-layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 320px;
@@ -1351,6 +1389,104 @@ textarea {
   background: #ffffff;
   box-shadow: var(--shadow);
   padding: 18px;
+}
+
+.quick-need-post {
+  border-color: #efc26f;
+  background: #fffdf7;
+}
+
+.trucknet-side-panel,
+.trucknet-score-card,
+.trucknet-trust-list {
+  display: grid;
+  gap: 12px;
+}
+
+.trucknet-score-card,
+.trucknet-trust-list {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #f8fafc;
+  padding: 14px;
+}
+
+.trucknet-score-card span,
+.trucknet-trust-list span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.trucknet-score-card strong {
+  color: var(--green);
+  font-size: 38px;
+  line-height: 1;
+}
+
+.trucknet-trust-list p {
+  margin: 0;
+}
+
+.trucknet-category-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.trucknet-category {
+  display: grid;
+  gap: 6px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #ffffff;
+  color: var(--ink);
+  cursor: pointer;
+  padding: 14px;
+  text-align: left;
+}
+
+.trucknet-category.active,
+.trucknet-category:hover {
+  border-color: var(--blue);
+  background: #eef7ff;
+}
+
+.trucknet-category span,
+.trucknet-post-meta span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.trucknet-trending,
+.trucknet-post-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.trucknet-trending {
+  align-items: center;
+  margin-top: 18px;
+}
+
+.trucknet-trending .eyebrow {
+  width: 100%;
+}
+
+.trucknet-trending span,
+.trucknet-post-meta span {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #ffffff;
+  padding: 7px 10px;
+}
+
+.trucknet-post-actions {
+  margin-top: 12px;
 }
 
 .forum-post h3,
@@ -1885,6 +2021,8 @@ tr:last-child td {
   .help-grid,
   .forum-layout,
   .forum-compose-panel,
+  .trucknet-quick-board,
+  .trucknet-category-grid,
   .marketing-layout,
   .marketing-question-grid,
   .payment-options,
