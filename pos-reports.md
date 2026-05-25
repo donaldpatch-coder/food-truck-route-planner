@@ -1,20 +1,18 @@
-# Owner Forum
+# Marketplace Listings
 
-![Owner forum screenshot](../../assets/help/help-forum.png)
+![Marketplace screenshot](../../assets/help/marketplace.png)
 
-Use the Owner Forum for questions, owner-to-owner help, and urgent needs at events.
+Use Marketplace to bring more visitors to the site by letting owners buy, sell, and discover trucks or equipment.
 
-## What To Post
+## What To Do
 
-- Use **Need / Buy / Borrow** for short requests like extra mustard, cups, propane, ice, or staff coverage.
-- Use **Locations** for event feedback, parking tips, and contact notes.
-- Use **Suppliers** or **Equipment** when owners need wholesale items, repairs, or recommendations.
-- Use **Routes** when owners want to coordinate travel or avoid duplicated stops.
-
-## Check-In Communication
-
-When an owner checks into a location, they can choose to be visible to other owners. Visible check-ins show the business name, contact note, time, and location so owners can coordinate if needed.
+1. Search by keyword, ZIP code, equipment type, or price range.
+2. Open the map preview to compare where listings are located.
+3. Add a listing with a title, price, ZIP code, description, and seller contact.
+4. Add up to 10 photo links so buyers can inspect the truck or equipment.
+5. Add a YouTube or video link when the seller has a walkaround.
+6. Add a referral or affiliate link if the listing should earn the site money.
 
 ## Tester Notes
 
-The forum is stored in the browser for testing. A live version should move posts and visible check-ins into the shared database with moderation.
+Use demo links while testing. Before public launch, add review rules so affiliate links and seller listings can be approved before they appear.

@@ -1,15 +1,21 @@
-# Dashboard & Weather
+# POS & Reports
 
-![Dashboard screenshot](../../assets/help/dashboard.png)
+![POS and reports screenshot](../../assets/help/pos-reports.png)
 
-Use the Dashboard to see the current best opportunity and weather risk.
+The POS screen currently uses a Square sandbox simulation for testers.
 
-## What To Check
+## POS Import
 
-- **Today's Best Spot** shows the highest-scoring opportunity.
-- **Live Weather** shows current temperature, rain chance, wind, and service risk.
-- **Learning From Sales** updates once check-ins or POS imports are saved.
+- Click **Connect Square Sandbox**.
+- Select one or more demo transactions.
+- Use **Select All** to import the whole batch.
+- Importing transactions creates sales history automatically.
+- Review the sync history so testers can see what was imported.
+
+## Reports
+
+Reports summarize sales, profit, location performance, menu demand, weather impact, supplier costs, pipeline value, marketplace interest, and POS sync totals.
 
 ## Tester Notes
 
-Click **Refresh Weather** if weather looks stale. Weather currently uses city-level data from Open-Meteo.
+This is not connected to a real Square account yet. Real Square OAuth will be added before production.

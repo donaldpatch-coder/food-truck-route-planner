@@ -1,180 +1,84 @@
-const jsonHeaders = {
-  "Content-Type": "application/json"
-};
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Download Focused Broadcast MVP</title>
+    <style>
+      body {
+        display: grid;
+        place-items: center;
+        min-height: 100vh;
+        margin: 0;
+        background: #f5f7fa;
+        color: #1c2430;
+        font-family: Arial, Helvetica, sans-serif;
+      }
 
-function response(statusCode, body) {
-  return {
-    statusCode,
-    headers: jsonHeaders,
-    body: JSON.stringify(body)
-  };
-}
+      main {
+        display: grid;
+        gap: 16px;
+        width: min(560px, calc(100% - 32px));
+        border: 1px solid #d8dee6;
+        border-radius: 8px;
+        background: #ffffff;
+        box-shadow: 0 18px 45px rgba(28, 36, 48, 0.1);
+        padding: 28px;
+      }
 
-function buildChannelPosts(posts = {}, channels = []) {
-  return channels.map((channel) => ({
-    channel,
-    text: posts[channel] || posts.gmb || posts.facebook || posts.instagram || ""
-  })).filter((item) => item.text.trim());
-}
+      h1,
+      p {
+        margin: 0;
+      }
 
-async function sendWebhook(payload, channelPosts) {
-  if (!payload.webhookUrl) {
-    return response(400, {
-      ok: false,
-      message: "Webhook URL is missing. Add it in Settings, or switch back to Demo mode."
-    });
-  }
+      a,
+      button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 48px;
+        border-radius: 8px;
+        border: 1px solid #0e4c82;
+        background: #1768ac;
+        color: #ffffff;
+        cursor: pointer;
+        font: inherit;
+        font-weight: 800;
+        padding: 10px 16px;
+        text-decoration: none;
+      }
 
-  const webhookResponse = await fetch(payload.webhookUrl, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      source: "Food Truck AI",
-      channelPosts,
-      location: payload.location,
-      photoName: payload.photoName || ""
-    })
-  });
+      code {
+        overflow-wrap: anywhere;
+        border-radius: 8px;
+        background: #eef3f8;
+        padding: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Download Dashboard Broadcast Fix</h1>
+      <p>Use the button below to save the latest fixed zip file.</p>
+      <a href="READY-TO-UPLOAD/focused-dashboard-broadcast-fix.zip" download="focused-dashboard-broadcast-fix.zip">Save zip file</a>
+      <button type="button" id="download-button">Try browser download</button>
+      <p>If the browser still will not save it, open this folder in Windows File Explorer:</p>
+      <code>C:\Users\Teaching\Documents\Codex\2026-05-21\can-you-create-a-new-folder\truckroute\app</code>
+    </main>
 
-  if (!webhookResponse.ok) {
-    return response(502, {
-      ok: false,
-      message: "The webhook did not accept the broadcast. Check the webhook URL."
-    });
-  }
-
-  return response(200, {
-    ok: true,
-    message: "Broadcast sent to the webhook."
-  });
-}
-
-async function sendAyrshare(channelPosts) {
-  const apiKey = process.env.AYRSHARE_API_KEY;
-
-  if (!apiKey) {
-    return response(501, {
-      ok: false,
-      message: "Ayrshare is selected, but AYRSHARE_API_KEY is not added in Netlify yet."
-    });
-  }
-
-  const results = [];
-
-  for (const item of channelPosts) {
-    const ayrshareResponse = await fetch("https://app.ayrshare.com/api/post", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${apiKey}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        post: item.text,
-        platforms: [item.channel]
-      })
-    });
-
-    const detail = await ayrshareResponse.json().catch(() => ({}));
-    results.push({ channel: item.channel, ok: ayrshareResponse.ok, detail });
-
-    if (!ayrshareResponse.ok) {
-      return response(502, {
-        ok: false,
-        message: `Ayrshare could not post to ${item.channel}. Check connected social accounts.`,
-        results
+    <script>
+      document.querySelector("#download-button").addEventListener("click", async () => {
+        const response = await fetch("READY-TO-UPLOAD/focused-dashboard-broadcast-fix.zip");
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "focused-dashboard-broadcast-fix.zip";
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
       });
-    }
-  }
-
-  return response(200, {
-    ok: true,
-    message: "Broadcast sent through Ayrshare.",
-    results
-  });
-}
-
-async function sendBuffer() {
-  return response(501, {
-    ok: false,
-    message: "Buffer needs profile IDs and a live access token before posting. Use Demo, Webhook, or Ayrshare for this test build."
-  });
-}
-
-exports.handler = async (event) => {
-  if (event.httpMethod !== "POST") {
-    return response(405, {
-      ok: false,
-      message: "Use POST to publish a broadcast."
-    });
-  }
-
-  let payload = {};
-
-  try {
-    payload = JSON.parse(event.body || "{}");
-  } catch (error) {
-    return response(400, {
-      ok: false,
-      message: "The broadcast payload was not readable."
-    });
-  }
-
-  const provider = payload.provider || "demo";
-  const channels = Array.isArray(payload.channels) && payload.channels.length
-    ? payload.channels
-    : ["instagram", "facebook", "gmb"];
-  const channelPosts = buildChannelPosts(payload.posts, channels);
-
-  if (payload.test) {
-    if (provider === "demo") {
-      return response(200, { ok: true, message: "Demo mode is ready." });
-    }
-
-    if (provider === "ayrshare" && !process.env.AYRSHARE_API_KEY) {
-      return response(501, {
-        ok: false,
-        message: "Add AYRSHARE_API_KEY in Netlify to enable Ayrshare."
-      });
-    }
-
-    if (provider === "buffer") {
-      return sendBuffer();
-    }
-
-    if (provider === "webhook" && !payload.webhookUrl) {
-      return response(400, {
-        ok: false,
-        message: "Add a webhook URL to test the connection."
-      });
-    }
-
-    return response(200, {
-      ok: true,
-      message: "Posting service settings look ready."
-    });
-  }
-
-  if (!channelPosts.length) {
-    return response(400, {
-      ok: false,
-      message: "No captions were included for posting."
-    });
-  }
-
-  if (provider === "webhook") {
-    return sendWebhook(payload, channelPosts);
-  }
-
-  if (provider === "ayrshare") {
-    return sendAyrshare(channelPosts);
-  }
-
-  if (provider === "buffer") {
-    return sendBuffer();
-  }
-
-  return response(200, {
-    ok: true,
-    message: "Demo broadcast saved. No live social service was called."
-  });
-};
+    </script>
+  </body>
+</html>

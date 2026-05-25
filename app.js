@@ -1,21 +1,23 @@
-# POS & Reports
+# Sales Log
 
-![POS and reports screenshot](../../assets/help/pos-reports.png)
+![Sales Log screenshot](../../assets/help/sales-log.png)
 
-The POS screen currently uses a Square sandbox simulation for testers.
+Use Sales Log when the truck starts service.
 
-## POS Import
+## What To Do
 
-- Click **Connect Square Sandbox**.
-- Select one or more demo transactions.
-- Use **Select All** to import the whole batch.
-- Importing transactions creates sales history automatically.
-- Review the sync history so testers can see what was imported.
+1. Choose the location.
+2. Click **Start Service**.
+3. Enter sales as orders come in.
+4. Add costs, best sellers, competitor count, and notes.
+5. Choose whether to appear in the visible owner list for that location.
+6. Click **Stop & Fill Time**.
+7. Save the check-in.
 
-## Reports
+## Why It Matters
 
-Reports summarize sales, profit, location performance, menu demand, weather impact, supplier costs, pipeline value, marketplace interest, and POS sync totals.
+Saved check-ins power location history, reports, profit per visit, owner visibility, and future recommendations.
 
-## Tester Notes
+## Privacy Note
 
-This is not connected to a real Square account yet. Real Square OAuth will be added before production.
+Visible check-ins are optional. If the owner does not turn that option on, the app still saves their private sales history without listing them for other owners.

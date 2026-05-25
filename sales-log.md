@@ -1,19 +1,19 @@
-# Find Locations
+# Routes & Marketplace
 
-![Find Locations screenshot](../../assets/help/find-locations.png)
+![Route and marketplace screenshot](../../assets/help/route-marketplace.png)
 
-Use Find Locations to review fairs, markets, breweries, public spaces, rented food truck spaces, and owner-added spots.
+Use Calendar to plan travel and Marketplace to find trucks and equipment.
 
-## What To Do
+## Route Planning
 
-- Click **Review** to open the location detail page.
-- Use **Source** links to open vendor or application pages.
-- Search by city, ZIP code, county, venue type, or keyword.
-- Use the map preview to see where the location sits before planning a stop.
-- Add your own location with notes if a spot is missing.
-- If you have been there before, the result card shows visits, earnings, notes, and average profit.
-- If other owners choose to be visible while checked in, the detail page shows who is there and how to contact them.
+- Choose Week, Month, or Year.
+- Review the route map, stops, and mileage between stops.
+- Check vendors along the route for supplies.
+
+## Marketplace
+
+Use Marketplace to browse or list food trucks, trailers, generators, refrigeration, POS gear, and cooking equipment. Listings can include ZIP code, map preview, photos, video, and referral or affiliate links.
 
 ## Tester Notes
 
-Try adding a location, checking in there from the Sales Log, and then searching that same place again to see the history appear.
+Mileage is currently estimated from local city coordinates. Live map routing can be connected later.
