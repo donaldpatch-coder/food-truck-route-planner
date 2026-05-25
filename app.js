@@ -204,6 +204,11 @@ const settingsHomeBase = document.querySelector("#settings-home-base");
 const settingsFoodType = document.querySelector("#settings-food-type");
 const settingsRadius = document.querySelector("#settings-radius");
 const settingsStatus = document.querySelector("#settings-status");
+const postingProvider = document.querySelector("#posting-provider");
+const postingWebhookUrl = document.querySelector("#posting-webhook-url");
+const postingChannels = document.querySelectorAll(".posting-channel");
+const postingServiceStatus = document.querySelector("#posting-service-status");
+const broadcastPostingServiceLabel = document.querySelector("#broadcast-posting-service-label");
 const feedbackArea = document.querySelector("#feedback-area");
 const feedbackMessage = document.querySelector("#feedback-message");
 const feedbackEmail = document.querySelector("#feedback-email");
@@ -274,6 +279,8 @@ const broadcastPhoto = document.querySelector("#broadcast-photo");
 const broadcastPhotoStatus = document.querySelector("#broadcast-photo-status");
 const broadcastPublishStatus = document.querySelector("#broadcast-publish-status");
 const broadcastLiveStatus = document.querySelector("#broadcast-live-status");
+const socialQueueList = document.querySelector("#social-queue-list");
+const socialQueueStatus = document.querySelector("#social-queue-status");
 
 const detailName = document.querySelector("#detail-name");
 const detailReason = document.querySelector("#detail-reason");
@@ -344,6 +351,7 @@ const storageKeys = {
   squareDemoTransactions: "foodTruckAiSquareDemoTransactions",
   marketplaceListings: "foodTruckAiMarketplaceListings",
   settings: "foodTruckAiSettings",
+  postingService: "foodTruckAiPostingService",
   feedback: "foodTruckAiFeedback",
   forumPosts: "foodTruckAiForumPosts",
   broadcasts: "foodTruckAiBroadcasts",
@@ -2435,8 +2443,9 @@ function generateBroadcastCaptions() {
   showBroadcastStep("preview");
 }
 
-function publishBroadcast() {
+async function publishBroadcast() {
   const location = getBroadcastLocation();
+  const postingSettings = getPostingServiceSettings();
   const record = {
     id: `broadcast-${Date.now()}`,
     locationId: location.id,
@@ -2444,19 +2453,61 @@ function publishBroadcast() {
     city: location.city,
     bestTime: location.bestTime,
     date: new Date().toISOString(),
+    provider: postingSettings.provider,
+    channels: postingSettings.channels,
     instagram: broadcastInstagram.value.trim(),
     facebook: broadcastFacebook.value.trim(),
     google: broadcastGoogle.value.trim(),
     photoName: broadcastPhoto.files[0]?.name || ""
   };
 
-  broadcastPublishStatus.textContent = "Publishing demo posts...";
+  broadcastPublishStatus.textContent = postingSettings.provider === "demo"
+    ? "Saving demo broadcast..."
+    : `Sending to ${getPostingProviderLabel(postingSettings.provider)}...`;
+
+  let postingResult = { mode: "demo", message: "Demo broadcast saved." };
+
+  if (postingSettings.provider !== "demo") {
+    try {
+      const response = await fetch("/.netlify/functions/post-social", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          provider: postingSettings.provider,
+          webhookUrl: postingSettings.webhookUrl,
+          channels: postingSettings.channels,
+          posts: {
+            instagram: record.instagram,
+            facebook: record.facebook,
+            gmb: record.google
+          },
+          location: {
+            name: record.location,
+            city: record.city,
+            bestTime: record.bestTime
+          },
+          photoName: record.photoName
+        })
+      });
+      postingResult = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(postingResult.message || "Posting service is not configured yet.");
+      }
+    } catch (error) {
+      broadcastPublishStatus.textContent = `${error.message} Saved as a demo broadcast for now.`;
+      record.provider = "demo fallback";
+    }
+  }
 
   setTimeout(() => {
     const broadcasts = getSavedCollection(storageKeys.broadcasts);
     saveCollection(storageKeys.broadcasts, [record, ...broadcasts].slice(0, 25));
     appStorage.setItem(storageKeys.activeBroadcast, JSON.stringify(record));
     renderBroadcastSuccess(record);
+    renderSocialQueue();
+    if (postingResult.message && postingSettings.provider !== "demo") {
+      broadcastPublishStatus.textContent = postingResult.message;
+    }
     showBroadcastStep("success");
   }, 900);
 }
@@ -2476,6 +2527,114 @@ function getActiveBroadcast() {
   } catch (error) {
     return null;
   }
+}
+
+function getBroadcasts() {
+  return getSavedCollection(storageKeys.broadcasts);
+}
+
+function saveBroadcasts(broadcasts) {
+  saveCollection(storageKeys.broadcasts, broadcasts);
+}
+
+function getPlatformCaption(record, platform) {
+  if (platform === "instagram") {
+    return record.instagram || "";
+  }
+
+  if (platform === "facebook") {
+    return record.facebook || "";
+  }
+
+  return record.google || "";
+}
+
+function getPlatformUrl(platform) {
+  const urls = {
+    instagram: "https://www.instagram.com/",
+    facebook: "https://www.facebook.com/",
+    google: "https://business.google.com/"
+  };
+
+  return urls[platform] || "https://www.google.com/";
+}
+
+function renderSocialQueue() {
+  if (!socialQueueList) {
+    return;
+  }
+
+  const broadcasts = getBroadcasts();
+
+  socialQueueStatus.textContent = broadcasts.length
+    ? `${broadcasts.length} approved broadcast${broadcasts.length === 1 ? "" : "s"} saved.`
+    : "No approved broadcasts yet. Use Accept & Generate Posts from the Dashboard.";
+
+  socialQueueList.innerHTML = broadcasts.length
+    ? broadcasts.map((record) => {
+        const postedClass = record.postedAt ? " posted" : "";
+        const postedLabel = record.postedAt ? `Posted ${record.postedAt}` : "Ready to post";
+        return `
+          <article class="social-queue-card${postedClass}" data-broadcast-id="${record.id}">
+            <div class="title-row">
+              <div>
+                <p class="eyebrow">${postedLabel}</p>
+                <h3>${record.location}</h3>
+                <p>${record.city || ""} · ${record.bestTime || "Today"}</p>
+              </div>
+              <button type="button" class="secondary social-mark-posted" data-broadcast-id="${record.id}">
+                ${record.postedAt ? "Mark Unposted" : "Mark Posted"}
+              </button>
+            </div>
+            <div class="social-platform-grid">
+              ${["instagram", "facebook", "google"].map((platform) => `
+                <div class="social-platform-card">
+                  <strong>${platform === "google" ? "Google Business" : platform}</strong>
+                  <p>${getPlatformCaption(record, platform)}</p>
+                  <div class="button-row">
+                    <button type="button" class="secondary social-copy-caption" data-broadcast-id="${record.id}" data-platform="${platform}">Copy Caption</button>
+                    <a class="source-link" href="${getPlatformUrl(platform)}" target="_blank" rel="noreferrer">Open</a>
+                  </div>
+                </div>
+              `).join("")}
+            </div>
+          </article>
+        `;
+      }).join("")
+    : `<div class="empty-state">No posts are waiting yet.</div>`;
+}
+
+async function copySocialCaption(broadcastId, platform) {
+  const record = getBroadcasts().find((item) => item.id === broadcastId);
+  const caption = record ? getPlatformCaption(record, platform) : "";
+
+  if (!caption) {
+    socialQueueStatus.textContent = "No caption found for that post.";
+    return;
+  }
+
+  try {
+    await navigator.clipboard.writeText(caption);
+    socialQueueStatus.textContent = `${platform === "google" ? "Google Business" : platform} caption copied.`;
+  } catch (error) {
+    socialQueueStatus.textContent = "Copy did not work in this browser. Select the caption text and copy it manually.";
+  }
+}
+
+function toggleSocialPosted(broadcastId) {
+  const broadcasts = getBroadcasts().map((record) => {
+    if (record.id !== broadcastId) {
+      return record;
+    }
+
+    return {
+      ...record,
+      postedAt: record.postedAt ? "" : new Date().toLocaleString()
+    };
+  });
+
+  saveBroadcasts(broadcasts);
+  renderSocialQueue();
 }
 
 function setSelectedLocation(locationId) {
@@ -4098,6 +4257,7 @@ function loadSettings() {
   settingsHomeBase.value = settings.homeBase || appStorage.getItem(storageKeys.homeBase) || homeBase.value;
   settingsFoodType.value = settings.foodType || document.querySelector("#food-type").value;
   settingsRadius.value = settings.radius || 50;
+  loadPostingServiceSettings();
 }
 
 function saveSettings() {
@@ -4118,6 +4278,120 @@ function saveSettings() {
   renderCalendar();
   if (getTruckProfiles().length === 0) {
     loadTruckProfileForm();
+  }
+}
+
+function getPostingServiceSettings() {
+  let settings = {};
+
+  try {
+    settings = JSON.parse(appStorage.getItem(storageKeys.postingService) || "{}");
+  } catch (error) {
+    settings = {};
+  }
+
+  const channels = Array.isArray(settings.channels) && settings.channels.length
+    ? settings.channels
+    : ["instagram", "facebook", "gmb"];
+
+  return {
+    provider: settings.provider || "demo",
+    webhookUrl: settings.webhookUrl || "",
+    channels
+  };
+}
+
+function getPostingProviderLabel(provider) {
+  const labels = {
+    demo: "Demo mode",
+    ayrshare: "Ayrshare",
+    buffer: "Buffer",
+    webhook: "Webhook"
+  };
+
+  return labels[provider] || "Demo mode";
+}
+
+function updatePostingServiceDisplay() {
+  const settings = getPostingServiceSettings();
+  const providerLabel = getPostingProviderLabel(settings.provider);
+  const channelText = settings.channels.map((channel) => channel === "gmb" ? "Google Business" : channel).join(", ");
+
+  if (broadcastPostingServiceLabel) {
+    broadcastPostingServiceLabel.textContent = settings.provider === "demo"
+      ? "Demo mode - posts will be saved inside this tester app."
+      : `${providerLabel} selected for ${channelText}. Netlify environment keys must be added before live posting.`;
+  }
+}
+
+function loadPostingServiceSettings() {
+  const settings = getPostingServiceSettings();
+
+  if (postingProvider) {
+    postingProvider.value = settings.provider;
+  }
+
+  if (postingWebhookUrl) {
+    postingWebhookUrl.value = settings.webhookUrl;
+  }
+
+  postingChannels.forEach((input) => {
+    input.checked = settings.channels.includes(input.value);
+  });
+
+  updatePostingServiceDisplay();
+}
+
+function savePostingServiceSettings(showMessage = true) {
+  const selectedChannels = Array.from(postingChannels)
+    .filter((input) => input.checked)
+    .map((input) => input.value);
+
+  const settings = {
+    provider: postingProvider?.value || "demo",
+    webhookUrl: postingWebhookUrl?.value.trim() || "",
+    channels: selectedChannels.length ? selectedChannels : ["instagram", "facebook", "gmb"]
+  };
+
+  appStorage.setItem(storageKeys.postingService, JSON.stringify(settings));
+  updatePostingServiceDisplay();
+
+  if (showMessage && postingServiceStatus) {
+    postingServiceStatus.textContent = settings.provider === "demo"
+      ? "Demo mode saved. Testers can broadcast without connecting live social accounts."
+      : `${getPostingProviderLabel(settings.provider)} saved. Add the matching secret key in Netlify before live posting.`;
+  }
+
+  return settings;
+}
+
+async function testPostingServiceConnection() {
+  const settings = savePostingServiceSettings(false);
+
+  if (settings.provider === "demo") {
+    postingServiceStatus.textContent = "Demo mode is ready. No outside social account is required for testing.";
+    return;
+  }
+
+  postingServiceStatus.textContent = "Checking posting service setup...";
+
+  try {
+    const response = await fetch("/.netlify/functions/post-social", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        provider: settings.provider,
+        webhookUrl: settings.webhookUrl,
+        channels: settings.channels,
+        test: true
+      })
+    });
+    const result = await response.json().catch(() => ({}));
+    postingServiceStatus.textContent = result.message || (response.ok
+      ? "Posting service is ready."
+      : "Posting service is not connected yet.");
+  } catch (error) {
+    postingServiceStatus.textContent = "Live posting needs the Netlify function online. Demo mode still works for testers.";
   }
 }
 
@@ -4235,6 +4509,7 @@ function renderAllDataViews() {
   renderCheckinHistory();
   renderFeedback();
   renderForum();
+  renderSocialQueue();
 }
 
 function saveForumPost() {
@@ -5998,6 +6273,8 @@ document.querySelector("#select-all-square").addEventListener("click", () => set
 document.querySelector("#clear-square-selection").addEventListener("click", () => setSquareTransactionSelection(false));
 document.querySelector("#refresh-square-demo").addEventListener("click", refreshSquareDemoBatch);
 document.querySelector("#save-settings").addEventListener("click", saveSettings);
+document.querySelector("#save-posting-service").addEventListener("click", () => savePostingServiceSettings(true));
+document.querySelector("#test-posting-service").addEventListener("click", testPostingServiceConnection);
 document.querySelector("#save-feedback").addEventListener("click", saveFeedback);
 document.querySelector("#export-demo-data").addEventListener("click", exportDemoData);
 document.querySelector("#reset-demo-data").addEventListener("click", resetDemoData);
@@ -6063,6 +6340,19 @@ broadcastPhoto.addEventListener("change", () => {
   broadcastPhotoStatus.textContent = broadcastPhoto.files[0]
     ? `${broadcastPhoto.files[0].name} attached to this demo broadcast.`
     : "Tap to add today's food photo.";
+});
+document.querySelector("#refresh-social-queue").addEventListener("click", renderSocialQueue);
+socialQueueList.addEventListener("click", (event) => {
+  const copyButton = event.target.closest(".social-copy-caption");
+  const postedButton = event.target.closest(".social-mark-posted");
+
+  if (copyButton) {
+    copySocialCaption(copyButton.dataset.broadcastId, copyButton.dataset.platform);
+  }
+
+  if (postedButton) {
+    toggleSocialPosted(postedButton.dataset.broadcastId);
+  }
 });
 
 document.querySelector("#add-to-plan").addEventListener("click", () => {

@@ -559,6 +559,21 @@ textarea {
   font-size: 16px;
 }
 
+.integration-status-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 12px 14px;
+  background: #f8fafc;
+  color: #334155;
+}
+
+.integration-status-card strong {
+  color: #0f172a;
+}
+
 .broadcast-upload input {
   padding: 10px;
 }
@@ -566,6 +581,28 @@ textarea {
 .broadcast-upload span {
   color: var(--muted);
   font-size: 13px;
+}
+
+.checkbox-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.checkbox-grid label {
+  min-height: 44px;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px;
+  background: #ffffff;
+  font-weight: 700;
+}
+
+.checkbox-grid input {
+  width: auto;
 }
 
 .broadcast-success-mark {
@@ -1120,6 +1157,49 @@ textarea {
   color: var(--green);
   padding: 10px 12px;
   text-align: center;
+}
+
+.social-queue-layout {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.8fr) minmax(0, 1.5fr);
+  gap: 18px;
+}
+
+.social-queue-list,
+.social-platform-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.social-queue-card,
+.social-platform-card {
+  display: grid;
+  gap: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px;
+  background: #ffffff;
+}
+
+.social-queue-card.posted {
+  background: #f3faf5;
+  border-color: #b8dcc6;
+}
+
+.social-platform-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.social-platform-card p {
+  min-height: 96px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.social-platform-card .button-row {
+  align-items: stretch;
 }
 
 .connection-badge {
@@ -2023,6 +2103,8 @@ tr:last-child td {
   .forum-compose-panel,
   .trucknet-quick-board,
   .trucknet-category-grid,
+  .social-queue-layout,
+  .social-platform-grid,
   .marketing-layout,
   .marketing-question-grid,
   .payment-options,

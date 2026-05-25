@@ -33,6 +33,7 @@
             <button class="nav-item" data-screen="operations">Operations</button>
             <button class="nav-item" data-screen="suppliers">Suppliers</button>
             <button class="nav-item" data-screen="marketing">Truck Finder Profile</button>
+            <button class="nav-item" data-screen="socialQueue">Social Queue</button>
             <button class="nav-item" data-screen="pos">POS</button>
             <button class="nav-item" data-screen="marketplace">Marketplace</button>
           <button class="nav-item" data-screen="forum">TruckNet Community</button>
@@ -205,6 +206,10 @@
 
             <article class="broadcast-step" id="broadcast-preview-step">
               <p class="broadcast-greeting">Review before posting</p>
+              <div class="integration-status-card" id="broadcast-posting-status-card">
+                <strong>Posting service</strong>
+                <span id="broadcast-posting-service-label">Demo mode - posts will be saved inside this tester app.</span>
+              </div>
               <label>
                 Instagram
                 <textarea id="broadcast-instagram" rows="5"></textarea>
@@ -224,7 +229,7 @@
               </label>
               <div class="button-row">
                 <button type="button" class="secondary" id="broadcast-back-to-recommendation">Back</button>
-                <button type="button" class="primary broadcast-primary" id="broadcast-publish">Approve & Blast Socials</button>
+                <button type="button" class="primary broadcast-primary" id="broadcast-publish">Approve & Broadcast Demo</button>
               </div>
               <p class="status-message" id="broadcast-publish-status" aria-live="polite"></p>
             </article>
@@ -239,9 +244,42 @@
                 <a href="https://www.google.com/maps" target="_blank">Google Maps</a>
               </div>
               <div class="button-row">
+                <button type="button" class="primary" data-next="socialQueue">Open Posting Queue</button>
                 <button type="button" class="secondary" id="broadcast-change-location">Close up early / Change location</button>
                 <button type="button" class="primary" data-next="dashboard">Open Dashboard</button>
               </div>
+            </article>
+          </div>
+        </section>
+
+        <section id="socialQueue" class="screen" aria-labelledby="social-queue-title">
+          <div class="screen-header">
+            <p class="eyebrow">Built-In Posting Assistant</p>
+            <h2 id="social-queue-title">Social Queue</h2>
+            <p>Approved broadcasts are saved here so owners can copy captions, open each social platform, and mark posts as posted.</p>
+          </div>
+
+          <div class="social-queue-layout">
+            <article class="feature-panel">
+              <p class="eyebrow">Why This Saves Money</p>
+              <h3>Scaled-down Ayrshare alternative</h3>
+              <p>This version avoids monthly API fees while testers prove the workflow. It does not post automatically, but it gives owners a fast copy-and-open station with posting history.</p>
+              <div class="mini-list">
+                <div class="mini-list-item"><strong>Included now</strong><span>Queue, captions, copy buttons, open links, posted status, history.</span></div>
+                <div class="mini-list-item"><strong>Later upgrade</strong><span>Meta, Google, or Ayrshare API posting when revenue supports it.</span></div>
+              </div>
+            </article>
+
+            <article class="feature-panel large">
+              <div class="title-row">
+                <div>
+                  <p class="eyebrow">Approved Posts</p>
+                  <h3>Ready to Post</h3>
+                </div>
+                <button type="button" class="secondary" id="refresh-social-queue">Refresh Queue</button>
+              </div>
+              <p class="status-message" id="social-queue-status" aria-live="polite"></p>
+              <div class="social-queue-list" id="social-queue-list"></div>
             </article>
           </div>
         </section>
@@ -1333,6 +1371,35 @@
               </div>
               <p class="status-message" id="data-tools-status"></p>
             </article>
+
+            <article class="feature-panel">
+              <p class="eyebrow">Social Posting</p>
+              <h3>Broadcast service</h3>
+              <p>Use demo mode for testing now. When you are ready, add your provider key in Netlify environment variables and switch this to Ayrshare or Buffer.</p>
+              <label>
+                Posting provider
+                <select id="posting-provider">
+                  <option value="demo">Demo mode</option>
+                  <option value="ayrshare">Ayrshare</option>
+                  <option value="buffer">Buffer</option>
+                  <option value="webhook">Webhook / automation link</option>
+                </select>
+              </label>
+              <label>
+                Webhook URL
+                <input id="posting-webhook-url" type="url" placeholder="Optional Zapier, Make, or custom webhook URL">
+              </label>
+              <div class="checkbox-grid">
+                <label><input class="posting-channel" type="checkbox" value="instagram" checked> Instagram</label>
+                <label><input class="posting-channel" type="checkbox" value="facebook" checked> Facebook</label>
+                <label><input class="posting-channel" type="checkbox" value="gmb" checked> Google Business</label>
+              </div>
+              <div class="button-row">
+                <button type="button" class="primary" id="save-posting-service">Save Posting Setup</button>
+                <button type="button" class="secondary" id="test-posting-service">Test Connection</button>
+              </div>
+              <p class="status-message" id="posting-service-status" aria-live="polite"></p>
+            </article>
           </div>
         </section>
 
@@ -1556,7 +1623,7 @@
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="app.js?v=generate-post-button-fix-1"></script>
+    <script src="app.js?v=posting-service-1"></script>
     <script>
       (function () {
         function fallbackShowScreen(id) {
@@ -1617,6 +1684,46 @@
           fallbackShowBroadcastStep("preview");
         }
 
+        function fallbackPublishBroadcast() {
+          var status = document.querySelector("#broadcast-publish-status");
+          var liveStatus = document.querySelector("#broadcast-live-status");
+          var locationName = document.querySelector("#broadcast-location-name")?.textContent || document.querySelector("#dashboard-best-name")?.textContent || "today's location";
+          var bestTime = document.querySelector("#broadcast-best-time")?.textContent || document.querySelector("#dashboard-best-time")?.textContent || "today";
+          var endTime = bestTime.indexOf("-") > -1 ? bestTime.split("-").pop().trim() : bestTime;
+          var record = {
+            id: "broadcast-" + Date.now(),
+            location: locationName,
+            bestTime: bestTime,
+            instagram: document.querySelector("#broadcast-instagram")?.value || "",
+            facebook: document.querySelector("#broadcast-facebook")?.value || "",
+            google: document.querySelector("#broadcast-google")?.value || "",
+            createdAt: new Date().toISOString(),
+            demoMode: true
+          };
+
+          if (status) {
+            status.textContent = "Publishing demo broadcast...";
+          }
+
+          try {
+            var saved = JSON.parse(localStorage.getItem("foodTruckAiBroadcasts") || "[]");
+            localStorage.setItem("foodTruckAiBroadcasts", JSON.stringify([record].concat(saved).slice(0, 25)));
+            localStorage.setItem("foodTruckAiActiveBroadcast", JSON.stringify(record));
+          } catch (error) {}
+
+          window.setTimeout(function () {
+            if (liveStatus) {
+              liveStatus.textContent = "Current Status: Active at " + locationName + " until " + endTime + ".";
+            }
+
+            if (status) {
+              status.textContent = "";
+            }
+
+            fallbackShowBroadcastStep("success");
+          }, 700);
+        }
+
         function openBroadcast(generatePosts) {
           if (typeof showScreen === "function") {
             showScreen("broadcast");
@@ -1644,6 +1751,7 @@
 
         var startButton = document.querySelector("#dashboard-start-broadcast");
         var generateButton = document.querySelector("#dashboard-generate-broadcast");
+        var publishButton = document.querySelector("#broadcast-publish");
 
         if (startButton) {
           startButton.onclick = function () {
@@ -1661,6 +1769,22 @@
         if (flowGenerateButton) {
           flowGenerateButton.onclick = function () {
             openBroadcast(true);
+          };
+        }
+
+        if (publishButton) {
+          publishButton.onclick = function () {
+            if (typeof publishBroadcast === "function") {
+              try {
+                publishBroadcast();
+                return;
+              } catch (error) {
+                fallbackPublishBroadcast();
+                return;
+              }
+            }
+
+            fallbackPublishBroadcast();
           };
         }
       })();

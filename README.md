@@ -13,6 +13,8 @@ The simplified tester flow is **Check In & Broadcast**:
 
 See `docs/check-in-broadcast-mvp.md` for the product flow and integration checklist.
 
+The broadcast button works in **Demo mode** by default, which saves the post and live-truck status inside the tester app. The app now includes a built-in **Social Queue** as a scaled-down Ayrshare alternative: owners can copy platform-specific captions, open Instagram/Facebook/Google Business, mark posts as posted, and keep a posting history without paying for a social API. A posting bridge is still included at `netlify/functions/post-social.js` for webhook posting and Ayrshare later. To enable Ayrshare on Netlify, add an environment variable named `AYRSHARE_API_KEY`, then switch the provider under **Settings > Social Posting**.
+
 The app navigation now puts the **Dashboard** first, with the broadcast action built into the dashboard. Planning, reports, POS, suppliers, marketplace, forum, and Truck Finder profile tools remain available under **Advanced Tools** so testers can focus on the daily operating workflow before exploring secondary features.
 
 The forum module is **TruckNet Community**. Its MVP starts with Quick Need, Locations & Events, Equipment Help, and Vendor Reviews, with Quick Need as the first live help board for urgent onsite needs.
@@ -27,6 +29,7 @@ Core files:
 - `styles.css` - layout and responsive styles
 - `app.js` - app behavior, local storage, Supabase calls, weather API, seed data
 - `server.js` - optional local server
+- `netlify/functions/post-social.js` - secure social posting bridge for webhook/Ayrshare testing
 - `supabase-schema.sql` - database schema for the hosted test version
 - `supabase-opportunities-seed.sql` - initial opportunity/location seed rows
 - `TESTING.md` - tester instructions and feedback checklist
@@ -72,6 +75,7 @@ Before a real multi-user test, run `supabase-schema.sql` in Supabase, then run `
 
 - Supabase: authentication and database
 - Open-Meteo: live weather and geocoding
+- Ayrshare or webhook automation: optional live social posting from the broadcast flow
 
 Open-Meteo does not require an API key for this prototype.
 

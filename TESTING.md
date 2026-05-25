@@ -11,9 +11,22 @@ Use this checklist to test the Food Truck Route Planner MVP.
 5. Pick another saved location if the recommendation is not right.
 6. Review and edit the Instagram, Facebook, and Google Business captions.
 7. Optionally attach a food photo.
-8. Click **Approve & Blast Socials**.
+8. Click **Approve & Broadcast Demo**.
 9. Confirm the success screen shows the truck as active at the location.
-10. Use **Close up early / Change location** and repeat the flow.
+10. Open **Social Queue**, copy a caption, open a social platform, and mark the post as posted.
+11. Use **Close up early / Change location** and repeat the flow.
+
+## Social Posting Setup
+
+Demo mode is the default and does not post to real social accounts. To test a live posting service:
+
+1. Go to **Settings**.
+2. Find **Social Posting**.
+3. Choose **Webhook** or **Ayrshare**.
+4. For Ayrshare, add `AYRSHARE_API_KEY` in Netlify first.
+5. Click **Test Connection**.
+
+The no-cost posting workflow lives under **Social Queue**. It is the scaled-down version of Ayrshare for this MVP.
 
 ## Secondary Test Flow
 
@@ -50,6 +63,7 @@ After testing the core broadcast flow:
 - Weather uses city-level current weather, not exact truck coordinates.
 - Public listings are saved locally in this prototype.
 - Affiliate links are owner-entered and not validated yet.
+- Social posting runs in demo mode unless a webhook URL or Ayrshare Netlify key is configured.
 
 ## Bug Report Format
 
