@@ -1168,13 +1168,15 @@ textarea {
 }
 
 .social-queue-list,
-.social-platform-grid {
+.social-platform-grid,
+.manual-post-grid {
   display: grid;
   gap: 12px;
 }
 
 .social-queue-card,
-.social-platform-card {
+.social-platform-card,
+.manual-post-card {
   display: grid;
   gap: 12px;
   border: 1px solid var(--line);
@@ -1192,7 +1194,12 @@ textarea {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
-.social-platform-card p {
+.manual-post-grid {
+  grid-template-columns: 1fr;
+}
+
+.social-platform-card p,
+.manual-post-card p {
   min-height: 96px;
   margin: 0;
   color: var(--muted);
@@ -1200,7 +1207,8 @@ textarea {
   line-height: 1.45;
 }
 
-.social-platform-card .button-row {
+.social-platform-card .button-row,
+.manual-post-card .button-row {
   align-items: stretch;
 }
 

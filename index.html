@@ -207,8 +207,8 @@
             <article class="broadcast-step" id="broadcast-preview-step">
               <p class="broadcast-greeting">Review before posting</p>
               <div class="integration-status-card" id="broadcast-posting-status-card">
-                <strong>Posting service</strong>
-                <span id="broadcast-posting-service-label">Demo mode - posts will be saved inside this tester app.</span>
+                <strong>Free manual posting</strong>
+                <span id="broadcast-posting-service-label">No paid posting service needed. Approval logs the post, then gives copy/open buttons for each platform.</span>
               </div>
               <label>
                 Instagram
@@ -236,8 +236,13 @@
 
             <article class="broadcast-step" id="broadcast-success-step">
               <div class="broadcast-success-mark">✓</div>
-              <p class="broadcast-greeting">Truck Status: Broadcasted!</p>
+              <p class="broadcast-greeting">Post Logged & Ready</p>
               <p id="broadcast-live-status">Current Status: Active at Downtown Common until 8:00 PM.</p>
+              <div class="integration-status-card">
+                <strong>Manual posting respects platform rules</strong>
+                <span>Copy the caption, open the social platform, review it, then post from the owner account.</span>
+              </div>
+              <div class="manual-post-grid" id="broadcast-manual-post-grid"></div>
               <div class="broadcast-live-links">
                 <a href="https://www.instagram.com/" target="_blank">Instagram</a>
                 <a href="https://www.facebook.com/" target="_blank">Facebook</a>
@@ -1623,7 +1628,7 @@
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="app.js?v=mobile-menu-single-tap-1"></script>
+    <script src="app.js?v=free-manual-posting-1"></script>
     <script>
       (function () {
         function fallbackShowScreen(id) {

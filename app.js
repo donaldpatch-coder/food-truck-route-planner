@@ -279,6 +279,7 @@ const broadcastPhoto = document.querySelector("#broadcast-photo");
 const broadcastPhotoStatus = document.querySelector("#broadcast-photo-status");
 const broadcastPublishStatus = document.querySelector("#broadcast-publish-status");
 const broadcastLiveStatus = document.querySelector("#broadcast-live-status");
+const broadcastManualPostGrid = document.querySelector("#broadcast-manual-post-grid");
 const socialQueueList = document.querySelector("#social-queue-list");
 const socialQueueStatus = document.querySelector("#social-queue-status");
 
@@ -2490,7 +2491,7 @@ async function publishBroadcast() {
   };
 
   broadcastPublishStatus.textContent = postingSettings.provider === "demo"
-    ? "Saving demo broadcast..."
+    ? "Logging post and preparing manual posting buttons..."
     : `Sending to ${getPostingProviderLabel(postingSettings.provider)}...`;
 
   let postingResult = { mode: "demo", message: "Demo broadcast saved." };
@@ -2545,7 +2546,8 @@ function renderBroadcastSuccess(record) {
   const locationText = currentRecord?.location || getBroadcastLocation().name;
   const timeText = currentRecord?.bestTime || getBroadcastLocation().bestTime;
 
-  broadcastLiveStatus.textContent = `Current Status: Active at ${locationText} until ${timeText.split("-").pop().trim()}.`;
+  broadcastLiveStatus.textContent = `Current Status: Active at ${locationText} until ${timeText.split("-").pop().trim()}. This post was logged in the app and is ready for manual posting.`;
+  renderBroadcastManualPostButtons(currentRecord);
 }
 
 function getActiveBroadcast() {
@@ -2585,6 +2587,23 @@ function getPlatformUrl(platform) {
   };
 
   return urls[platform] || "https://www.google.com/";
+}
+
+function renderBroadcastManualPostButtons(record) {
+  if (!broadcastManualPostGrid || !record) {
+    return;
+  }
+
+  broadcastManualPostGrid.innerHTML = ["instagram", "facebook", "google"].map((platform) => `
+    <article class="manual-post-card">
+      <strong>${platform === "google" ? "Google Business" : platform}</strong>
+      <p>${getPlatformCaption(record, platform)}</p>
+      <div class="button-row">
+        <button type="button" class="secondary social-copy-caption" data-broadcast-id="${record.id}" data-platform="${platform}">Copy Caption</button>
+        <a class="source-link" href="${getPlatformUrl(platform)}" target="_blank" rel="noreferrer">Open ${platform === "google" ? "Google" : platform}</a>
+      </div>
+    </article>
+  `).join("");
 }
 
 function renderSocialQueue() {
@@ -6388,6 +6407,14 @@ socialQueueList.addEventListener("click", (event) => {
 
   if (postedButton) {
     toggleSocialPosted(postedButton.dataset.broadcastId);
+  }
+});
+broadcastManualPostGrid?.addEventListener("click", (event) => {
+  const copyButton = event.target.closest(".social-copy-caption");
+
+  if (copyButton) {
+    copySocialCaption(copyButton.dataset.broadcastId, copyButton.dataset.platform);
+    broadcastPublishStatus.textContent = `${copyButton.dataset.platform === "google" ? "Google Business" : copyButton.dataset.platform} caption copied. Open the platform and paste it from the owner account.`;
   }
 });
 
