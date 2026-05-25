@@ -6326,8 +6326,10 @@ document.querySelectorAll(".trucknet-category").forEach((button) => {
   });
 });
 reportLocationFilter.addEventListener("change", renderReports);
-navToggle.addEventListener("click", toggleMobileMenu);
-navToggle.addEventListener("touchend", toggleMobileMenu);
+if (navToggle) {
+  navToggle.dataset.appMenuReady = "true";
+  navToggle.addEventListener("click", toggleMobileMenu);
+}
 homeBase.addEventListener("input", renderCalendar);
 routePeriod.addEventListener("change", renderCalendar);
 

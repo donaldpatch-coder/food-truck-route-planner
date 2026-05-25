@@ -1623,7 +1623,7 @@
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="app.js?v=site-recovery-1"></script>
+    <script src="app.js?v=mobile-menu-single-tap-1"></script>
     <script>
       (function () {
         function fallbackShowScreen(id) {
@@ -1779,10 +1779,9 @@
         var publishButton = document.querySelector("#broadcast-publish");
         var mobileMenuButton = document.querySelector("#nav-toggle");
 
-        if (mobileMenuButton && !mobileMenuButton.dataset.fallbackReady) {
+        if (mobileMenuButton && !mobileMenuButton.dataset.appMenuReady && !mobileMenuButton.dataset.fallbackReady) {
           mobileMenuButton.dataset.fallbackReady = "true";
           mobileMenuButton.addEventListener("click", fallbackToggleMobileMenu);
-          mobileMenuButton.addEventListener("touchend", fallbackToggleMobileMenu);
         }
 
         if (startButton) {
