@@ -1623,7 +1623,7 @@
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="app.js?v=android-menu-fix-1"></script>
+    <script src="app.js?v=site-recovery-1"></script>
     <script>
       (function () {
         function fallbackShowScreen(id) {

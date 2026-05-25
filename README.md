@@ -4929,7 +4929,7 @@ function getTruckProfileFields() {
     truckProfileCateringMenu,
     truckProfileSeasonalSpecials,
     ...truckPaymentOptions
-  ];
+  ].filter(Boolean);
 }
 
 function setTruckProfileEditing(isEditing) {
@@ -4937,9 +4937,16 @@ function setTruckProfileEditing(isEditing) {
   getTruckProfileFields().forEach((field) => {
     field.disabled = !isEditing;
   });
-  saveTruckDraft.disabled = !isEditing;
-  document.querySelector("#save-truck-profile").disabled = !isEditing;
-  editTruckProfile.textContent = isEditing ? "Editing" : "Edit";
+  if (saveTruckDraft) {
+    saveTruckDraft.disabled = !isEditing;
+  }
+  const publishButton = document.querySelector("#save-truck-profile");
+  if (publishButton) {
+    publishButton.disabled = !isEditing;
+  }
+  if (editTruckProfile) {
+    editTruckProfile.textContent = isEditing ? "Editing" : "Edit";
+  }
 }
 
 function loadTruckProfileForm() {
@@ -6246,31 +6253,31 @@ marketplaceCategory.addEventListener("change", renderMarketplace);
 document.querySelector("#save-marketplace-listing").addEventListener("click", saveMarketplaceListing);
 document.querySelector("#save-public-listing").addEventListener("click", savePublicListing);
 document.querySelector("#browse-public-listings").addEventListener("click", renderPublicListings);
-document.querySelector("#save-truck-profile").addEventListener("click", saveTruckProfile);
-saveTruckDraft.addEventListener("click", saveTruckProfileDraft);
-editTruckProfile.addEventListener("click", () => {
+document.querySelector("#save-truck-profile")?.addEventListener("click", saveTruckProfile);
+saveTruckDraft?.addEventListener("click", saveTruckProfileDraft);
+editTruckProfile?.addEventListener("click", () => {
   setTruckProfileEditing(true);
-  truckProfileName.focus();
+  truckProfileName?.focus();
   truckProfileStatus.textContent = "Editing profile.";
 });
 getTruckProfileFields().filter((input) => input.type !== "file").forEach((input) => {
   const eventName = input.type === "checkbox" ? "change" : "input";
   input.addEventListener(eventName, () => renderTruckProfilePreview(getTruckProfileDraftFromForm()));
 });
-truckProfileLogoFile.addEventListener("change", () => {
+truckProfileLogoFile?.addEventListener("change", () => {
   truckProfileStatus.textContent = truckProfileLogoFile.files[0]
     ? `${truckProfileLogoFile.files[0].name} added as the logo upload.`
     : "";
   renderTruckProfilePreview(getTruckProfileDraftFromForm());
 });
-truckProfileImagesFiles.addEventListener("change", () => {
+truckProfileImagesFiles?.addEventListener("change", () => {
   const count = truckProfileImagesFiles.files.length;
   truckProfilePhotoStatus.textContent = count
     ? `${count} photo file${count === 1 ? "" : "s"} selected. Save or publish to keep them on the tester profile.`
     : "Add links now, or choose photo files for the tester profile.";
   renderTruckProfilePreview(getTruckProfileDraftFromForm());
 });
-truckProfileMenuFile.addEventListener("change", () => {
+truckProfileMenuFile?.addEventListener("change", () => {
   truckMenuToolsStatus.textContent = truckProfileMenuFile.files[0]
     ? `${truckProfileMenuFile.files[0].name} added. Save or publish to keep it on the profile.`
     : "For now, customers can use a menu link or a menu picture. Full menu conversion can come back later.";
