@@ -296,10 +296,10 @@ const detailHistoryList = document.querySelector("#detail-history-list");
 
 const SUPABASE_URL = "https://vyjquxjxjywhrtihpzwk.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_dnU2ePpleMBcl5Qt3kJriw_AFTeDa1w";
-const LIVE_SITE_URL = "https://myfoodtruck.netlify.app/";
+const LIVE_SITE_URL = "https://myfoodtruck.netlify.app/owner.html";
 const AUTH_REDIRECT_URL = window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost"
   ? LIVE_SITE_URL
-  : `${window.location.origin}/`;
+  : `${window.location.origin}/owner.html`;
 
 function createSafeStorage() {
   const memoryStorage = new Map();
@@ -5111,7 +5111,7 @@ function saveTruckProfile() {
   const profile = saveTruckProfileRecord({ publish: true });
 
   if (profile) {
-    truckProfileStatus.textContent = `${profile.truckName} is published on the truck finder site.`;
+    truckProfileStatus.textContent = `${profile.truckName} is saved in this browser. Use Manage public listings to publish it for all diners.`;
   }
 }
 
