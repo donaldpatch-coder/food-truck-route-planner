@@ -4,10 +4,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>The Street Bite | Owner dashboard</title>
-    <link rel="stylesheet" href="styles.css">
-  </head>
+    <link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="app-install.css"><script defer src="install-app.js"></script>
+  <meta name="theme-color" content="#203f31"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/assets/app-icon-192.png"></head>
   <body>
-    <main class="app-shell">
+    <section class="app-install-bar" aria-label="The Street Bite app"><a href="/">Find food</a><a href="app-features.html">All features</a><button type="button" data-install-app>Install app</button><a href="install-app.html">Install help</a><span data-install-status role="status"></span><p data-connection-status role="status"></p></section><main class="app-shell">
       <aside class="sidebar">
         <div class="brand">
           <div class="brand-mark">SB</div>
@@ -30,7 +30,7 @@
             <button class="nav-item" data-screen="plan">Route Plan</button>
             <button class="nav-item" data-screen="checkins">Sales Log</button>
             <button class="nav-item" data-screen="reports">Reports</button>
-            <button class="nav-item" data-screen="operations">Operations</button>
+            <button class="nav-item" data-screen="operations">Operations</button><button class="nav-item" data-screen="public-site">Public Space Listings</button><button class="nav-item" data-screen="calendar">Calendar</button>
             <button class="nav-item" data-screen="suppliers">Suppliers</button>
             <button class="nav-item" data-screen="marketing">Truck Finder Profile</button>
             <button class="nav-item" data-screen="socialQueue">Social Queue</button>
@@ -812,6 +812,7 @@
                 <div class="marketing-question-grid">
                   <label>Cuisine type<input id="truck-profile-cuisine" type="text" placeholder="BBQ, Mexican, Vegan, Desserts, Fusion"></label>
                   <label>Price range<select id="truck-profile-price-range"><option>$</option><option>$$</option><option>$$$</option></select></label>
+                  <label>Daily special<input id="truck-profile-special" type="text" maxlength="250" placeholder="Today's dish, offer or seasonal special"></label>
                   <label class="wide-field">Signature dishes, top 3-5<textarea id="truck-profile-signature-dishes" rows="3" placeholder="Birria tacos&#10;Chicken verde bowl&#10;Street corn cups"></textarea></label>
                   <label class="wide-field">Dietary options<textarea id="truck-profile-dietary" rows="2" placeholder="Vegan options, gluten-free buns, halal chicken, nut-free desserts"></textarea></label>
                   <div class="wide-field menu-tools-panel">
@@ -1627,7 +1628,7 @@
       </section>
     </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="vendor/supabase.js"></script>
     <script src="app.js?v=free-manual-posting-1"></script>
     <script>
       (function () {

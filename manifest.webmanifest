@@ -1,0 +1,22 @@
+{
+  "id": "/street-bite-app",
+  "name": "The Street Bite",
+  "short_name": "Street Bite",
+  "description": "Food truck routes, check-ins, sales, local food and business tools.",
+  "start_url": "/app?source=installed",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f8f5ec",
+  "theme_color": "#203f31",
+  "lang": "en",
+  "icons": [
+    {"src": "/assets/app-icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+    {"src": "/assets/app-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
+    {"src": "/assets/app-icon-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ],
+  "shortcuts": [
+    {"name": "Find food", "url": "/#find"},
+    {"name": "Sales log", "url": "/app?screen=checkins"},
+    {"name": "Route plan", "url": "/app?screen=plan"}
+  ]
+}
