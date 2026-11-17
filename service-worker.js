@@ -1,5 +1,5 @@
 /* Only cache the public owner shell/assets. Never intercept Supabase, auth, APIs or POSTs. */
-const APP_CACHE = 'streetbite-owner-v1';
+const APP_CACHE = 'streetbite-owner-v2';
 const SHELL = ['/owner.html', '/app.js', '/styles.css', '/app-install.css', '/install-app.js', '/vendor/supabase.js', '/assets/app-icon-192.png', '/assets/app-icon-512.png', '/assets/app-icon-maskable.png'];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(APP_CACHE).then(cache => cache.addAll(SHELL)));
