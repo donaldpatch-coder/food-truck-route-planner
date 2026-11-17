@@ -9,11 +9,22 @@ const contentTypes = {
   ".html": "text/html; charset=utf-8",
   ".css": "text/css; charset=utf-8",
   ".js": "text/javascript; charset=utf-8",
-  ".zip": "application/zip"
+  ".zip": "application/zip",
+  ".png": "image/png",
+  ".webp": "image/webp",
+  ".json": "application/json",
+  ".webmanifest": "application/manifest+json"
 };
 
 const server = http.createServer((request, response) => {
   const requestPath = request.url.split("?")[0].split("#")[0];
+  if (requestPath === "/.netlify/functions/locate") {
+    const url = new URL(request.url, "http://localhost");
+    require("./netlify/functions/locate").handler({httpMethod:request.method,queryStringParameters:Object.fromEntries(url.searchParams)}).then(result=>{
+      response.writeHead(result.statusCode,result.headers);response.end(result.body);
+    }).catch(()=>{response.writeHead(503);response.end('{"error":"Location unavailable"}');});
+    return;
+  }
   const helpRedirects = {
     "/docs/help/dashboard-weather.md": "/docs/help/dashboard-weather.html",
     "/docs/help/find-locations.md": "/docs/help/find-locations.html",
@@ -30,7 +41,8 @@ const server = http.createServer((request, response) => {
     return;
   }
 
-  const safePath = requestPath === "/" ? "index.html" : requestPath.replace(/^\/+/, "");
+  let safePath = requestPath === "/" ? "index.html" : requestPath === "/app" ? "owner.html" : requestPath.replace(/^\/+/, "");
+  if (!path.extname(safePath) && fs.existsSync(path.join(appDir,safePath+".html"))) safePath += ".html";
   const filePath = path.join(appDir, safePath);
 
   if (!filePath.startsWith(appDir)) {
