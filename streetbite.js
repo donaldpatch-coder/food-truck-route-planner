@@ -4,6 +4,7 @@
   const $ = (id) => document.getElementById(id);
   if (!window.supabase) { const status = $('search-status') || $('auth-status'); if (status) status.textContent = 'The connection could not load. Please refresh and try again.'; return; }
   const db = window.supabase.createClient('https://vyjquxjxjywhrtihpzwk.supabase.co', 'sb_publishable_dnU2ePpleMBcl5Qt3kJriw_AFTeDa1w');
+  window.streetbiteDb = db;
   let user = null, activePlace = null, signupEmail = '', searchVersion = 0;
   const el = (tag, text, cls) => { const n = document.createElement(tag); if (text) n.textContent = text; if (cls) n.className = cls; return n; };
   const safeLink = (raw) => { try { const u = new URL(raw); return ['http:', 'https:'].includes(u.protocol) ? u.href : null; } catch { return null; } };
@@ -70,7 +71,7 @@
   $('show-live')?.addEventListener('click',()=>{$('live-only').checked=true;search();});
   $('near-me')?.addEventListener('click',()=>{if(!navigator.geolocation){message('search-status','Location is unavailable in this browser. Enter a ZIP or city instead.');return;}message('search-status','Waiting for your location permission…');navigator.geolocation.getCurrentPosition(pos=>{searchCenter={latitude:pos.coords.latitude,longitude:pos.coords.longitude,label:'your location'};centerInput='Your location';$('zip').value=centerInput;search();$('find').scrollIntoView({behavior:'smooth'});},()=>{message('search-status','Location permission was denied or unavailable. Enter a ZIP code or city instead.');},{timeout:10000,maximumAge:60000,enableHighAccuracy:false});});
   $('saved-toggle')?.addEventListener('click',()=>{savedOnly=!savedOnly;$('saved-toggle').setAttribute('aria-pressed',String(savedOnly));search();$('find').scrollIntoView({behavior:'smooth'});});savedCount();
-  async function community(){if(!$('community-reviews'))return;const target=$('community-reviews');const {data,error}=await db.from('streetbite_reviews').select('listing_id,display_name,rating,body').order('created_at',{ascending:false}).limit(3);target.replaceChildren();if(error){text('p','Community reviews are temporarily unavailable.',target);return;}if(!data.length){text('div','No Street Bite reviews yet. Find a local spot and share your first-hand experience. Your review could help someone find their next favorite.',target,'review-empty');return;}for(const r of data){const a=el('article','','review');text('p','★'.repeat(r.rating)+' · '+r.display_name,a,'rating');text('p',r.body,a);target.append(a);}}
+  async function community(){if(!$('community-reviews'))return;const target=$('community-reviews');const {data,error}=await db.from('streetbite_reviews').select('listing_id,display_name,rating,body,dish_name,heat,richness').eq('is_public',true).order('created_at',{ascending:false}).limit(3);target.replaceChildren();if(error){text('p','Community reviews are temporarily unavailable.',target);return;}if(!data.length){text('div','No Street Bite reviews yet. Find a local spot and share your first-hand experience. Your review could help someone find their next favorite.',target,'review-empty');return;}for(const r of data){const a=el('article','','review');text('p','★'.repeat(r.rating)+' · '+r.display_name,a,'rating');if(r.dish_name)text('p',r.dish_name,a);window.streetbiteCreatorUI?.badges(r,a);text('p',r.body,a);target.append(a);}}
   async function openPlace(place){
     activePlace=place;const detail=$('place-detail');detail.replaceChildren();text('p',place.kind,detail,'eyebrow');text('h2',place.name,detail);text('p',place.description,detail);text('p',`${place.address} · ${place.city}${place.zip?' '+place.zip:''}`,detail);
     const url=safeLink(place.website);if(url){const a=text('a','Visit website / menu ↗',detail,'button');a.href=url;a.target='_blank';a.rel='noopener noreferrer';}
@@ -85,19 +86,21 @@
   }
   async function loadReviews(id){
     const target=$('reviews');target.replaceChildren(el('p','Loading reviews…'));
-    const {data,error}=await db.from('streetbite_reviews').select('display_name,rating,body,created_at').eq('listing_id',id).order('created_at',{ascending:false}).limit(100);
+    const {data,error}=await db.from('streetbite_reviews').select('user_id,display_name,rating,body,created_at,dish_name,heat,richness,video_url,disclosure').eq('is_public',true).eq('listing_id',id).order('created_at',{ascending:false}).limit(100);
     if(activePlace?.id!==id)return;
     target.replaceChildren();if(error){text('p','Reviews could not load. Close this listing and try again.',target);return;}
     if(!data.length)text('p','No reviews yet. Share your firsthand experience after signing in.',target);
-    for(const r of data){const a=el('article','','review');text('h4',`${r.display_name} · ${r.rating}/5`,a);text('small',new Date(r.created_at).toLocaleDateString(),a);text('p',r.body,a);target.append(a);}
+    let profiles=[];if(data.length){const response=await db.from('streetbite_creator_profiles').select('user_id,handle,display_name').eq('is_public',true).in('user_id',[...new Set(data.map(r=>r.user_id))]);profiles=response.data||[];}
+    if(activePlace?.id!==id)return;
+    for(const r of data){const a=el('article','','review');const creator=profiles.find(p=>p.user_id===r.user_id);text('h4',`${creator?.display_name||r.display_name} · ${r.rating}/5 overall`,a);if(creator){const link=text('a','Creator profile · @'+creator.handle,a,'creator-handle');link.href='creators.html?creator='+encodeURIComponent(creator.handle);}text('small',new Date(r.created_at).toLocaleDateString(),a);if(r.dish_name)text('p','Dish: '+r.dish_name,a);window.streetbiteCreatorUI?.badges(r,a);text('p',r.body,a);window.streetbiteCreatorUI?.videoLink(r,a);window.streetbiteCreatorUI?.disclosure(r,a);target.append(a);}
     if(data.length===100)text('p','Showing the 100 most recent reviews.',target,'small');
   }
   $('search-form')?.addEventListener('submit',search);
   $('close-place')?.addEventListener('click',()=>$('place-dialog').close());
   $('review-form')?.addEventListener('submit',async e=>{
     e.preventDefault(); if(!user || !activePlace)return;const form=e.currentTarget,values=new FormData(form);busy(form,true);message('review-status','Saving your review…');
-    try{const {error}=await db.from('streetbite_reviews').insert({listing_id:activePlace.id,display_name:values.get('display_name').trim(),rating:Number(values.get('rating')),body:values.get('body').trim()});if(error)throw error;message('review-status','Your review is published. Thank you!');form.reset();form.hidden=true;await loadReviews(activePlace.id);await search();}
-    catch(error){message('review-status',errorText(error));}finally{busy(form,false);}
+    try{if(String(values.get('video_url')||'').trim()&&!window.streetbiteCreatorUI)throw Error('Video tools could not load. Refresh before sharing a video link.');const {error}=await db.from('streetbite_reviews').insert({listing_id:activePlace.id,display_name:values.get('display_name').trim(),rating:Number(values.get('rating')),body:values.get('body').trim(),dish_name:String(values.get('dish_name')||'').trim(),heat:values.get('heat')==null||values.get('heat')===''?null:Number(values.get('heat')),richness:values.get('richness')==null||values.get('richness')===''?null:Number(values.get('richness')),video_url:window.streetbiteCreatorUI?.normalizeSocial(values.get('video_url'))||'',disclosure:values.get('disclosure')||'none'});if(error)throw error;message('review-status','Your review is published. Thank you!');form.reset();form.hidden=true;await loadReviews(activePlace.id);await search();}
+    catch(error){message('review-status',error.message&&!error.code?error.message:errorText(error));}finally{busy(form,false);}
   });
 
   async function refreshAccount(){
@@ -156,5 +159,5 @@
     catch(error){message('listing-status',errorText(error));}finally{busy(form,false);}
   });
   refreshAccount();
-  if($('search-form')){const params=new URLSearchParams(location.search);if(params.get('zip'))$('zip').value=params.get('zip');if(params.get('q'))$('food').value=params.get('q');if(params.get('kind')&&Array.from($('kind').options).some(o=>o.value===params.get('kind')))$('kind').value=params.get('kind');search().then(async()=>{const key=params.get('place');if(key){const {data}=await db.from('streetbite_listings').select('*').eq('source_key',key).eq('status','published').maybeSingle();if(data)openPlace(data);}});community();setInterval(()=>{if(!document.hidden&&!$('place-dialog').open)search();},60000);}
+  if($('search-form')){const params=new URLSearchParams(location.search);if(params.get('zip'))$('zip').value=params.get('zip');if(params.get('q'))$('food').value=params.get('q');if(params.get('kind')&&Array.from($('kind').options).some(o=>o.value===params.get('kind')))$('kind').value=params.get('kind');search().then(async()=>{const key=params.get('place'),listing=params.get('listing');if(key||/^[0-9a-f-]{36}$/i.test(listing||'')){const {data}=await db.from('streetbite_listings').select('*').eq(key?'source_key':'id',key||listing).eq('status','published').maybeSingle();if(data)openPlace(data);}});community();setInterval(()=>{if(!document.hidden&&!$('place-dialog').open)search();},60000);}
 })();

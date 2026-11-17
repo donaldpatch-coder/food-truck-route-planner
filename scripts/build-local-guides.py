@@ -3,7 +3,7 @@ import json, html
 from pathlib import Path
 rows=json.loads(Path('data/lowell-launch.json').read_text(encoding='utf-8'))
 guides=[('food-in-lowell-ma','Places to eat in Lowell, MA',lambda r:r['location_kind']=='street_address'),('food-trucks-in-lowell-ma','Food trucks serving Lowell & the Merrimack Valley',lambda r:r['kind']=='Food truck'),('restaurants-in-lowell-ma','Restaurants in Lowell, MA',lambda r:r['kind']=='Restaurant'),('bakeries-in-lowell-ma','Bakeries in Lowell, MA',lambda r:r['kind']=='Bakery'),('cafes-in-lowell-ma','Cafes in Lowell, MA',lambda r:r['kind']=='Cafe'),('tacos-in-lowell-ma','Find tacos in Lowell, MA',lambda r:'tacos' in r['cuisine'].lower())]
-urls=['https://thestreetbite.com/']
+urls=['https://thestreetbite.com/','https://thestreetbite.com/creators']
 for slug,title,predicate in guides:
  selected=[r for r in rows if predicate(r)]
  cards=[]
